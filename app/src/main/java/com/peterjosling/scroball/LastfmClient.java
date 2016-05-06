@@ -1,0 +1,90 @@
+package com.peterjosling.scroball;
+
+import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Message;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import de.umass.lastfm.*;
+import de.umass.lastfm.Track;
+import de.umass.lastfm.scrobble.ScrobbleData;
+import de.umass.lastfm.scrobble.ScrobbleResult;
+
+public class LastfmClient {
+
+  private static final String API_KEY = "";
+  private static final String API_SECRET = "";
+
+  private final Session session;
+
+  public LastfmClient(String userAgent, String sessionKey) {
+    Caller.getInstance().setUserAgent(userAgent);
+    session = Session.createSession(API_KEY, API_SECRET, sessionKey);
+  }
+
+  public void updateNowPlaying(final String artist, final String track) {
+    new AsyncTask<Object, Object, ScrobbleResult>() {
+      @Override
+      protected ScrobbleResult doInBackground(Object... params) {
+        return Track.updateNowPlaying(artist, track, session);
+      }
+
+      @Override
+      protected void onPostExecute(ScrobbleResult scrobbleResult) {
+        // TODO remove
+        System.out.println(scrobbleResult);
+      }
+    }.execute();
+  }
+
+  public void scrobbleTracks(final List<Scrobble> scrobbles, final Handler.Callback callback) {
+    final List<ScrobbleData> scrobbleData = new ArrayList<>();
+
+    for (Scrobble scrobble : scrobbles) {
+      com.peterjosling.scroball.Track track = scrobble.track();
+      scrobbleData.add(new ScrobbleData(track.artist(), track.track(), scrobble.timestamp()));
+    }
+
+    new AsyncTask<Object, Object, List<ScrobbleResult>>() {
+      @Override
+      protected List<ScrobbleResult> doInBackground(Object... params) {
+        return Track.scrobble(scrobbleData, session);
+      }
+
+      @Override
+      protected void onPostExecute(List<ScrobbleResult> results) {
+        Message message = Message.obtain();
+        message.obj = results;
+        callback.handleMessage(message);
+        System.out.println(Arrays.toString(results.toArray()));
+      }
+    }.execute();
+  }
+
+  public void getTrackInfo(final String artist, final String track, final Handler.Callback callback) {
+    new AsyncTask<Object, Object, Track>() {
+      @Override
+      protected Track doInBackground(Object... params) {
+        return Track.getInfo(artist, track, session.getApiKey());
+      }
+
+      @Override
+      protected void onPostExecute(Track updatedTrack) {
+        Message message = Message.obtain();
+
+        if (updatedTrack != null) {
+          message.obj = ImmutableTrack.builder()
+              .artist(artist)
+              .track(track)
+              .duration(updatedTrack.getDuration() * 1000)
+              .build();
+        }
+
+        callback.handleMessage(message);
+      }
+    }.execute();
+  }
+}
