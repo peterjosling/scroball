@@ -15,8 +15,8 @@ import de.umass.lastfm.scrobble.ScrobbleResult;
 
 public class LastfmClient {
 
-  private static final String API_KEY = "";
-  private static final String API_SECRET = "";
+  private static final String API_KEY = "e0189dd89bed85023712c63544325558";
+  private static final String API_SECRET = "747ea338a0e071b7d3d14c1a64e13567";
 
   private final Session session;
 
