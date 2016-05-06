@@ -3,6 +3,7 @@ package com.peterjosling.scroball;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.graphics.Color;
 
 import java.util.Locale;
 
@@ -27,6 +28,7 @@ public class ScrobbleNotificationManager {
         .setContentText(String.format("%s — %s", track.artist(), track.track()))
         .setOngoing(true)
         .setCategory(Notification.CATEGORY_STATUS)
+        .setColor(Color.argb(255, 242, 72, 63))
         .build();
 
     notificationManager.notify(NOW_PLAYING_ID, notification);
@@ -52,6 +54,7 @@ public class ScrobbleNotificationManager {
         .setContentTitle("Track scrobbled")
         .setContentText(String.format("%s%s — %s", plays, track.artist(), track.track()))
         .setCategory(Notification.CATEGORY_STATUS)
+        .setColor(Color.argb(255, 242, 72, 63))
         .build();
 
     notificationManager.notify(scrobbleNotificationId++, notification);
