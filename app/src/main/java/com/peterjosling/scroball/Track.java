@@ -13,6 +13,7 @@ public abstract class Track {
   public abstract String artist();
   public abstract Optional<String> album();
   public abstract Optional<String> albumArtist();
+  @Value.Auxiliary
   public abstract Optional<Long> duration();
 
   public boolean isValid() {
