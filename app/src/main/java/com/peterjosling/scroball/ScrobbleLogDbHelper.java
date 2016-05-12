@@ -17,6 +17,7 @@ public class ScrobbleLogDbHelper extends SQLiteOpenHelper {
           ScrobbleLogEntry._ID + " INTEGER PRIMARY KEY," +
           ScrobbleLogEntry.COLUMN_NAME_TIMESTAMP + INT_TYPE + COMMA_SEP +
           ScrobbleLogEntry.COLUMN_NAME_ARTIST + TEXT_TYPE + COMMA_SEP +
+          ScrobbleLogEntry.COLUMN_NAME_ALBUM_ARTIST + TEXT_TYPE + COMMA_SEP +
           ScrobbleLogEntry.COLUMN_NAME_TRACK + TEXT_TYPE + COMMA_SEP +
           ScrobbleLogEntry.COLUMN_NAME_ALBUM + TEXT_TYPE + COMMA_SEP +
           ScrobbleLogEntry.COLUMN_NAME_STATUS + INT_TYPE +

@@ -47,6 +47,10 @@ public class ScrobbleLog {
       values.put(ScrobbleLogEntry.COLUMN_NAME_ALBUM, track.album().get());
     }
 
+    if (track.albumArtist().isPresent()) {
+      values.put(ScrobbleLogEntry.COLUMN_NAME_ALBUM_ARTIST, track.albumArtist().get());
+    }
+
     if (status.getDbId() > -1) {
       String selection = ScrobbleLogEntry._ID + " LIKE ?";
       String[] selectionArgs = {String.valueOf(status.getDbId())};
@@ -93,6 +97,7 @@ public class ScrobbleLog {
       int timestamp = cursor.getInt(cursor.getColumnIndexOrThrow(ScrobbleLogEntry.COLUMN_NAME_TIMESTAMP));
       int status = cursor.getInt(cursor.getColumnIndexOrThrow(ScrobbleLogEntry.COLUMN_NAME_STATUS));
       String artist = cursor.getString(cursor.getColumnIndexOrThrow(ScrobbleLogEntry.COLUMN_NAME_ARTIST));
+      String albumArtist = cursor.getString(cursor.getColumnIndexOrThrow(ScrobbleLogEntry.COLUMN_NAME_ALBUM_ARTIST));
       String track = cursor.getString(cursor.getColumnIndexOrThrow(ScrobbleLogEntry.COLUMN_NAME_TRACK));
       String album = cursor.getString(cursor.getColumnIndexOrThrow(ScrobbleLogEntry.COLUMN_NAME_ALBUM));
 
@@ -100,6 +105,7 @@ public class ScrobbleLog {
 
       Track trackObj = ImmutableTrack.builder()
           .artist(artist)
+          .albumArtist(albumArtist)
           .album(album)
           .track(track)
           .build();
