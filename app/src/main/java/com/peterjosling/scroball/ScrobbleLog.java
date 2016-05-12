@@ -6,9 +6,9 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.common.collect.ImmutableList;
 import com.peterjosling.scroball.ScrobbleLogContract.ScrobbleLogEntry;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ScrobbleLog {
@@ -87,7 +87,7 @@ public class ScrobbleLog {
   }
 
   private List<Scrobble> readScrobblesFromCursor(Cursor cursor) {
-    List<Scrobble> scrobbles = new ArrayList<>();
+    ImmutableList.Builder<Scrobble> scrobbles = ImmutableList.builder();
 
     int rows = cursor.getCount();
     cursor.moveToFirst();
@@ -120,6 +120,6 @@ public class ScrobbleLog {
       cursor.moveToNext();
     }
 
-    return scrobbles;
+    return scrobbles.build();
   }
 }
