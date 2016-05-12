@@ -1,7 +1,6 @@
 package com.peterjosling.scroball;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,8 +17,8 @@ public class ScrobbleLog {
   private SQLiteDatabase db;
   private ScrobbleLogDbHelper dbHelper;
 
-  public ScrobbleLog(Context context) {
-    dbHelper = new ScrobbleLogDbHelper(context);
+  public ScrobbleLog(ScrobbleLogDbHelper scrobbleLogDbHelper) {
+    dbHelper = scrobbleLogDbHelper;
   }
 
   public void open() {

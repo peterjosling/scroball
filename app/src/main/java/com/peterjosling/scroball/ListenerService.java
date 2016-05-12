@@ -37,7 +37,7 @@ public class ListenerService extends NotificationListenerService
     ConnectivityManager connectivityManager =
         (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-    ScrobbleLog scrobbleLog = new ScrobbleLog(this);
+    ScrobbleLog scrobbleLog = new ScrobbleLog(new ScrobbleLogDbHelper(this));
     scrobbleLog.open();
 
     ScrobbleNotificationManager scrobbleNotificationManager =
