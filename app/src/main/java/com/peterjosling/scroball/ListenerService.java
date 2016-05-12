@@ -42,7 +42,8 @@ public class ListenerService extends NotificationListenerService
     ScrobbleNotificationManager scrobbleNotificationManager =
         new ScrobbleNotificationManager(this);
 
-    LastfmClient lastfmClient = new LastfmClient("tst", "");
+    ScroballApplication application = (ScroballApplication) getApplication();
+    LastfmClient lastfmClient = application.getLastfmClient();
 
     Scrobbler scrobbler = new Scrobbler(
         lastfmClient,

@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">Scroball</string>
+    <string name="user_agent">tst</string>
 
     <!-- Strings related to Settings -->
+    <string name="preference_file_key">com.peterjosling.scroball.PREFERENCE_FILE_KEY</string>
+    <string name="saved_session_key">sessionKey</string>
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>
