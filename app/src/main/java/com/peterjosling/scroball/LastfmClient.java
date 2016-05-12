@@ -18,11 +18,15 @@ public class LastfmClient {
   private static final String API_KEY = "e0189dd89bed85023712c63544325558";
   private static final String API_SECRET = "747ea338a0e071b7d3d14c1a64e13567";
 
-  private final Session session;
+  private Session session;
 
   public LastfmClient(String userAgent, String sessionKey) {
+    this(userAgent);
+    setSession(sessionKey);
+  }
+
+  public LastfmClient(String userAgent) {
     Caller.getInstance().setUserAgent(userAgent);
-    session = Session.createSession(API_KEY, API_SECRET, sessionKey);
   }
 
   public void updateNowPlaying(final String artist, final String track) {
@@ -86,5 +90,9 @@ public class LastfmClient {
         callback.handleMessage(message);
       }
     }.execute();
+  }
+
+  private void setSession(String sessionKey) {
+    session = Session.createSession(API_KEY, API_SECRET, sessionKey);
   }
 }
