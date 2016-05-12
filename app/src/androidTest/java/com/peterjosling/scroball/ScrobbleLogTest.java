@@ -1,12 +1,13 @@
 package com.peterjosling.scroball;
 
 import android.content.Context;
+import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
 
+import com.google.common.collect.ImmutableList;
+
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -15,38 +16,30 @@ import java.util.List;
 import static com.google.common.truth.Truth.assertThat;
 
 @RunWith(AndroidJUnit4.class)
-public class ScrobbleLogTest extends AndroidTestCase {
+public class ScrobbleLogTest {
 
   Context context;
   ScrobbleLog scrobbleLog;
-  Track track;
-  ScrobbleStatus scrobbleStatus;
-  Scrobble scrobble;
+  Track track = ImmutableTrack.builder()
+      .duration(1)
+      .artist("Artist")
+      .track("Track")
+      .album("Album")
+      .albumArtist("Album artist")
+      .build();
 
-  @BeforeClass
-  public void beforeClass() throws Exception {
-    context = new RenamingDelegatingContext(getContext(), "test_");
-
-    track = ImmutableTrack.builder()
-        .duration(1)
-        .artist("Artist")
-        .track("Track")
-        .album("Album")
-        .albumArtist("Album artist")
-        .build();
-
-    scrobbleStatus = new ScrobbleStatus(0);
-
-    scrobble = ImmutableScrobble.builder()
-        .track(track)
-        .timestamp((int) (System.currentTimeMillis() / 1000))
-        .status(scrobbleStatus)
-        .build();
-  }
+  ScrobbleStatus scrobbleStatus = new ScrobbleStatus(0);
+  Scrobble scrobble = ImmutableScrobble.builder()
+      .track(track)
+      .timestamp((int) (System.currentTimeMillis() / 1000))
+      .status(scrobbleStatus)
+      .build();
 
   @Before
   public void before() throws Exception {
-    scrobbleLog = new ScrobbleLog(context);
+    context = new RenamingDelegatingContext(InstrumentationRegistry.getContext(), "test_");
+
+    scrobbleLog = new ScrobbleLog(ScrobbleLogDbHelper.getTestInstance(context));
     scrobbleLog.open();
   }
 
@@ -62,39 +55,61 @@ public class ScrobbleLogTest extends AndroidTestCase {
 
   @Test
   public void write_setsDbIdOnNewEntries() {
-    // TODO
+    assertThat(scrobble.status().getDbId()).isEqualTo(-1);
+    scrobbleLog.write(scrobble);
+    assertThat(scrobble.status().getDbId()).isGreaterThan(0L);
   }
 
   @Test
   public void write_updatesExistingEntries() {
-    // TODO
+    long id = 5;
+    scrobble.status().setDbId(id);
+    scrobbleLog.write(scrobble);
+    assertThat(scrobble.status().getDbId()).isEqualTo(id);
   }
 
   @Test
   public void readPending_readsAllPendingEntries() {
-    Scrobble[] scrobbles = new Scrobble[]{scrobble, scrobble, scrobble};
-
-    for (Scrobble scrobble : scrobbles) {
-      scrobbleLog.write(scrobble);
-    }
+    Scrobble scrobble1 = copyScrobble(scrobble);
+    Scrobble scrobble2 = copyScrobble(scrobble);
+    Scrobble scrobble3 = copyScrobble(scrobble);
+    List<Scrobble> scrobbles = ImmutableList.of(scrobble1, scrobble2, scrobble3);
+    scrobbleLog.write(scrobbles);
 
     List<Scrobble> pending = scrobbleLog.readPending();
 
-    assertThat(pending).hasSize(3);
-
-    for (int i = 0; i < scrobbles.length; i++) {
-      assertThat(pending.get(i)).isEqualTo(scrobbles[i]);
-    }
+    assertThat(pending).containsAllIn(scrobbles);
   }
 
   @Test
   public void readPending_treatsErroredScrobblesAsPending() {
     Scrobble erroredScrobble = ImmutableScrobble.builder().from(scrobble).build();
     erroredScrobble.status().setErrorCode(1);
+    scrobbleLog.write(erroredScrobble);
+
+    List<Scrobble> pending = scrobbleLog.readPending();
+
+    assertThat(pending.size()).isEqualTo(1);
+    assertThat(pending.get(0)).isEqualTo(erroredScrobble);
   }
 
   @Test
   public void readPending_doesNotReadSubmittedScrobbles() {
-    // TODO
+    Scrobble pendingScrobble = copyScrobble(scrobble);
+    Scrobble submittedScrobble = copyScrobble(scrobble);
+    submittedScrobble.status().setScrobbled(true);
+    List<Scrobble> scrobbles = ImmutableList.of(pendingScrobble, submittedScrobble);
+    scrobbleLog.write(scrobbles);
+
+    List<Scrobble> pending = scrobbleLog.readPending();
+
+    assertThat(pending.size()).isEqualTo(1);
+    assertThat(pending).contains(pendingScrobble);
+  }
+
+  private Scrobble copyScrobble(Scrobble input) {
+    return ImmutableScrobble.builder().from(input)
+        .status(new ScrobbleStatus(input.status().getErrorCode(), input.status().getDbId()))
+        .build();
   }
 }
