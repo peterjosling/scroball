@@ -20,6 +20,7 @@ public class Scrobbler {
   private final ScrobbleNotificationManager notificationManager;
   private final ScrobbleLog scrobbleLog;
   private final ConnectivityManager connectivityManager;
+  private final List<PlaybackItem> pendingPlaybackItems;
   private final List<Scrobble> pending;
   private boolean isScrobbling = false;
 
@@ -32,12 +33,18 @@ public class Scrobbler {
     this.notificationManager = notificationManager;
     this.scrobbleLog = scrobbleLog;
     this.connectivityManager = connectivityManager;
+    // TODO read this from DB
+    // TODO write unit test to ensure non-network plays get scrobbled with duration lookup.
+    this.pendingPlaybackItems = new ArrayList<>();
     this.pending = scrobbleLog.readPending();
-
-    System.out.println("Pending size: " + this.pending.size());
   }
 
   public void updateNowPlaying(Track track) {
+    if (!client.isAuthenticated()) {
+      System.out.println("Skipping now playing update, not logged in.");
+      return;
+    }
+
     System.out.println("!!!!!!!!!!! Updating now playing");
     System.out.println(track);
     client.updateNowPlaying(track.artist(), track.track());
@@ -110,19 +117,19 @@ public class Scrobbler {
 
         // TODO error handling
         if (message.obj == null) {
-          // TODO handle offline, need to fetch duration later.
-          updatedPlaybackItem = ImmutablePlaybackItem.builder().from(playbackItem)
-              .track(ImmutableTrack.builder().from(playbackItem.track()).duration(0).build())
-              .build();
-          System.out.println("Track could not be updated, submitting without check: " + playbackItem);
-        } else {
-          updatedPlaybackItem = ImmutablePlaybackItem.builder().from(playbackItem)
-              .track((Track) message.obj)
-              .build();
-          System.out.println("Submitting updated track: " + updatedPlaybackItem);
+          // TODO check error code here.
+          // TODO persist this to DB.
+          System.out.println("Failed to fetch track duration, saving for later.");
+          pendingPlaybackItems.add(playbackItem);
+          return true;
         }
 
-          submit(updatedPlaybackItem);
+        updatedPlaybackItem = ImmutablePlaybackItem.builder().from(playbackItem)
+            .track((Track) message.obj)
+            .build();
+        System.out.println("Submitting updated track: " + updatedPlaybackItem);
+
+        submit(updatedPlaybackItem);
         return true;
       }
     });
@@ -131,11 +138,22 @@ public class Scrobbler {
   public void scrobblePending() {
     NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
     boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    boolean tracksPending = !(pending.isEmpty() && pendingPlaybackItems.isEmpty());
 
     // TODO listen for changes in connectivity and trigger this method then.
-
-    if (isScrobbling || pending.size() < 1 || !isConnected) {
+    if (isScrobbling || !tracksPending || !isConnected || !client.isAuthenticated()) {
       return;
+    }
+
+    List<PlaybackItem> playbackItems = pendingPlaybackItems;
+    pendingPlaybackItems.clear();
+
+    if (!playbackItems.isEmpty()) {
+      System.out.println("Re-processing queued items with missing durations.");
+    }
+
+    for (PlaybackItem playbackItem : playbackItems) {
+      fetchTrackDurationAndSubmit(playbackItem);
     }
 
     isScrobbling = true;
@@ -174,6 +192,7 @@ public class Scrobbler {
         if (!didError) {
           scrobblePending();
         }
+
         return false;
       }
     });
