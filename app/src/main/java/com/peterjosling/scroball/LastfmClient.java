@@ -29,6 +29,10 @@ public class LastfmClient {
     Caller.getInstance().setUserAgent(userAgent);
   }
 
+  public boolean isAuthenticated() {
+    return session != null;
+  }
+
   public void updateNowPlaying(final String artist, final String track) {
     new AsyncTask<Object, Object, ScrobbleResult>() {
       @Override
