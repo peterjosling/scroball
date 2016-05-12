@@ -100,8 +100,6 @@ public class ListenerService extends NotificationListenerService
       }
     }
 
-    // TODO submit scrobbles for removed media sessions?
-
     for (final MediaController controller : toAdd) {
       if (!controller.getPackageName().equals("com.apple.android.music")) {
         // TODO remove
