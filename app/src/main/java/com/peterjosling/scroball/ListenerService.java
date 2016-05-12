@@ -2,12 +2,14 @@ package com.peterjosling.scroball;
 
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.media.MediaMetadata;
 import android.media.session.MediaController;
 import android.media.session.MediaSessionManager;
 import android.media.session.PlaybackState;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
+import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -27,6 +29,8 @@ import de.umass.lastfm.Session;
 
 public class ListenerService extends NotificationListenerService
     implements MediaSessionManager.OnActiveSessionsChangedListener {
+
+  public static boolean isNotificationAccessEnabled = false;
 
   private List<MediaController> mediaControllers = new ArrayList<>();
   private Map<MediaController, MediaController.Callback> controllerCallbacks = new WeakHashMap<>();
@@ -67,6 +71,20 @@ public class ListenerService extends NotificationListenerService
     // Trigger change event with existing set of sessions.
     List<MediaController> initialSessions = mediaSessionManager.getActiveSessions(componentName);
     onActiveSessionsChanged(initialSessions);
+  }
+
+  @Override
+  public IBinder onBind(Intent mIntent) {
+    IBinder mIBinder = super.onBind(mIntent);
+    isNotificationAccessEnabled = true;
+    return mIBinder;
+  }
+
+  @Override
+  public boolean onUnbind(Intent mIntent) {
+    boolean mOnUnbind = super.onUnbind(mIntent);
+    isNotificationAccessEnabled = false;
+    return mOnUnbind;
   }
 
   @Override
