@@ -8,7 +8,6 @@ import android.media.session.MediaController;
 import android.media.session.MediaSessionManager;
 import android.media.session.PlaybackState;
 import android.net.ConnectivityManager;
-import android.os.AsyncTask;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.support.annotation.NonNull;
@@ -17,15 +16,11 @@ import android.util.Log;
 import com.google.common.collect.Sets;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
-
-import de.umass.lastfm.Authenticator;
-import de.umass.lastfm.Session;
 
 public class ListenerService extends NotificationListenerService
     implements MediaSessionManager.OnActiveSessionsChangedListener {
