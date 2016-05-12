@@ -15,6 +15,8 @@ import de.umass.lastfm.scrobble.ScrobbleResult;
 
 public class LastfmClient {
 
+  public static final int ERROR_CODE_AUTH = 4;
+
   private static final String API_KEY = "e0189dd89bed85023712c63544325558";
   private static final String API_SECRET = "747ea338a0e071b7d3d14c1a64e13567";
 
@@ -31,6 +33,51 @@ public class LastfmClient {
 
   public boolean isAuthenticated() {
     return session != null;
+  }
+
+  public void authenticate(final String username, final String password, final Handler.Callback callback) {
+    new AsyncTask<Void, Void, AuthResult>() {
+      @Override
+      protected AuthResult doInBackground(Void... voids) {
+        Session session = Authenticator.getMobileSession(username, password, API_KEY, API_SECRET);
+
+        if (session != null) {
+          String sessionKey = session.getKey();
+          setSession(sessionKey);
+
+          return ImmutableAuthResult.builder()
+              .sessionKey(sessionKey)
+              .build();
+        }
+
+        Result result = Caller.getInstance().getLastResult();
+        ImmutableAuthResult.Builder authResultBuilder = ImmutableAuthResult.builder();
+        int httpErrorCode = result.getHttpErrorCode();
+        int errorCode = result.getErrorCode();
+        String errorMessage = result.getErrorMessage();
+
+        if (httpErrorCode > -1) {
+          authResultBuilder.httpErrorCode(httpErrorCode);
+        }
+
+        if (errorCode > -1) {
+          authResultBuilder.errorCode(errorCode);
+        }
+
+        if (errorMessage != null) {
+          authResultBuilder.error(errorMessage);
+        }
+
+        return authResultBuilder.build();
+      }
+
+      @Override
+      protected void onPostExecute(AuthResult authResult) {
+        Message message = Message.obtain();
+        message.obj = authResult;
+        callback.handleMessage(message);
+      }
+    }.execute();
   }
 
   public void updateNowPlaying(final String artist, final String track) {
