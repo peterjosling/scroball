@@ -69,8 +69,8 @@ public class ScrobbleLog {
 
   public List<Scrobble> readPending() {
     String sortOrder = ScrobbleLogEntry.COLUMN_NAME_TIMESTAMP + " DESC";
-    String[] cols = new String[]{ScrobbleLogEntry.COLUMN_NAME_STATUS};
-    Cursor cursor = db.query(ScrobbleLogEntry.TABLE_NAME, null, "?=0", cols, null, null, sortOrder);
+    String selection = ScrobbleLogEntry.COLUMN_NAME_STATUS + ">-1";
+    Cursor cursor = db.query(ScrobbleLogEntry.TABLE_NAME, null, selection, null, null, null, sortOrder);
     List<Scrobble> pending = readScrobblesFromCursor(cursor);
     cursor.close();
     return pending;
