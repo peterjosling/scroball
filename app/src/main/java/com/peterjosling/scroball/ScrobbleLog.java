@@ -77,7 +77,7 @@ public class ScrobbleLog {
 
   public void prune() {
     String[] cols = new String[]{ScrobbleLogEntry.COLUMN_NAME_STATUS};
-    long rowCount = DatabaseUtils.queryNumEntries(db, ScrobbleLogEntry.TABLE_NAME, "?>0", cols);
+    long rowCount = DatabaseUtils.queryNumEntries(db, ScrobbleLogEntry.TABLE_NAME, "?<0", cols);
     long toRemove = MAX_ROWS - rowCount;
 
     if (toRemove > 0) {
