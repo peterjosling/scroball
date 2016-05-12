@@ -3,6 +3,7 @@ package com.peterjosling.scroball;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.VisibleForTesting;
 
 import com.peterjosling.scroball.ScrobbleLogContract.ScrobbleLogEntry;
 
@@ -28,6 +29,10 @@ public class ScrobbleLogDbHelper extends SQLiteOpenHelper {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
   }
 
+  private ScrobbleLogDbHelper(Context context, String name) {
+    super(context, name, null, DATABASE_VERSION);
+  }
+
   @Override
   public void onCreate(SQLiteDatabase db) {
     db.execSQL(SQL_CREATE_ENTRIES);
@@ -36,5 +41,10 @@ public class ScrobbleLogDbHelper extends SQLiteOpenHelper {
   @Override
   public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
     // TODO
+  }
+
+  @VisibleForTesting
+  public static ScrobbleLogDbHelper getTestInstance(Context context) {
+    return new ScrobbleLogDbHelper(context, null);
   }
 }
