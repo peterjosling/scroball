@@ -51,4 +51,19 @@ public class ScrobbleStatus {
     ScrobbleStatus status = (ScrobbleStatus) object;
     return status == this || status.getErrorCode() == errorCode && status.getDbId() == dbId;
   }
+
+  @Override
+  public String toString() {
+    String value;
+
+    if (isScrobbled()) {
+      value = "Scrobbled";
+    } else if (errorCode == 0) {
+      value = "Pending";
+    } else {
+      value = "Error " + errorCode;
+    }
+
+    return String.format("Status(%s)", value);
+  }
 }
