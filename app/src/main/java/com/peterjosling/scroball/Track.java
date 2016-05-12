@@ -6,8 +6,6 @@ import com.google.common.base.Optional;
 
 import org.immutables.value.Value;
 
-import java.util.Arrays;
-
 @Value.Immutable
 public abstract class Track {
 
