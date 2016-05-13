@@ -104,7 +104,6 @@ public class ScrobbleLog {
 
       ImmutableTrack.Builder trackBuilder = ImmutableTrack.builder()
           .artist(artist)
-          .albumArtist(albumArtist)
           .album(album)
           .track(track);
 
