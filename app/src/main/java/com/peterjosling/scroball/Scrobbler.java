@@ -156,6 +156,10 @@ public class Scrobbler {
       fetchTrackDurationAndSubmit(playbackItem);
     }
 
+    if (pending.isEmpty()) {
+      return;
+    }
+
     isScrobbling = true;
     final List<Scrobble> tracksToScrobble = new ArrayList<>(pending);
 
