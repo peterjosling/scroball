@@ -86,7 +86,14 @@ public class LastfmClient {
     new AsyncTask<Object, Object, ScrobbleResult>() {
       @Override
       protected ScrobbleResult doInBackground(Object... params) {
-        return Track.updateNowPlaying(artist, track, session);
+        try {
+          return Track.updateNowPlaying(artist, track, session);
+        } catch (CallException e) {
+          System.err.println("Exception thrown while updating now playing");
+          e.printStackTrace();
+        }
+
+        return null;
       }
 
       @Override
@@ -108,7 +115,14 @@ public class LastfmClient {
     new AsyncTask<Object, Object, List<ScrobbleResult>>() {
       @Override
       protected List<ScrobbleResult> doInBackground(Object... params) {
-        return Track.scrobble(scrobbleData, session);
+        try {
+          return Track.scrobble(scrobbleData, session);
+        } catch (CallException e) {
+          System.err.println("Exception thrown while scrobbling");
+          e.printStackTrace();
+        }
+
+        return new ArrayList<ScrobbleResult>();
       }
 
       @Override
@@ -125,7 +139,14 @@ public class LastfmClient {
     new AsyncTask<Object, Object, Track>() {
       @Override
       protected Track doInBackground(Object... params) {
-        return Track.getInfo(artist, track, session.getApiKey());
+        try {
+          return Track.getInfo(artist, track, session.getApiKey());
+        } catch (CallException e) {
+          System.err.println("Exception thrown while fetching track info");
+          e.printStackTrace();
+        }
+
+        return null;
       }
 
       @Override
