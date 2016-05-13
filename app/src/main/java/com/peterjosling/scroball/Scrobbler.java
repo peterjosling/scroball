@@ -145,7 +145,7 @@ public class Scrobbler {
       return;
     }
 
-    List<PlaybackItem> playbackItems = pendingPlaybackItems;
+    List<PlaybackItem> playbackItems = new ArrayList<>(pendingPlaybackItems);
     pendingPlaybackItems.clear();
 
     if (!playbackItems.isEmpty()) {
