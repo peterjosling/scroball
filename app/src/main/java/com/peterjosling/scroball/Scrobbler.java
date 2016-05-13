@@ -45,6 +45,13 @@ public class Scrobbler {
       return;
     }
 
+    NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+    boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+    if (!isConnected) {
+      return;
+    }
+
     System.out.println("!!!!!!!!!!! Updating now playing");
     System.out.println(track);
     client.updateNowPlaying(track.artist(), track.track());
@@ -109,6 +116,15 @@ public class Scrobbler {
   }
 
   public void fetchTrackDurationAndSubmit(final PlaybackItem playbackItem) {
+    NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+    boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+    if (!isConnected) {
+      System.out.println("Offline, can't fetch track duration. Saving for later.");
+      pendingPlaybackItems.add(playbackItem);
+      return;
+    }
+
     Track track = playbackItem.track();
     client.getTrackInfo(track.artist(), track.track(), new Handler.Callback() {
       @Override
