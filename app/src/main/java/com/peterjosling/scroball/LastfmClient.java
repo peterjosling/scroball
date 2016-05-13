@@ -28,7 +28,9 @@ public class LastfmClient {
   }
 
   public LastfmClient(String userAgent) {
-    Caller.getInstance().setUserAgent(userAgent);
+    Caller caller = Caller.getInstance();
+    caller.setUserAgent(userAgent);
+    caller.setCache(null);
   }
 
   public boolean isAuthenticated() {
