@@ -104,8 +104,11 @@ public class ScrobbleLog {
 
       ImmutableTrack.Builder trackBuilder = ImmutableTrack.builder()
           .artist(artist)
-          .album(album)
           .track(track);
+
+      if (album != null) {
+        trackBuilder.album(album);
+      }
 
       if (albumArtist != null) {
         trackBuilder.albumArtist(albumArtist);
