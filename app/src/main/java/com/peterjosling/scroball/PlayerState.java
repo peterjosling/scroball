@@ -112,7 +112,6 @@ public class PlayerState {
       playbackItem = ImmutablePlaybackItem.builder()
           .track(track)
           .timestamp(System.currentTimeMillis())
-          .amountPlayed(0)
           .isPlaying(isPlaying)
           .playbackStartTime(now)
           .build();

@@ -7,9 +7,22 @@ public abstract class PlaybackItem {
 
   public abstract Track track();
   public abstract long timestamp();
-  public abstract long playbackStartTime();
-  public abstract long amountPlayed();
-  public abstract boolean isPlaying();
+
+  @Value.Default
+  public long amountPlayed() {
+    return 0;
+  }
+
+  @Value.Default
+  public long playbackStartTime() {
+    return 0;
+  }
+
+  @Value.Default
+  public boolean isPlaying() {
+    return false;
+  }
+
 
   public PlaybackItem updateAmountPlayed() {
     if (!isPlaying()) {
