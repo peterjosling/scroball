@@ -102,12 +102,17 @@ public class ScrobbleLog {
 
       ScrobbleStatus statusObj = new ScrobbleStatus(status, id);
 
-      Track trackObj = ImmutableTrack.builder()
+      ImmutableTrack.Builder trackBuilder = ImmutableTrack.builder()
           .artist(artist)
           .albumArtist(albumArtist)
           .album(album)
-          .track(track)
-          .build();
+          .track(track);
+
+      if (albumArtist != null) {
+        trackBuilder.albumArtist(albumArtist);
+      }
+
+      Track trackObj = trackBuilder.build();
 
       Scrobble scrobble = ImmutableScrobble.builder()
           .status(statusObj)
