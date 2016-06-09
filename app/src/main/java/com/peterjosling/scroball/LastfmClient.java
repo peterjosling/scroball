@@ -122,7 +122,7 @@ public class LastfmClient {
           e.printStackTrace();
         }
 
-        return new ArrayList<ScrobbleResult>();
+        return new ArrayList<>();
       }
 
       @Override
