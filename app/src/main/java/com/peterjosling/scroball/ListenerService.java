@@ -3,6 +3,7 @@ package com.peterjosling.scroball;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaMetadata;
 import android.media.session.MediaController;
 import android.media.session.MediaSessionManager;
@@ -63,6 +64,10 @@ public class ListenerService extends NotificationListenerService
 
     ComponentName componentName = new ComponentName(this, this.getClass());
     mediaSessionManager.addOnActiveSessionsChangedListener(this, componentName);
+
+    NetworkStateReceiver networkStateReceiver = new NetworkStateReceiver(scrobbler);
+    IntentFilter filter = new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION);
+    this.registerReceiver(networkStateReceiver, filter);
 
     // Trigger change event with existing set of sessions.
     List<MediaController> initialSessions = mediaSessionManager.getActiveSessions(componentName);
