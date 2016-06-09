@@ -71,6 +71,7 @@
     <string name="error_incorrect_password">Invalid username or password</string>
     <string name="error_field_required">This field is required</string>
     <string name="error_unknown">An unknown error occurred</string>
+    <string name="error_internet">You are not connected to the internet</string>
     <string name="splash_notification_access">Notification Access required</string>
     <string name="splash_notification_access_text">The Notification Access permission is required by Scroball to read device playback state.</string>
 </resources>

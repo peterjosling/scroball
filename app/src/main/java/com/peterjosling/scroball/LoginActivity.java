@@ -4,17 +4,15 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.Application;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
-
-import android.os.AsyncTask;
-
-import android.os.Build;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
@@ -23,8 +21,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import com.google.common.collect.ClassToInstanceMap;
 
 /**
  * A login screen that offers login via email/password.
@@ -112,6 +108,18 @@ public class LoginActivity extends AppCompatActivity {
       mUsernameView.setError(getString(R.string.error_field_required));
       focusView = mUsernameView;
       cancel = true;
+    }
+
+    // Check for network connectivity.
+    ConnectivityManager connectivityManager =
+        (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+    NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+    boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+
+    if (!isConnected) {
+      cancel = true;
+      focusView = mPasswordView;
+      showErrorDialog(getString(R.string.error_internet));
     }
 
     if (cancel) {
