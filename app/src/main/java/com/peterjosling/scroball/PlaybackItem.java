@@ -2,12 +2,13 @@ package com.peterjosling.scroball;
 
 public class PlaybackItem {
 
-  private final Track track;
   private final long timestamp;
 
+  private Track track;
   private long amountPlayed;
   private long playbackStartTime;
   private boolean isPlaying;
+  private int playsScrobbled;
 
   public PlaybackItem(Track track, long timestamp) {
     this.track = track;
@@ -37,6 +38,14 @@ public class PlaybackItem {
 
   public boolean isPlaying() {
     return isPlaying;
+  }
+
+  public int getPlaysScrobbled() {
+    return playsScrobbled;
+  }
+
+  public void addScrobble() {
+    playsScrobbled++;
   }
 
   public void startPlaying() {

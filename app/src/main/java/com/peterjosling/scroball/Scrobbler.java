@@ -97,6 +97,8 @@ public class Scrobbler {
       playCount++;
     }
 
+    playCount -= playbackItem.getPlaysScrobbled();
+
     for (int i = 0; i < playCount; i++) {
       int itemTimestamp = (int) ((timestamp + i * duration) / 1000);
 
@@ -108,6 +110,7 @@ public class Scrobbler {
 
       pending.add(scrobble);
       scrobbleLog.write(scrobble);
+      playbackItem.addScrobble();
     }
 
     System.out.println("!!!!!!!!!!! Added new scrobbles: " + playCount);

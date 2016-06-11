@@ -29,6 +29,7 @@ public class PlayerState {
     } else {
       playbackItem.stopPlaying();
       notificationManager.removeNowPlaying();
+      scrobbler.submit(playbackItem);
     }
 
     System.out.print("State: ");
