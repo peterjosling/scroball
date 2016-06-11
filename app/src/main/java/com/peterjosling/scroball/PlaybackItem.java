@@ -1,5 +1,7 @@
 package com.peterjosling.scroball;
 
+import java.util.Locale;
+
 public class PlaybackItem {
 
   private final long timestamp;
@@ -70,5 +72,19 @@ public class PlaybackItem {
     long start = playbackStartTime;
     amountPlayed += now - start;
     playbackStartTime = now;
+  }
+
+  @Override
+  public String toString() {
+    return String.format(
+        Locale.getDefault(),
+        "PlaybackItem{Track=%s, timestamp=%d, isPlaying=%s, amountPlayed=%d, playbackStartTime=%d, " +
+            "playsScrobbled=%d}",
+        track.toString(),
+        timestamp,
+        Boolean.toString(isPlaying),
+        amountPlayed,
+        playbackStartTime,
+        playsScrobbled);
   }
 }
