@@ -131,8 +131,6 @@ public class Scrobbler {
     client.getTrackInfo(track.artist(), track.track(), new Handler.Callback() {
       @Override
       public boolean handleMessage(Message message) {
-        PlaybackItem updatedPlaybackItem;
-
         // TODO error handling
         if (message.obj == null) {
           Result result = Caller.getInstance().getLastResult();
@@ -150,13 +148,10 @@ public class Scrobbler {
         }
 
         Track updatedTrack = (Track) message.obj;
-        long timestamp = playbackItem.getTimestamp();
-        long amountPlayed = playbackItem.getAmountPlayed();
+        playbackItem.updateTrack(updatedTrack);
+        System.out.println("Submitting updated track: " + playbackItem);
 
-        updatedPlaybackItem = new PlaybackItem(updatedTrack, timestamp, amountPlayed);
-        System.out.println("Submitting updated track: " + updatedPlaybackItem);
-
-        submit(updatedPlaybackItem);
+        submit(playbackItem);
         return true;
       }
     });

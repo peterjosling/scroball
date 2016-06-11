@@ -23,6 +23,10 @@ public class PlaybackItem {
     return track;
   }
 
+  public void updateTrack(Track track) {
+    this.track = track;
+  }
+
   public long getTimestamp() {
     return timestamp;
   }
