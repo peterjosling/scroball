@@ -69,5 +69,6 @@ public class PlaybackItem {
     long now = System.currentTimeMillis();
     long start = playbackStartTime;
     amountPlayed += now - start;
+    playbackStartTime = now;
   }
 }
