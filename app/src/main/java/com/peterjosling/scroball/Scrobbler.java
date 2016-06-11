@@ -60,7 +60,6 @@ public class Scrobbler {
   public void submit(PlaybackItem playbackItem) {
     // Set final value for amount played, in case it was playing up until now.
     playbackItem = playbackItem.updateAmountPlayed();
-    playbackItem = ImmutablePlaybackItem.builder().from(playbackItem).isPlaying(false).build();
 
     // Generate one scrobble per played period.
     Track track = playbackItem.track();

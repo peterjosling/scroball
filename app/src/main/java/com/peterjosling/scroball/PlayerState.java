@@ -103,6 +103,7 @@ public class PlayerState {
       System.out.println("Creating new PlaybackItem");
 
       if (playbackItem != null) {
+        playbackItem = ImmutablePlaybackItem.builder().from(playbackItem).isPlaying(false).build();
         scrobbler.submit(playbackItem);
       }
 
