@@ -8,6 +8,8 @@ import android.os.Message;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.umass.lastfm.Caller;
+import de.umass.lastfm.Result;
 import de.umass.lastfm.scrobble.ScrobbleResult;
 
 public class Scrobbler {
@@ -133,10 +135,17 @@ public class Scrobbler {
 
         // TODO error handling
         if (message.obj == null) {
-          // TODO check error code here.
-          // TODO persist this to DB.
-          System.out.println("Failed to fetch track duration, saving for later.");
-          pendingPlaybackItems.add(playbackItem);
+          Result result = Caller.getInstance().getLastResult();
+
+          if (result.getErrorCode() == 6) {
+            System.out.println("Track not found, cannot scrobble.");
+          } else {
+            // TODO check error code here.
+            System.out.println("Failed to fetch track duration, saving for later.");
+            // TODO persist this to DB.
+            pendingPlaybackItems.add(playbackItem);
+          }
+
           return true;
         }
 
