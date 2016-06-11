@@ -59,10 +59,10 @@ public class Scrobbler {
 
   public void submit(PlaybackItem playbackItem) {
     // Set final value for amount played, in case it was playing up until now.
-    playbackItem = playbackItem.updateAmountPlayed();
+    playbackItem.updateAmountPlayed();
 
     // Generate one scrobble per played period.
-    Track track = playbackItem.track();
+    Track track = playbackItem.getTrack();
 
     if (!track.duration().isPresent()) {
       fetchTrackDurationAndSubmit(playbackItem);
@@ -71,9 +71,9 @@ public class Scrobbler {
 
     System.out.println("Submitting: " + playbackItem);
 
-    long timestamp = playbackItem.timestamp();
+    long timestamp = playbackItem.getTimestamp();
     long duration = track.duration().get();
-    long playTime = playbackItem.amountPlayed();
+    long playTime = playbackItem.getAmountPlayed();
 
     if (playTime < 1) {
       return;
@@ -125,7 +125,7 @@ public class Scrobbler {
       return;
     }
 
-    Track track = playbackItem.track();
+    Track track = playbackItem.getTrack();
     client.getTrackInfo(track.artist(), track.track(), new Handler.Callback() {
       @Override
       public boolean handleMessage(Message message) {
@@ -140,9 +140,11 @@ public class Scrobbler {
           return true;
         }
 
-        updatedPlaybackItem = ImmutablePlaybackItem.builder().from(playbackItem)
-            .track((Track) message.obj)
-            .build();
+        Track updatedTrack = (Track) message.obj;
+        long timestamp = playbackItem.getTimestamp();
+        long amountPlayed = playbackItem.getAmountPlayed();
+
+        updatedPlaybackItem = new PlaybackItem(updatedTrack, timestamp, amountPlayed);
         System.out.println("Submitting updated track: " + updatedPlaybackItem);
 
         submit(updatedPlaybackItem);

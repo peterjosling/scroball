@@ -1,40 +1,60 @@
 package com.peterjosling.scroball;
 
-import org.immutables.value.Value;
+public class PlaybackItem {
 
-@Value.Immutable
-public abstract class PlaybackItem {
+  private final Track track;
+  private final long timestamp;
 
-  public abstract Track track();
-  public abstract long timestamp();
+  private long amountPlayed;
+  private long playbackStartTime;
+  private boolean isPlaying;
 
-  @Value.Default
-  public long amountPlayed() {
-    return 0;
+  public PlaybackItem(Track track, long timestamp) {
+    this.track = track;
+    this.timestamp = timestamp;
   }
 
-  @Value.Default
-  public long playbackStartTime() {
-    return 0;
+  public PlaybackItem(Track track, long timestamp, long amountPlayed) {
+    this(track, timestamp);
+    this.amountPlayed = amountPlayed;
   }
 
-  @Value.Default
+  public Track getTrack() {
+    return track;
+  }
+
+  public long getTimestamp() {
+    return timestamp;
+  }
+
+  public long getAmountPlayed() {
+    return amountPlayed;
+  }
+
   public boolean isPlaying() {
-    return false;
+    return isPlaying;
   }
 
+  public void startPlaying() {
+    if (!isPlaying) {
+      playbackStartTime = System.currentTimeMillis();
+    }
 
-  public PlaybackItem updateAmountPlayed() {
+    isPlaying = true;
+  }
+
+  public void stopPlaying() {
+    updateAmountPlayed();
+    isPlaying = false;
+  }
+
+  public void updateAmountPlayed() {
     if (!isPlaying()) {
-      return this;
+      return;
     }
 
     long now = System.currentTimeMillis();
-    long start = playbackStartTime();
-
-    return ImmutablePlaybackItem.builder().from(this)
-        .amountPlayed(amountPlayed() + now - start)
-        .playbackStartTime(now)
-        .build();
+    long start = playbackStartTime;
+    amountPlayed += now - start;
   }
 }

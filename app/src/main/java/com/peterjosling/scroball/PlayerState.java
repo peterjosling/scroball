@@ -18,19 +18,16 @@ public class PlayerState {
       return;
     }
 
-    playbackItem = playbackItem.updateAmountPlayed();
-
-    ImmutablePlaybackItem.Builder itemBuilder = ImmutablePlaybackItem.builder().from(playbackItem);
+    playbackItem.updateAmountPlayed();
 
     int state = playbackState.getState();
     boolean isPlaying = state == PlaybackState.STATE_PLAYING;
 
-    itemBuilder.isPlaying(isPlaying);
-
     if (isPlaying) {
-      itemBuilder.playbackStartTime(System.currentTimeMillis());
-      notificationManager.updateNowPlaying(playbackItem.track());
+      playbackItem.startPlaying();
+      notificationManager.updateNowPlaying(playbackItem.getTrack());
     } else {
+      playbackItem.stopPlaying();
       notificationManager.removeNowPlaying();
     }
 
@@ -85,8 +82,6 @@ public class PlayerState {
         System.out.println("Stopped");
         break;
     }
-
-    playbackItem = itemBuilder.build();
   }
 
   public void setTrack(Track track) {
@@ -95,7 +90,7 @@ public class PlayerState {
     long now = System.currentTimeMillis();
 
     if (playbackItem != null) {
-      currentTrack = playbackItem.track();
+      currentTrack = playbackItem.getTrack();
       isPlaying = playbackItem.isPlaying();
     }
 
@@ -103,19 +98,18 @@ public class PlayerState {
       System.out.println("Creating new PlaybackItem");
 
       if (playbackItem != null) {
-        playbackItem = ImmutablePlaybackItem.builder().from(playbackItem).isPlaying(false).build();
+        playbackItem.stopPlaying();
         scrobbler.submit(playbackItem);
       }
 
       scrobbler.updateNowPlaying(track);
       notificationManager.updateNowPlaying(track);
 
-      playbackItem = ImmutablePlaybackItem.builder()
-          .track(track)
-          .timestamp(System.currentTimeMillis())
-          .isPlaying(isPlaying)
-          .playbackStartTime(now)
-          .build();
+      playbackItem = new PlaybackItem(track, now);
+
+      if (isPlaying) {
+        playbackItem.startPlaying();
+      }
     }
   }
 }
