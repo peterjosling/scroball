@@ -16,10 +16,10 @@ import java.util.List;
 import static com.google.common.truth.Truth.assertThat;
 
 @RunWith(AndroidJUnit4.class)
-public class ScrobbleLogTest {
+public class ScroballDBTest {
 
   Context context;
-  ScrobbleLog scrobbleLog;
+  ScroballDB scroballDB;
   Track track = ImmutableTrack.builder()
       .duration(1)
       .artist("Artist")
@@ -39,14 +39,14 @@ public class ScrobbleLogTest {
   public void before() throws Exception {
     context = new RenamingDelegatingContext(InstrumentationRegistry.getContext(), "test_");
 
-    scrobbleLog = new ScrobbleLog(ScrobbleLogDbHelper.getTestInstance(context));
-    scrobbleLog.open();
+    scroballDB = new ScroballDB(ScroballDBHelper.getTestInstance(context));
+    scroballDB.open();
   }
 
   @Test
   public void write_serialisesAllScrobbleData() {
-    scrobbleLog.write(scrobble);
-    List<Scrobble> scrobbles = scrobbleLog.read();
+    scroballDB.writeScrobble(scrobble);
+    List<Scrobble> scrobbles = scroballDB.readScrobbles();
 
     assertThat(scrobbles).hasSize(1);
     Scrobble readScrobble = scrobbles.get(0);
@@ -56,7 +56,7 @@ public class ScrobbleLogTest {
   @Test
   public void write_setsDbIdOnNewEntries() {
     assertThat(scrobble.status().getDbId()).isEqualTo(-1);
-    scrobbleLog.write(scrobble);
+    scroballDB.writeScrobble(scrobble);
     assertThat(scrobble.status().getDbId()).isGreaterThan(0L);
   }
 
@@ -64,7 +64,7 @@ public class ScrobbleLogTest {
   public void write_updatesExistingEntries() {
     long id = 5;
     scrobble.status().setDbId(id);
-    scrobbleLog.write(scrobble);
+    scroballDB.writeScrobble(scrobble);
     assertThat(scrobble.status().getDbId()).isEqualTo(id);
   }
 
@@ -74,9 +74,9 @@ public class ScrobbleLogTest {
     Scrobble scrobble2 = copyScrobble(scrobble);
     Scrobble scrobble3 = copyScrobble(scrobble);
     List<Scrobble> scrobbles = ImmutableList.of(scrobble1, scrobble2, scrobble3);
-    scrobbleLog.write(scrobbles);
+    scroballDB.writeScrobbles(scrobbles);
 
-    List<Scrobble> pending = scrobbleLog.readPending();
+    List<Scrobble> pending = scroballDB.readPendingScrobbles();
 
     assertThat(pending).containsAllIn(scrobbles);
   }
@@ -85,9 +85,9 @@ public class ScrobbleLogTest {
   public void readPending_treatsErroredScrobblesAsPending() {
     Scrobble erroredScrobble = ImmutableScrobble.builder().from(scrobble).build();
     erroredScrobble.status().setErrorCode(1);
-    scrobbleLog.write(erroredScrobble);
+    scroballDB.writeScrobble(erroredScrobble);
 
-    List<Scrobble> pending = scrobbleLog.readPending();
+    List<Scrobble> pending = scroballDB.readPendingScrobbles();
 
     assertThat(pending.size()).isEqualTo(1);
     assertThat(pending.get(0)).isEqualTo(erroredScrobble);
@@ -99,9 +99,9 @@ public class ScrobbleLogTest {
     Scrobble submittedScrobble = copyScrobble(scrobble);
     submittedScrobble.status().setScrobbled(true);
     List<Scrobble> scrobbles = ImmutableList.of(pendingScrobble, submittedScrobble);
-    scrobbleLog.write(scrobbles);
+    scroballDB.writeScrobbles(scrobbles);
 
-    List<Scrobble> pending = scrobbleLog.readPending();
+    List<Scrobble> pending = scroballDB.readPendingScrobbles();
 
     assertThat(pending.size()).isEqualTo(1);
     assertThat(pending).contains(pendingScrobble);

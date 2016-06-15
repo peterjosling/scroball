@@ -5,9 +5,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.VisibleForTesting;
 
-import com.peterjosling.scroball.ScrobbleLogContract.ScrobbleLogEntry;
+import com.peterjosling.scroball.ScroballDBContract.ScrobbleLogEntry;
 
-public class ScrobbleLogDbHelper extends SQLiteOpenHelper {
+public class ScroballDBHelper extends SQLiteOpenHelper {
 
   private static final String TEXT_TYPE = " TEXT";
   private static final String INT_TYPE = " INTEGER";
@@ -21,16 +21,16 @@ public class ScrobbleLogDbHelper extends SQLiteOpenHelper {
           ScrobbleLogEntry.COLUMN_NAME_TRACK + TEXT_TYPE + COMMA_SEP +
           ScrobbleLogEntry.COLUMN_NAME_ALBUM + TEXT_TYPE + COMMA_SEP +
           ScrobbleLogEntry.COLUMN_NAME_STATUS + INT_TYPE +
-          " )";
+          " );";
 
   public static final int DATABASE_VERSION = 1;
-  public static final String DATABASE_NAME = "ScrobbleLog.db";
+  public static final String DATABASE_NAME = "ScroballDB.db";
 
-  public ScrobbleLogDbHelper(Context context) {
+  public ScroballDBHelper(Context context) {
     super(context, DATABASE_NAME, null, DATABASE_VERSION);
   }
 
-  private ScrobbleLogDbHelper(Context context, String name) {
+  private ScroballDBHelper(Context context, String name) {
     super(context, name, null, DATABASE_VERSION);
   }
 
@@ -45,7 +45,7 @@ public class ScrobbleLogDbHelper extends SQLiteOpenHelper {
   }
 
   @VisibleForTesting
-  public static ScrobbleLogDbHelper getTestInstance(Context context) {
-    return new ScrobbleLogDbHelper(context, null);
+  public static ScroballDBHelper getTestInstance(Context context) {
+    return new ScroballDBHelper(context, null);
   }
 }

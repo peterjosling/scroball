@@ -2,9 +2,9 @@ package com.peterjosling.scroball;
 
 import android.provider.BaseColumns;
 
-public final class ScrobbleLogContract {
+public final class ScroballDBContract {
 
-  public ScrobbleLogContract() {}
+  public ScroballDBContract() {}
 
   public static abstract class ScrobbleLogEntry implements BaseColumns {
     public static final String TABLE_NAME = "scrobbles";

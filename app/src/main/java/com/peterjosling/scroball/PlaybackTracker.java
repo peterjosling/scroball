@@ -10,18 +10,18 @@ import java.util.Map;
 public class PlaybackTracker {
 
   private final ScrobbleNotificationManager scrobbleNotificationManager;
-  private final ScrobbleLog scrobbleLog;
+  private final ScroballDB scroballDB;
   private final ConnectivityManager connectivityManager;
   private final Scrobbler scrobbler;
   private Map<String, PlayerState> playerStates = new HashMap<>();
 
   public PlaybackTracker(
       ScrobbleNotificationManager scrobbleNotificationManager,
-      ScrobbleLog scrobbleLog,
+      ScroballDB scroballDB,
       ConnectivityManager connectivityManager,
       Scrobbler scrobbler) {
     this.scrobbleNotificationManager = scrobbleNotificationManager;
-    this.scrobbleLog = scrobbleLog;
+    this.scroballDB = scroballDB;
     this.connectivityManager = connectivityManager;
     this.scrobbler = scrobbler;
   }

@@ -5,27 +5,27 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
-import com.peterjosling.scroball.ScrobbleLogContract.ScrobbleLogEntry;
+import com.peterjosling.scroball.ScroballDBContract.ScrobbleLogEntry;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScrobbleLog {
+public class ScroballDB {
 
   private static final int MAX_ROWS = 1000;
 
   private SQLiteDatabase db;
-  private ScrobbleLogDbHelper dbHelper;
+  private ScroballDBHelper dbHelper;
 
-  public ScrobbleLog(ScrobbleLogDbHelper scrobbleLogDbHelper) {
-    dbHelper = scrobbleLogDbHelper;
+  public ScroballDB(ScroballDBHelper scroballDBHelper) {
+    dbHelper = scroballDBHelper;
   }
 
   public void open() {
       db = dbHelper.getWritableDatabase();
   }
 
-  public List<Scrobble> read() {
+  public List<Scrobble> readScrobbles() {
     String sortOrder = ScrobbleLogEntry.COLUMN_NAME_TIMESTAMP + " DESC";
     Cursor cursor = db.query(ScrobbleLogEntry.TABLE_NAME, null, null, null, null, null, sortOrder);
     List<Scrobble> scrobbles = readScrobblesFromCursor(cursor);
@@ -33,7 +33,7 @@ public class ScrobbleLog {
     return scrobbles;
   }
 
-  public void write(Scrobble scrobble) {
+  public void writeScrobble(Scrobble scrobble) {
     Track track = scrobble.track();
     ScrobbleStatus status = scrobble.status();
     ContentValues values = new ContentValues();
@@ -60,13 +60,13 @@ public class ScrobbleLog {
     }
   }
 
-  public void write(List<Scrobble> scrobbles) {
+  public void writeScrobbles(List<Scrobble> scrobbles) {
     for (Scrobble scrobble : scrobbles) {
-      write(scrobble);
+      writeScrobble(scrobble);
     }
   }
 
-  public List<Scrobble> readPending() {
+  public List<Scrobble> readPendingScrobbles() {
     String sortOrder = ScrobbleLogEntry.COLUMN_NAME_TIMESTAMP + " DESC";
     String selection = ScrobbleLogEntry.COLUMN_NAME_STATUS + ">-1";
     Cursor cursor = db.query(ScrobbleLogEntry.TABLE_NAME, null, selection, null, null, null, sortOrder);

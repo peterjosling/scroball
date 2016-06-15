@@ -20,7 +20,7 @@ public class Scrobbler {
 
   private final LastfmClient client;
   private final ScrobbleNotificationManager notificationManager;
-  private final ScrobbleLog scrobbleLog;
+  private final ScroballDB scroballDB;
   private final ConnectivityManager connectivityManager;
   private final List<PlaybackItem> pendingPlaybackItems;
   private final List<Scrobble> pending;
@@ -29,16 +29,16 @@ public class Scrobbler {
   public Scrobbler(
       LastfmClient client,
       ScrobbleNotificationManager notificationManager,
-      ScrobbleLog scrobbleLog,
+      ScroballDB scroballDB,
       ConnectivityManager connectivityManager) {
     this.client = client;
     this.notificationManager = notificationManager;
-    this.scrobbleLog = scrobbleLog;
+    this.scroballDB = scroballDB;
     this.connectivityManager = connectivityManager;
     // TODO read this from DB
     // TODO write unit test to ensure non-network plays get scrobbled with duration lookup.
     this.pendingPlaybackItems = new ArrayList<>();
-    this.pending = scrobbleLog.readPending();
+    this.pending = scroballDB.readPendingScrobbles();
   }
 
   public void updateNowPlaying(Track track) {
@@ -109,7 +109,7 @@ public class Scrobbler {
           .build();
 
       pending.add(scrobble);
-      scrobbleLog.write(scrobble);
+      scroballDB.writeScrobble(scrobble);
       playbackItem.addScrobble();
     }
 
@@ -205,12 +205,12 @@ public class Scrobbler {
 
           if (result.isSuccessful()) {
             scrobble.status().setScrobbled(true);
-            scrobbleLog.write(scrobble);
+            scroballDB.writeScrobble(scrobble);
             pending.remove(scrobble);
           } else {
             // TODO set error code.
             scrobble.status().setErrorCode(1);
-            scrobbleLog.write(scrobble);
+            scroballDB.writeScrobble(scrobble);
             didError = true;
           }
         }
