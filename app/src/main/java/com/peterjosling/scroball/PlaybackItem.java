@@ -11,6 +11,7 @@ public class PlaybackItem {
   private long playbackStartTime;
   private boolean isPlaying;
   private int playsScrobbled;
+  private long dbId;
 
   public PlaybackItem(Track track, long timestamp) {
     this.track = track;
@@ -20,6 +21,11 @@ public class PlaybackItem {
   public PlaybackItem(Track track, long timestamp, long amountPlayed) {
     this(track, timestamp);
     this.amountPlayed = amountPlayed;
+  }
+
+  public PlaybackItem(Track track, long timestamp, long amountPlayed, long dbId) {
+    this(track, timestamp, amountPlayed);
+    this.dbId = dbId;
   }
 
   public Track getTrack() {
@@ -48,6 +54,14 @@ public class PlaybackItem {
 
   public void addScrobble() {
     playsScrobbled++;
+  }
+
+  public long getDbId() {
+    return dbId;
+  }
+
+  public void setDbId(long dbId) {
+    this.dbId = dbId;
   }
 
   public void startPlaying() {

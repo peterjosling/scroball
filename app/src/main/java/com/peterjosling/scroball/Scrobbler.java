@@ -35,9 +35,8 @@ public class Scrobbler {
     this.notificationManager = notificationManager;
     this.scroballDB = scroballDB;
     this.connectivityManager = connectivityManager;
-    // TODO read this from DB
     // TODO write unit test to ensure non-network plays get scrobbled with duration lookup.
-    this.pendingPlaybackItems = new ArrayList<>();
+    this.pendingPlaybackItems = scroballDB.readPendingPlaybackItems();
     this.pending = scroballDB.readPendingScrobbles();
   }
 
@@ -126,7 +125,7 @@ public class Scrobbler {
 
     if (!isConnected) {
       System.out.println("Offline, can't fetch track duration. Saving for later.");
-      pendingPlaybackItems.add(playbackItem);
+      queuePendingPlaybackitem(playbackItem);
       return;
     }
 
@@ -143,8 +142,7 @@ public class Scrobbler {
           } else {
             // TODO check error code here.
             System.out.println("Failed to fetch track duration, saving for later.");
-            // TODO persist this to DB.
-            pendingPlaybackItems.add(playbackItem);
+            queuePendingPlaybackitem(playbackItem);
           }
 
           return true;
@@ -225,5 +223,10 @@ public class Scrobbler {
         return false;
       }
     });
+  }
+
+  private void queuePendingPlaybackitem(PlaybackItem playbackItem) {
+    pendingPlaybackItems.add(playbackItem);
+    scroballDB.writePendingPlaybackItem(playbackItem);
   }
 }

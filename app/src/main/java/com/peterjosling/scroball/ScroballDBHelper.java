@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.VisibleForTesting;
 
+import com.peterjosling.scroball.ScroballDBContract.PendingPlaybackItemEntry;
 import com.peterjosling.scroball.ScroballDBContract.ScrobbleLogEntry;
 
 public class ScroballDBHelper extends SQLiteOpenHelper {
@@ -21,6 +22,15 @@ public class ScroballDBHelper extends SQLiteOpenHelper {
           ScrobbleLogEntry.COLUMN_NAME_TRACK + TEXT_TYPE + COMMA_SEP +
           ScrobbleLogEntry.COLUMN_NAME_ALBUM + TEXT_TYPE + COMMA_SEP +
           ScrobbleLogEntry.COLUMN_NAME_STATUS + INT_TYPE +
+          " );" +
+          "CREATE TABLE " + PendingPlaybackItemEntry.TABLE_NAME + " (" +
+          PendingPlaybackItemEntry._ID + " INTEGER PRIMARY KEY," +
+          PendingPlaybackItemEntry.COLUMN_NAME_TIMESTAMP + INT_TYPE + COMMA_SEP +
+          PendingPlaybackItemEntry.COLUMN_NAME_ARTIST + TEXT_TYPE + COMMA_SEP +
+          PendingPlaybackItemEntry.COLUMN_NAME_ALBUM_ARTIST + TEXT_TYPE + COMMA_SEP +
+          PendingPlaybackItemEntry.COLUMN_NAME_TRACK + TEXT_TYPE + COMMA_SEP +
+          PendingPlaybackItemEntry.COLUMN_NAME_ALBUM + TEXT_TYPE + COMMA_SEP +
+          PendingPlaybackItemEntry.COLUMN_NAME_AMOUNT_PLAYED + INT_TYPE +
           " );";
 
   public static final int DATABASE_VERSION = 1;

@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.peterjosling.scroball.ScroballDBContract.PendingPlaybackItemEntry;
 import com.peterjosling.scroball.ScroballDBContract.ScrobbleLogEntry;
 
 import java.util.ArrayList;
@@ -73,6 +74,72 @@ public class ScroballDB {
     List<Scrobble> pending = readScrobblesFromCursor(cursor);
     cursor.close();
     return pending;
+  }
+
+  public void writePendingPlaybackItem(PlaybackItem playbackItem) {
+    Track track = playbackItem.getTrack();
+    ContentValues values = new ContentValues();
+    values.put(PendingPlaybackItemEntry.COLUMN_NAME_TIMESTAMP, playbackItem.getTimestamp());
+    values.put(PendingPlaybackItemEntry.COLUMN_NAME_ARTIST, track.artist());
+    values.put(PendingPlaybackItemEntry.COLUMN_NAME_TRACK, track.track());
+    values.put(PendingPlaybackItemEntry.COLUMN_NAME_AMOUNT_PLAYED, playbackItem.getAmountPlayed());
+
+    if (track.album().isPresent()) {
+      values.put(ScrobbleLogEntry.COLUMN_NAME_ALBUM, track.album().get());
+    }
+
+    if (track.albumArtist().isPresent()) {
+      values.put(ScrobbleLogEntry.COLUMN_NAME_ALBUM_ARTIST, track.albumArtist().get());
+    }
+
+    if (playbackItem.getDbId() > -1) {
+      String selection = PendingPlaybackItemEntry._ID + " LIKE ?";
+      String[] selectionArgs = {String.valueOf(playbackItem.getDbId())};
+      db.update(PendingPlaybackItemEntry.TABLE_NAME, values, selection, selectionArgs);
+    } else {
+      long id = db.insert(PendingPlaybackItemEntry.TABLE_NAME, "null", values);
+      playbackItem.setDbId(id);
+    }
+  }
+
+  public List<PlaybackItem> readPendingPlaybackItems() {
+    String sortOrder = PendingPlaybackItemEntry.COLUMN_NAME_TIMESTAMP + " ASC";
+    Cursor cursor = db.query(PendingPlaybackItemEntry.TABLE_NAME, null, null, null, null, null, sortOrder);
+    List<PlaybackItem> playbackItems = new ArrayList<>();
+
+    int rows = cursor.getCount();
+    cursor.moveToFirst();
+
+    for (int i = 0; i < rows; i++) {
+      long id = cursor.getLong(cursor.getColumnIndexOrThrow(PendingPlaybackItemEntry._ID));
+      int timestamp = cursor.getInt(cursor.getColumnIndexOrThrow(PendingPlaybackItemEntry.COLUMN_NAME_TIMESTAMP));
+      long amountPlayed = cursor.getLong(cursor.getColumnIndexOrThrow(PendingPlaybackItemEntry.COLUMN_NAME_AMOUNT_PLAYED));
+      String artist = cursor.getString(cursor.getColumnIndexOrThrow(PendingPlaybackItemEntry.COLUMN_NAME_ARTIST));
+      String albumArtist = cursor.getString(cursor.getColumnIndexOrThrow(PendingPlaybackItemEntry.COLUMN_NAME_ALBUM_ARTIST));
+      String track = cursor.getString(cursor.getColumnIndexOrThrow(PendingPlaybackItemEntry.COLUMN_NAME_TRACK));
+      String album = cursor.getString(cursor.getColumnIndexOrThrow(PendingPlaybackItemEntry.COLUMN_NAME_ALBUM));
+
+      ImmutableTrack.Builder trackBuilder = ImmutableTrack.builder()
+          .artist(artist)
+          .track(track);
+
+      if (album != null) {
+        trackBuilder.album(album);
+      }
+
+      if (albumArtist != null) {
+        trackBuilder.albumArtist(albumArtist);
+      }
+
+      Track trackObj = trackBuilder.build();
+      PlaybackItem playbackItem = new PlaybackItem(trackObj, timestamp, amountPlayed, id);
+
+      playbackItems.add(playbackItem);
+      cursor.moveToNext();
+    }
+
+    cursor.close();
+    return playbackItems;
   }
 
   public void prune() {
