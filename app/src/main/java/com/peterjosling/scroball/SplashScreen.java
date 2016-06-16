@@ -46,7 +46,10 @@ public class SplashScreen extends Activity {
     ScroballApplication application = (ScroballApplication) getApplication();
 
     if (application.getLastfmClient().isAuthenticated()) {
-      // TODO
+      Intent intent = new Intent(this, MainActivity.class);
+      intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+      startActivity(intent);
+      finish();
     } else {
       Intent intent = new Intent(this, LoginActivity.class);
       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

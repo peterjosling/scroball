@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -144,6 +145,10 @@ public class LoginActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = preferences.edit();
             editor.putString(getString(R.string.saved_session_key), result.sessionKey().get());
             editor.apply();
+
+            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
             finish();
           } else if (result.errorCode().or(0) == LastfmClient.ERROR_CODE_AUTH) {
             mPasswordView.setError(getString(R.string.error_incorrect_password));
