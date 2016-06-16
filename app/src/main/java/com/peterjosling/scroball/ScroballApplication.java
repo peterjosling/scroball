@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 public class ScroballApplication extends Application {
 
   private LastfmClient lastfmClient;
+  private ScroballDB scroballDB;
   private SharedPreferences sharedPreferences;
 
   @Override
@@ -25,10 +26,17 @@ public class ScroballApplication extends Application {
     } else {
       lastfmClient = new LastfmClient(userAgent);
     }
+
+    scroballDB = new ScroballDB(new ScroballDBHelper(this));
+    scroballDB.open();
   }
 
   public LastfmClient getLastfmClient() {
     return lastfmClient;
+  }
+
+  public ScroballDB getScroballDB() {
+    return scroballDB;
   }
 
   public SharedPreferences getSharedPreferences() {

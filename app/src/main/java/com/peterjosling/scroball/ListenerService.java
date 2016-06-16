@@ -34,16 +34,16 @@ public class ListenerService extends NotificationListenerService
 
   @Override
   public void onCreate() {
+    ScroballApplication application = (ScroballApplication) getApplication();
+
     ConnectivityManager connectivityManager =
         (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
-    ScroballDB scroballDB = new ScroballDB(new ScroballDBHelper(this));
-    scroballDB.open();
+    ScroballDB scroballDB = application.getScroballDB();
 
     ScrobbleNotificationManager scrobbleNotificationManager =
         new ScrobbleNotificationManager(this);
 
-    ScroballApplication application = (ScroballApplication) getApplication();
     LastfmClient lastfmClient = application.getLastfmClient();
 
     Scrobbler scrobbler = new Scrobbler(
