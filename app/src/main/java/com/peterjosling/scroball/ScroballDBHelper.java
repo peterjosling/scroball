@@ -13,7 +13,7 @@ public class ScroballDBHelper extends SQLiteOpenHelper {
   private static final String TEXT_TYPE = " TEXT";
   private static final String INT_TYPE = " INTEGER";
   private static final String COMMA_SEP = ",";
-  private static final String SQL_CREATE_ENTRIES =
+  private static final String SQL_CREATE_SCROBBLES =
       "CREATE TABLE " + ScrobbleLogEntry.TABLE_NAME + " (" +
           ScrobbleLogEntry._ID + " INTEGER PRIMARY KEY," +
           ScrobbleLogEntry.COLUMN_NAME_TIMESTAMP + INT_TYPE + COMMA_SEP +
@@ -22,8 +22,9 @@ public class ScroballDBHelper extends SQLiteOpenHelper {
           ScrobbleLogEntry.COLUMN_NAME_TRACK + TEXT_TYPE + COMMA_SEP +
           ScrobbleLogEntry.COLUMN_NAME_ALBUM + TEXT_TYPE + COMMA_SEP +
           ScrobbleLogEntry.COLUMN_NAME_STATUS + INT_TYPE +
-          " );" +
-          "CREATE TABLE " + PendingPlaybackItemEntry.TABLE_NAME + " (" +
+          " );";
+  private static final String SQL_CREATE_PENDING =
+      "CREATE TABLE " + PendingPlaybackItemEntry.TABLE_NAME + " (" +
           PendingPlaybackItemEntry._ID + " INTEGER PRIMARY KEY," +
           PendingPlaybackItemEntry.COLUMN_NAME_TIMESTAMP + INT_TYPE + COMMA_SEP +
           PendingPlaybackItemEntry.COLUMN_NAME_ARTIST + TEXT_TYPE + COMMA_SEP +
@@ -46,7 +47,8 @@ public class ScroballDBHelper extends SQLiteOpenHelper {
 
   @Override
   public void onCreate(SQLiteDatabase db) {
-    db.execSQL(SQL_CREATE_ENTRIES);
+    db.execSQL(SQL_CREATE_SCROBBLES);
+    db.execSQL(SQL_CREATE_PENDING);
   }
 
   @Override
