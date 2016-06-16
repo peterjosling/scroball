@@ -42,7 +42,7 @@ public class ListenerService extends NotificationListenerService
     ScroballDB scroballDB = application.getScroballDB();
 
     ScrobbleNotificationManager scrobbleNotificationManager =
-        new ScrobbleNotificationManager(this);
+        new ScrobbleNotificationManager(this, application.getSharedPreferences());
 
     LastfmClient lastfmClient = application.getLastfmClient();
 

@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 
 public class SplashScreen extends Activity {
 
@@ -14,6 +15,8 @@ public class SplashScreen extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_splash_screen);
+    PreferenceManager.setDefaultValues(this, R.xml.pref_notification, false);
+    PreferenceManager.setDefaultValues(this, R.xml.pref_players, false);
     enableNotificationAccess();
   }
 
