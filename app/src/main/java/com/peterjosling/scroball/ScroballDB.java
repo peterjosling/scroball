@@ -152,6 +152,11 @@ public class ScroballDB {
     }
   }
 
+  public void clear() {
+    db.delete(ScrobbleLogEntry.TABLE_NAME, null, null);
+    db.delete(PendingPlaybackItemEntry.TABLE_NAME, null, null);
+  }
+
   private List<Scrobble> readScrobblesFromCursor(Cursor cursor) {
     List<Scrobble> scrobbles = new ArrayList<>();
 
