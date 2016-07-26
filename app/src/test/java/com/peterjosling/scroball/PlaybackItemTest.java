@@ -51,4 +51,9 @@ public class PlaybackItemTest {
 //    assertThat(playbackItem2.getAmountPlayed() / 1000).isEqualTo((delay + alreadyPlayed) / 1000);
     // TODO use fake clock to fix this test.
   }
+
+  @Test
+  public void updateAmountPlayed_updatesStartTimeToAvoidCountingTwice() {
+    // TODO
+  }
 }
