@@ -28,6 +28,10 @@ public class PlaybackItem {
     this.dbId = dbId;
   }
 
+  public void setTrack(Track track) {
+    this.track = track;
+  }
+
   public Track getTrack() {
     return track;
   }
