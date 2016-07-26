@@ -1,8 +1,8 @@
 package com.peterjosling.scroball;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 public class ScroballApplication extends Application {
 
@@ -14,8 +14,7 @@ public class ScroballApplication extends Application {
   public void onCreate() {
     super.onCreate();
 
-    sharedPreferences = getSharedPreferences(
-        getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+    sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
     String userAgent = getString(R.string.user_agent);
     String sessionKeyKey = getString(R.string.saved_session_key);
