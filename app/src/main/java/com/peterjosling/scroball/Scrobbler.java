@@ -225,6 +225,31 @@ public class Scrobbler {
     });
   }
 
+  /**
+   * Calculates the number of milliseconds of playback time remaining until the specified
+   * {@param PlaybackItem} can be scrobbled, i.e. reaches 50% of track duration or
+   * SCROBBLE_THRESHOLD.
+   *
+   * @return The number of milliseconds remaining until the next scrobble for the current playback
+   *     item can be submitted, or -1 if the track's duration is below MINIMUM_SCROBBLE_TIME.
+   */
+  public long getMillisecondsUntilScrobble(PlaybackItem playbackItem) {
+    if (playbackItem == null) {
+      return -1;
+    }
+
+    long duration = playbackItem.getTrack().duration().or(0L);
+
+    if (duration < MINIMUM_SCROBBLE_TIME) {
+      return -1;
+    }
+
+    long scrobbleThreshold = Math.min(duration / 2, SCROBBLE_THRESHOLD);
+    long nextScrobbleAt = playbackItem.getPlaysScrobbled() * duration + scrobbleThreshold;
+
+    return Math.max(0, nextScrobbleAt - playbackItem.getAmountPlayed());
+  }
+
   private void queuePendingPlaybackitem(PlaybackItem playbackItem) {
     pendingPlaybackItems.add(playbackItem);
     scroballDB.writePendingPlaybackItem(playbackItem);
