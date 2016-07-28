@@ -17,8 +17,8 @@ public class LastfmClient {
 
   public static final int ERROR_CODE_AUTH = 4;
 
-  private static final String API_KEY = "e0189dd89bed85023712c63544325558";
-  private static final String API_SECRET = "747ea338a0e071b7d3d14c1a64e13567";
+  private static final String API_KEY = "17f6f4f55152871370780cd9c0761509";
+  private static final String API_SECRET = "99eafa4c2412543f3141505121184b8a";
 
   private Session session;
 
