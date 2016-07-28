@@ -114,12 +114,11 @@ public class PlayerState {
       playbackItem = new PlaybackItem(track, now);
     }
 
-    scrobbler.updateNowPlaying(track);
-    notificationManager.updateNowPlaying(track);
-    scheduleSubmission();
-
     if (isPlaying) {
+      scrobbler.updateNowPlaying(track);
+      notificationManager.updateNowPlaying(track);
       playbackItem.startPlaying();
+      scheduleSubmission();
     }
   }
 
