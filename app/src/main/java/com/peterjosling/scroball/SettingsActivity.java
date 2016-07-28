@@ -4,6 +4,9 @@ package com.peterjosling.scroball;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,11 +14,15 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
+import android.preference.SwitchPreference;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -131,6 +138,40 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
       super.onCreate(savedInstanceState);
       addPreferencesFromResource(R.xml.pref_players);
       setHasOptionsMenu(true);
+
+      SharedPreferences sharedPreferences = this.getPreferenceManager().getSharedPreferences();
+      Set<String> prefKeys = sharedPreferences.getAll().keySet();
+      List<String> playerPrefKeys = new ArrayList<>();
+
+      for (String key : prefKeys) {
+        if (key.startsWith("player.")) {
+          playerPrefKeys.add(key);
+        }
+      }
+
+      PreferenceScreen root = getPreferenceScreen();
+      PackageManager packageManager = root.getContext().getApplicationContext().getPackageManager();
+
+      for (String key : playerPrefKeys) {
+        Preference preference = new SwitchPreference(root.getContext());
+        String packageName = key.substring(7);
+        ApplicationInfo applicationInfo;
+
+        try {
+          applicationInfo = packageManager.getApplicationInfo(packageName, 0);
+        } catch (PackageManager.NameNotFoundException e) {
+          SharedPreferences.Editor editor = sharedPreferences.edit();
+          editor.remove(key);
+          editor.apply();
+
+          continue;
+        }
+
+        preference.setTitle(packageManager.getApplicationLabel(applicationInfo));
+        preference.setKey(key);
+        preference.setIcon(packageManager.getApplicationIcon(applicationInfo));
+        root.addPreference(preference);
+      }
     }
 
     @Override

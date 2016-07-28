@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.media.MediaMetadata;
 import android.media.session.MediaController;
 import android.media.session.MediaSessionManager;
@@ -31,10 +32,12 @@ public class ListenerService extends NotificationListenerService
   private List<MediaController> mediaControllers = new ArrayList<>();
   private Map<MediaController, MediaController.Callback> controllerCallbacks = new WeakHashMap<>();
   private PlaybackTracker playbackTracker;
+  private SharedPreferences sharedPreferences;
 
   @Override
   public void onCreate() {
     ScroballApplication application = (ScroballApplication) getApplication();
+    sharedPreferences = application.getSharedPreferences();
 
     ConnectivityManager connectivityManager =
         (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -42,7 +45,7 @@ public class ListenerService extends NotificationListenerService
     ScroballDB scroballDB = application.getScroballDB();
 
     ScrobbleNotificationManager scrobbleNotificationManager =
-        new ScrobbleNotificationManager(this, application.getSharedPreferences());
+        new ScrobbleNotificationManager(this, sharedPreferences);
 
     LastfmClient lastfmClient = application.getLastfmClient();
 
@@ -106,9 +109,18 @@ public class ListenerService extends NotificationListenerService
     }
 
     for (final MediaController controller : toAdd) {
-      if (!controller.getPackageName().equals("com.apple.android.music")) {
-        // TODO remove
-        System.out.println("Ignoring player");
+      String packageName = controller.getPackageName();
+      String prefKey = "player." + packageName;
+
+      if (!sharedPreferences.contains(prefKey)) {
+        boolean defaultVal = sharedPreferences.getBoolean("scrobble_new_players", true);
+
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean(prefKey, defaultVal);
+        editor.apply();
+      }
+
+      if (!sharedPreferences.getBoolean(prefKey, true)) {
         continue;
       }
 
