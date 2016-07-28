@@ -16,7 +16,6 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
 
@@ -94,7 +93,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getItemId() == android.R.id.home) {
-      NavUtils.navigateUpFromSameTask(this);
+      super.onBackPressed();
     }
 
     return true;
