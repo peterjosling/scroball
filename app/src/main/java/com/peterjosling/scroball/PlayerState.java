@@ -2,11 +2,15 @@ package com.peterjosling.scroball;
 
 import android.media.session.PlaybackState;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class PlayerState {
 
   private final Scrobbler scrobbler;
   private final ScrobbleNotificationManager notificationManager;
   private PlaybackItem playbackItem;
+  private Timer submissionTimer;
 
   public PlayerState(Scrobbler scrobbler, ScrobbleNotificationManager notificationManager) {
     this.scrobbler = scrobbler;
@@ -26,6 +30,7 @@ public class PlayerState {
     if (isPlaying) {
       playbackItem.startPlaying();
       notificationManager.updateNowPlaying(playbackItem.getTrack());
+      scheduleSubmission();
     } else {
       playbackItem.stopPlaying();
       notificationManager.removeNowPlaying();
@@ -95,7 +100,10 @@ public class PlayerState {
       isPlaying = playbackItem.isPlaying();
     }
 
-    if (!track.equals(currentTrack)) {
+    if (track.equals(currentTrack)) {
+      // Update track in PlaybackItem, as this new one probably has updated details/more keys.
+      playbackItem.setTrack(track);
+    } else {
       System.out.println("Creating new PlaybackItem");
 
       if (playbackItem != null) {
@@ -103,14 +111,34 @@ public class PlayerState {
         scrobbler.submit(playbackItem);
       }
 
-      scrobbler.updateNowPlaying(track);
-      notificationManager.updateNowPlaying(track);
-
       playbackItem = new PlaybackItem(track, now);
+    }
 
-      if (isPlaying) {
-        playbackItem.startPlaying();
-      }
+    scrobbler.updateNowPlaying(track);
+    notificationManager.updateNowPlaying(track);
+    scheduleSubmission();
+
+    if (isPlaying) {
+      playbackItem.startPlaying();
+    }
+  }
+
+  private void scheduleSubmission() {
+    if (submissionTimer != null) {
+      submissionTimer.cancel();
+    }
+
+    long delay = scrobbler.getMillisecondsUntilScrobble(playbackItem);
+
+    if (delay > -1) {
+      submissionTimer = new Timer();
+      submissionTimer.schedule(new TimerTask() {
+        @Override
+        public void run() {
+          scrobbler.submit(playbackItem);
+          scheduleSubmission();
+        }
+      }, delay);
     }
   }
 }
