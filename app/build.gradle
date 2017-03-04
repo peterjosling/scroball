@@ -33,6 +33,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.2.0'
     compile 'com.android.support:mediarouter-v7:25.2.0'
     compile 'com.android.support:support-v4:25.2.0'
+    compile 'com.google.android.gms:play-services-cast-framework:10.2.0'
     compile 'junit:junit:4.12'
     compile 'com.google.truth:truth:0.28'
     compile 'com.google.guava:guava:19.0'
