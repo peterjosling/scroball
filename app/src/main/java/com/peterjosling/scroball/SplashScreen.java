@@ -17,14 +17,21 @@ public class SplashScreen extends Activity {
     setContentView(R.layout.activity_splash_screen);
     PreferenceManager.setDefaultValues(this, R.xml.pref_notification, false);
     PreferenceManager.setDefaultValues(this, R.xml.pref_players, false);
-    enableNotificationAccess();
-    startService(new Intent(this, ListenerService.class));
+    startService();
   }
 
   @Override
   protected void onResume() {
     super.onResume();
+    startService();
+  }
+
+  private void startService() {
     enableNotificationAccess();
+
+    if (ListenerService.isNotificationAccessEnabled(this)) {
+      startService(new Intent(this, ListenerService.class));
+    }
   }
 
   private void enableNotificationAccess() {
