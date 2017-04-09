@@ -4,6 +4,8 @@ import android.media.MediaMetadata;
 import android.media.session.PlaybackState;
 import android.net.ConnectivityManager;
 
+import com.peterjosling.scroball.transforms.MetadataTransformers;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +15,7 @@ public class PlaybackTracker {
   private final ScroballDB scroballDB;
   private final ConnectivityManager connectivityManager;
   private final Scrobbler scrobbler;
+  private final MetadataTransformers metadataTransformers = new MetadataTransformers();
   private Map<String, PlayerState> playerStates = new HashMap<>();
 
   public PlaybackTracker(
@@ -40,7 +43,8 @@ public class PlaybackTracker {
       return;
     }
 
-    Track track = Track.fromMediaMetadata(metadata);
+    Track track =
+        metadataTransformers.transformForPackageName(player, Track.fromMediaMetadata(metadata));
 
     if (!track.isValid()) {
       return;
