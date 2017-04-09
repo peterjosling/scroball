@@ -31,7 +31,7 @@ public class SplashScreen extends Activity {
       alertDialog.dismiss();
     }
 
-    if (!ListenerService.isNotificationAccessEnabled) {
+    if (!ListenerService.isNotificationAccessEnabled(this)) {
       alertDialog = new AlertDialog.Builder(this)
           .setTitle(R.string.splash_notification_access)
           .setMessage(R.string.splash_notification_access_text)
