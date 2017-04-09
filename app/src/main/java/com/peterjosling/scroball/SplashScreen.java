@@ -18,6 +18,7 @@ public class SplashScreen extends Activity {
     PreferenceManager.setDefaultValues(this, R.xml.pref_notification, false);
     PreferenceManager.setDefaultValues(this, R.xml.pref_players, false);
     enableNotificationAccess();
+    startService(new Intent(this, ListenerService.class));
   }
 
   @Override
