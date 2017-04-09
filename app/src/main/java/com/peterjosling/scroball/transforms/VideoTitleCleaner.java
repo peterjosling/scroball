@@ -1,14 +1,10 @@
-package com.peterjosling.scroball;
+package com.peterjosling.scroball.transforms;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
+import com.peterjosling.scroball.ImmutableTrack;
+import com.peterjosling.scroball.Track;
 
-import java.util.Arrays;
+public class VideoTitleCleaner implements MetadataTransform {
 
-public class MetadataExtractor {
-
-  private static final String[] SEPARATORS =
-      new String[]{" -- ", "--", " - ", " – ", " — ", "-", "–", "—", ":", "|", "///"};
   private static final String[] REPLACEMENTS = new String[]{
       // **NEW**
       "\\s*\\*+\\s?\\S+\\s?\\*+$",
@@ -53,42 +49,13 @@ public class MetadataExtractor {
       "[\\/\\s,:;~\\-\\s\"\\s!]+$"
   };
 
-  public Optional<Track> guessTrack(String text) {
-    if (text == null) {
-      return Optional.absent();
-    }
-
-    String title = null;
-    String artist = null;
-
-    for (String separator : SEPARATORS) {
-      String[] components = text.split(separator);
-
-      if (components.length > 1) {
-        String[] titleComponents = Arrays.copyOfRange(components, 1, components.length);
-
-        artist = components[0];
-        title = Joiner.on(separator).join(titleComponents);
-        break;
-      }
-    }
-
-    if (title == null || artist == null) {
-      return Optional.absent();
-    }
-
-    title = title.trim();
-    artist = artist.trim();
+  @Override
+  public Track transform(Track track) {
+    String title = track.track();
 
     for (String replacement : REPLACEMENTS) {
       title = title.replaceAll(replacement, "");
     }
-
-    Track track = ImmutableTrack.builder()
-        .track(title)
-        .artist(artist)
-        .build();
-
-    return Optional.of(track);
+    return ImmutableTrack.builder().from(track).track(title).build();
   }
 }

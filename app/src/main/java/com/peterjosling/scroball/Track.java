@@ -3,6 +3,7 @@ package com.peterjosling.scroball;
 import android.media.MediaMetadata;
 
 import com.google.common.base.Optional;
+import com.peterjosling.scroball.transforms.TitleExtractor;
 
 import org.immutables.value.Value;
 
@@ -21,37 +22,22 @@ public abstract class Track {
   }
 
   public static Track fromMediaMetadata(MediaMetadata metadata) {
-    String track = metadata.getString(MediaMetadata.METADATA_KEY_TITLE);
+    String title = metadata.getString(MediaMetadata.METADATA_KEY_TITLE);
     String artist = metadata.getString(MediaMetadata.METADATA_KEY_ARTIST);
     String album = metadata.getString(MediaMetadata.METADATA_KEY_ALBUM);
     String albumArtist = metadata.getString(MediaMetadata.METADATA_KEY_ALBUM_ARTIST);
     long duration = metadata.getLong(MediaMetadata.METADATA_KEY_DURATION);
 
-    if (track == null) {
-      track = metadata.getString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE);
+    if (title == null) {
+      title = metadata.getString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE);
 
-      if (track  == null) {
-        track = "";
+      if (title  == null) {
+        title = "";
       }
     }
 
-    if (artist == null) {
-      artist = "";
-
-      MetadataExtractor extractor = new MetadataExtractor();
-      Optional<Track> guess = extractor.guessTrack(track);
-
-      if (guess.isPresent()) {
-        Track guessedTrack = guess.get();
-        artist = guessedTrack.artist();
-        track = guessedTrack.track();
-      }
-    }
-
-    ImmutableTrack.Builder builder = ImmutableTrack.builder();
-
-    builder
-        .track(track)
+    ImmutableTrack.Builder builder = ImmutableTrack.builder()
+        .track(title)
         .artist(artist)
         .album(Optional.fromNullable(album))
         .albumArtist(Optional.fromNullable(albumArtist));
@@ -60,6 +46,9 @@ public abstract class Track {
       builder.duration(duration);
     }
 
+    if (artist == null) {
+      new TitleExtractor().transform(builder.build());
+    }
     return builder.build();
   }
 }
