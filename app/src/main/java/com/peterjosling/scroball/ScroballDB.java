@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.google.common.eventbus.EventBus;
 import com.peterjosling.scroball.ScroballDBContract.PendingPlaybackItemEntry;
 import com.peterjosling.scroball.ScroballDBContract.ScrobbleLogEntry;
 
@@ -17,6 +18,7 @@ public class ScroballDB {
 
   private SQLiteDatabase db;
   private ScroballDBHelper dbHelper;
+  private EventBus eventBus = ScroballApplication.getEventBus();
 
   public ScroballDB(ScroballDBHelper scroballDBHelper) {
     dbHelper = scroballDBHelper;
@@ -59,6 +61,8 @@ public class ScroballDB {
       long id = db.insert(ScrobbleLogEntry.TABLE_NAME, "null", values);
       scrobble.status().setDbId(id);
     }
+
+    eventBus.post(ImmutableScroballDBUpdateEvent.builder().scrobble(scrobble).build());
   }
 
   public void writeScrobbles(List<Scrobble> scrobbles) {

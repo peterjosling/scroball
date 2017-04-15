@@ -4,7 +4,11 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.google.common.eventbus.EventBus;
+
 public class ScroballApplication extends Application {
+
+  private static EventBus eventBus = new EventBus();
 
   private LastfmClient lastfmClient;
   private ScroballDB scroballDB;
@@ -40,5 +44,9 @@ public class ScroballApplication extends Application {
 
   public SharedPreferences getSharedPreferences() {
     return sharedPreferences;
+  }
+
+  public static EventBus getEventBus() {
+    return eventBus;
   }
 }
