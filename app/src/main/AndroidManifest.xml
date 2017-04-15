@@ -44,8 +44,6 @@
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity">
         </activity>
-        <activity android:name=".ScrobbleHistoryActivity">
-        </activity>
     </application>
 
 </manifest>

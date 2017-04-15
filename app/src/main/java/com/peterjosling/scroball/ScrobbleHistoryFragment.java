@@ -1,8 +1,12 @@
 package com.peterjosling.scroball;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.util.LongSparseArray;
-import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -11,35 +15,37 @@ import com.google.common.eventbus.Subscribe;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ScrobbleHistoryActivity extends AppCompatActivity {
+public class ScrobbleHistoryFragment extends Fragment {
 
   private ArrayAdapter adapter;
   private ScroballDB scroballDB;
   private List<Scrobble> scrobbles = new ArrayList<>();
   private LongSparseArray<Scrobble> scrobbleMap = new LongSparseArray<>();
 
+  @Nullable
   @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_scrobble_history);
+  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    View rootView = inflater.inflate(R.layout.fragment_scrobble_history, container, false);
 
-    scroballDB = ((ScroballApplication) getApplication()).getScroballDB();
+    scroballDB = ((ScroballApplication) getActivity().getApplication()).getScroballDB();
     refreshData();
 
-    adapter = new ScrobbleHistoryItemAdapter(this, android.R.layout.simple_list_item_1, scrobbles);
-    ListView listView = (ListView) findViewById(R.id.scrobble_history_list_view);
+    adapter = new ScrobbleHistoryItemAdapter(getContext(), android.R.layout.simple_list_item_1, scrobbles);
+    ListView listView = (ListView) rootView.findViewById(R.id.scrobble_history_list_view);
     listView.setAdapter(adapter);
+
+    return rootView;
   }
 
   @Override
-  protected void onResume() {
+  public void onResume() {
     super.onResume();
     ScroballApplication.getEventBus().register(this);
     refreshData();
   }
 
   @Override
-  protected void onPause() {
+  public void onPause() {
     super.onPause();
     ScroballApplication.getEventBus().unregister(this);
   }
@@ -49,7 +55,7 @@ public class ScrobbleHistoryActivity extends AppCompatActivity {
     final Scrobble scrobble = event.scrobble();
     final long id = scrobble.status().getDbId();
 
-    runOnUiThread(new Runnable() {
+    getActivity().runOnUiThread(new Runnable() {
       @Override
       public void run() {
         if (scrobbleMap.get(id) != null) {
