@@ -33,6 +33,7 @@ dependencies {
     compile 'de.u-mass:lastfm-java:0.1.2'
     compile 'junit:junit:4.12'
     compile 'org.hamcrest:hamcrest-core:1.3'
+    compile 'com.android.support.constraint:constraint-layout:+'
     testCompile 'com.google.guava:guava:19.0'
     testCompile 'junit:junit:4.12'
     androidTestCompile 'com.android.support:support-v4:25.2.0'
