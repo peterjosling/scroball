@@ -42,6 +42,11 @@ public class ScrobbleStatus {
     this.dbId = dbId;
   }
 
+  public void setFrom(ScrobbleStatus status) {
+    this.errorCode = status.errorCode;
+    this.dbId = status.dbId;
+  }
+
   @Override
   public boolean equals(Object object) {
     if (!(object instanceof ScrobbleStatus)) {
