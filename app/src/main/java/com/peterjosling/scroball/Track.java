@@ -51,4 +51,9 @@ public abstract class Track {
     }
     return builder.build();
   }
+
+  @Value.Lazy
+  public static Track empty() {
+    return ImmutableTrack.builder().track("").artist("").build();
+  }
 }

@@ -31,10 +31,12 @@ public class PlayerState {
     boolean isPlaying = state == PlaybackState.STATE_PLAYING;
 
     if (isPlaying) {
+      postEvent(playbackItem.getTrack());
       playbackItem.startPlaying();
       notificationManager.updateNowPlaying(playbackItem.getTrack());
       scheduleSubmission();
     } else {
+      postEvent(ImmutableTrack.empty());
       playbackItem.stopPlaying();
       notificationManager.removeNowPlaying();
       scrobbler.submit(playbackItem);
@@ -118,6 +120,7 @@ public class PlayerState {
     }
 
     if (isPlaying) {
+      postEvent(track);
       scrobbler.updateNowPlaying(track);
       notificationManager.updateNowPlaying(track);
       playbackItem.startPlaying();
@@ -142,5 +145,13 @@ public class PlayerState {
         }
       }, delay);
     }
+  }
+
+  private void postEvent(Track track) {
+    ScroballApplication.getEventBus().post(
+        ImmutableNowPlayingChangeEvent.builder()
+            .track(track)
+            .source(player)
+            .build());
   }
 }
