@@ -45,12 +45,16 @@ public abstract class Track {
     ImmutableTrack.Builder builder = ImmutableTrack.builder()
         .track(title)
         .artist(artist)
-        .album(Optional.fromNullable(album))
-        .albumArtist(Optional.fromNullable(albumArtist))
         .art(Optional.fromNullable(art));
 
     if (duration > 0) {
       builder.duration(duration);
+    }
+    if (album != null && !album.isEmpty()) {
+      builder.album(album);
+    }
+    if (albumArtist != null && !albumArtist.isEmpty()) {
+      builder.albumArtist(albumArtist);
     }
 
     if (artist == null) {
