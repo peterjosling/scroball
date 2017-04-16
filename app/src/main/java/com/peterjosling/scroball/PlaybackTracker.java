@@ -66,7 +66,7 @@ public class PlaybackTracker {
     PlayerState playerState = playerStates.get(player);
 
     if (!playerStates.containsKey(player)) {
-      playerState = new PlayerState(scrobbler, scrobbleNotificationManager);
+      playerState = new PlayerState(player, scrobbler, scrobbleNotificationManager);
       playerStates.put(player, playerState);
     }
 

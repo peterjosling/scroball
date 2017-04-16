@@ -7,12 +7,15 @@ import java.util.TimerTask;
 
 public class PlayerState {
 
+  private final String player;
   private final Scrobbler scrobbler;
   private final ScrobbleNotificationManager notificationManager;
   private PlaybackItem playbackItem;
   private Timer submissionTimer;
 
-  public PlayerState(Scrobbler scrobbler, ScrobbleNotificationManager notificationManager) {
+  public PlayerState(
+      String player, Scrobbler scrobbler, ScrobbleNotificationManager notificationManager) {
+    this.player = player;
     this.scrobbler = scrobbler;
     this.notificationManager = notificationManager;
   }
