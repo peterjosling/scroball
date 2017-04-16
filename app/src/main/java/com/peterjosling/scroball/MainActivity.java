@@ -104,7 +104,8 @@ public class MainActivity extends AppCompatActivity {
    */
   public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-    List<Fragment> fragments = ImmutableList.of((Fragment) new ScrobbleHistoryFragment());
+    List<Fragment> fragments = ImmutableList.of(
+        new NowPlayingFragment(), new ScrobbleHistoryFragment());
 
     public SectionsPagerAdapter(FragmentManager fm) {
       super(fm);
@@ -126,6 +127,8 @@ public class MainActivity extends AppCompatActivity {
     public CharSequence getPageTitle(int position) {
       switch (position) {
         case 0:
+          return "Now Playing";
+        case 1:
           return "History";
       }
       return null;

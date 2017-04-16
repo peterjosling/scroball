@@ -35,4 +35,7 @@
     <string name="logout">Logout</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="logout_confirm">Logging out will clear any scrobbles which have yet to be submitted. Continue?</string>
+
+    <!-- Strings related to the now playing screen -->
+    <string name="nothing_playing">Nothing playing</string>
 </resources>

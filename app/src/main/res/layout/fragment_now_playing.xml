@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="@dimen/activity_horizontal_margin">
+
+    <RelativeLayout
+        android:id="@+id/now_playing_detail"
+        android:layout_marginTop="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/now_playing_art_card"
+            android:layout_width="280dp"
+            android:layout_height="280dp"
+            android:layout_centerHorizontal="true">
+
+            <ImageView
+                android:id="@+id/now_playing_art"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@mipmap/ic_launcher"
+                android:scaleType="fitCenter"/>
+        </android.support.v7.widget.CardView>
+        <TextView
+            android:id="@+id/now_playing_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/now_playing_art_card"
+            android:text="Track"
+            android:textAlignment="center"
+            android:layout_marginTop="16dp"
+            style="@android:style/TextAppearance.Medium"/>
+        <TextView
+            android:id="@+id/now_playing_artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/now_playing_title"
+            android:text="Artist — Album"
+            android:textAlignment="center"
+            style="@android:style/TextAppearance.Small"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/now_playing_nothing_playing"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/nothing_playing"
+        android:textAlignment="center"
+        android:gravity="center"
+        android:visibility="gone"
+        style="@android:style/TextAppearance.Large"/>
+</LinearLayout>
