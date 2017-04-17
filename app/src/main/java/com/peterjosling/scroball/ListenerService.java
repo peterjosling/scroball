@@ -26,6 +26,8 @@ import java.util.WeakHashMap;
 public class ListenerService extends NotificationListenerService
     implements MediaSessionManager.OnActiveSessionsChangedListener {
 
+  private static final String TAG = ListenerService.class.getName();
+
   private List<MediaController> mediaControllers = new ArrayList<>();
   private Map<MediaController, MediaController.Callback> controllerCallbacks = new WeakHashMap<>();
   private PlaybackTracker playbackTracker;
@@ -57,7 +59,7 @@ public class ListenerService extends NotificationListenerService
         connectivityManager,
         scrobbler);
 
-    Log.d("Scroball", "NotificationListenerService started");
+    Log.i(TAG, "NotificationListenerService started");
 
     MediaSessionManager mediaSessionManager = (MediaSessionManager) getApplicationContext()
         .getSystemService(Context.MEDIA_SESSION_SERVICE);
@@ -82,9 +84,9 @@ public class ListenerService extends NotificationListenerService
 
   @Override
   public void onActiveSessionsChanged(List<MediaController> activeMediaControllers) {
-    Log.d("Scroball", "Active MediaSessions changed");
-
     Set<MediaController> existingControllers = new HashSet<>(mediaControllers);
+    Log.i(TAG, "Active MediaSessions changed");
+
     Set<MediaController> newControllers = new HashSet<>(activeMediaControllers);
 
     Set<MediaController> toRemove = Sets.difference(existingControllers, newControllers);
@@ -110,8 +112,11 @@ public class ListenerService extends NotificationListenerService
       }
 
       if (!sharedPreferences.getBoolean(prefKey, true)) {
+        Log.i(TAG, String.format("Ignoring player %s", packageName));
         continue;
       }
+
+      Log.i(TAG, String.format("Listening for events from %s", packageName));
 
       MediaController.Callback callback = new MediaController.Callback() {
         @Override
