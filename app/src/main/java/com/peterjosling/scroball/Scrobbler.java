@@ -4,6 +4,9 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
+
+import com.google.common.base.Optional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +17,7 @@ import de.umass.lastfm.scrobble.ScrobbleResult;
 
 public class Scrobbler {
 
+  private static final String TAG = Scrobbler.class.getName();
   private static final int SCROBBLE_THRESHOLD = 4 * 60 * 1000;
   private static final int MINIMUM_SCROBBLE_TIME = 30 * 1000;
   private static final int MAX_SCROBBLES = 50;
@@ -42,7 +46,7 @@ public class Scrobbler {
 
   public void updateNowPlaying(Track track) {
     if (!client.isAuthenticated()) {
-      System.out.println("Skipping now playing update, not logged in.");
+      Log.i(TAG, "Skipping now playing update, not logged in.");
       return;
     }
 
@@ -52,9 +56,6 @@ public class Scrobbler {
     if (!isConnected) {
       return;
     }
-
-    System.out.println("!!!!!!!!!!! Updating now playing");
-    System.out.println(track);
     client.updateNowPlaying(track.artist(), track.track());
   }
 
@@ -69,8 +70,6 @@ public class Scrobbler {
       fetchTrackDurationAndSubmit(playbackItem);
       return;
     }
-
-    System.out.println("Submitting: " + playbackItem);
 
     long timestamp = playbackItem.getTimestamp();
     long duration = track.duration().get();
@@ -112,8 +111,9 @@ public class Scrobbler {
       playbackItem.addScrobble();
     }
 
-    System.out.println("!!!!!!!!!!! Added new scrobbles: " + playCount);
-    System.out.println(track);
+    if (playCount > 0) {
+      Log.i(TAG, String.format("Queued %d scrobbles", playCount));
+    }
 
     notificationManager.notifyScrobbled(track, playCount);
     scrobblePending();
@@ -124,8 +124,8 @@ public class Scrobbler {
     boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
     if (!isConnected) {
-      System.out.println("Offline, can't fetch track duration. Saving for later.");
-      queuePendingPlaybackitem(playbackItem);
+      Log.i(TAG, "Offline, can't fetch track duration. Saving for later.");
+      queuePendingPlaybackItem(playbackItem);
       return;
     }
 
@@ -138,11 +138,11 @@ public class Scrobbler {
           Result result = Caller.getInstance().getLastResult();
 
           if (result.getErrorCode() == 6) {
-            System.out.println("Track not found, cannot scrobble.");
+            Log.w(TAG, "Track not found, cannot scrobble.");
           } else {
             // TODO check error code here.
-            System.out.println("Failed to fetch track duration, saving for later.");
-            queuePendingPlaybackitem(playbackItem);
+            Log.w(TAG, "Failed to fetch track duration, saving for later.");
+            queuePendingPlaybackItem(playbackItem);
           }
 
           return true;
@@ -150,7 +150,7 @@ public class Scrobbler {
 
         Track updatedTrack = (Track) message.obj;
         playbackItem.updateTrack(updatedTrack);
-        System.out.println("Submitting updated track: " + playbackItem);
+        Log.i(TAG, String.format("Track info updated: %s", playbackItem));
 
         submit(playbackItem);
         return true;
@@ -172,7 +172,7 @@ public class Scrobbler {
     pendingPlaybackItems.clear();
 
     if (!playbackItems.isEmpty()) {
-      System.out.println("Re-processing queued items with missing durations.");
+      Log.i(TAG, "Re-processing queued items with missing durations.");
     }
 
     for (PlaybackItem playbackItem : playbackItems) {
@@ -238,9 +238,15 @@ public class Scrobbler {
       return -1;
     }
 
-    long duration = playbackItem.getTrack().duration().or(0L);
+    Optional<Long> optionalDuration = playbackItem.getTrack().duration();
+    long duration = optionalDuration.or(0L);
 
     if (duration < MINIMUM_SCROBBLE_TIME) {
+      if (optionalDuration.isPresent()) {
+        Log.i(TAG, String.format("Not scheduling scrobble, track is too short (%d)", duration));
+      } else {
+        Log.i(TAG, "Not scheduling scrobble, track duration not known");
+      }
       return -1;
     }
 
@@ -250,7 +256,7 @@ public class Scrobbler {
     return Math.max(0, nextScrobbleAt - playbackItem.getAmountPlayed());
   }
 
-  private void queuePendingPlaybackitem(PlaybackItem playbackItem) {
+  private void queuePendingPlaybackItem(PlaybackItem playbackItem) {
     pendingPlaybackItems.add(playbackItem);
     scroballDB.writePendingPlaybackItem(playbackItem);
   }

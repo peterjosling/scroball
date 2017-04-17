@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +15,9 @@ import android.widget.TextView;
 import com.google.common.base.Optional;
 import com.google.common.eventbus.Subscribe;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 public class NowPlayingFragment extends Fragment {
 
-  private static final Logger logger = Logger.getLogger(NowPlayingFragment.class.getName());
+  private static final String TAG = NowPlayingFragment.class.getName();
 
   private ViewGroup detailGroup;
   private ImageView artImageView;
@@ -77,7 +75,7 @@ public class NowPlayingFragment extends Fragment {
           Drawable icon = getActivity().getPackageManager().getApplicationIcon(event.source());
           artImageView.setImageDrawable(icon);
         } catch (PackageManager.NameNotFoundException e) {
-          logger.log(Level.WARNING, "Failed to read application icon for player", e);
+          Log.w(TAG, "Failed to read application icon for player", e);
         }
       }
 

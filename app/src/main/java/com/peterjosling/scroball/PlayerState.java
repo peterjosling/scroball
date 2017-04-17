@@ -1,11 +1,14 @@
 package com.peterjosling.scroball;
 
 import android.media.session.PlaybackState;
+import android.util.Log;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class PlayerState {
+
+  private static final String TAG = PlayerState.class.getName();
 
   private final String player;
   private final Scrobbler scrobbler;
@@ -31,67 +34,17 @@ public class PlayerState {
     boolean isPlaying = state == PlaybackState.STATE_PLAYING;
 
     if (isPlaying) {
+      Log.i(TAG, "Track playing");
       postEvent(playbackItem.getTrack());
       playbackItem.startPlaying();
       notificationManager.updateNowPlaying(playbackItem.getTrack());
       scheduleSubmission();
     } else {
+      Log.i(TAG, String.format("Track paused (state %d)", state));
       postEvent(ImmutableTrack.empty());
       playbackItem.stopPlaying();
       notificationManager.removeNowPlaying();
       scrobbler.submit(playbackItem);
-    }
-
-    System.out.print("State: ");
-
-    switch (state) {
-      case PlaybackState.STATE_BUFFERING:
-        System.out.println("Buffering");
-        break;
-
-      case PlaybackState.STATE_CONNECTING:
-        System.out.println("Connecting");
-        break;
-
-      case PlaybackState.STATE_ERROR:
-        System.out.println("Error");
-        break;
-
-      case PlaybackState.STATE_FAST_FORWARDING:
-        System.out.println("Fast forwarding");
-        break;
-
-      case PlaybackState.STATE_NONE:
-        System.out.println("None");
-        break;
-
-      case PlaybackState.STATE_PAUSED:
-        System.out.println("Paused");
-        break;
-
-      case PlaybackState.STATE_PLAYING:
-        System.out.println("Playing");
-        break;
-
-      case PlaybackState.STATE_REWINDING:
-        System.out.println("Rewinding");
-        break;
-
-      case PlaybackState.STATE_SKIPPING_TO_NEXT:
-        System.out.println("Skipping to next");
-        break;
-
-      case PlaybackState.STATE_SKIPPING_TO_PREVIOUS:
-        System.out.println("Skipping to previous");
-        break;
-
-      case PlaybackState.STATE_SKIPPING_TO_QUEUE_ITEM:
-        System.out.println("Skipping to queue item");
-        break;
-
-      case PlaybackState.STATE_STOPPED:
-        System.out.println("Stopped");
-        break;
     }
   }
 
@@ -106,10 +59,12 @@ public class PlayerState {
     }
 
     if (track.isSameTrack(currentTrack)) {
+      Log.i(TAG, String.format("Track metadata updated: %s", track));
+
       // Update track in PlaybackItem, as this new one probably has updated details/more keys.
       playbackItem.setTrack(track);
     } else {
-      System.out.println("Creating new PlaybackItem");
+      Log.i(TAG, String.format("Changed track: %s", track));
 
       if (playbackItem != null) {
         playbackItem.stopPlaying();
@@ -129,6 +84,8 @@ public class PlayerState {
   }
 
   private void scheduleSubmission() {
+    Log.d(TAG, "Scheduling scrobble submission");
+
     if (submissionTimer != null) {
       submissionTimer.cancel();
     }
@@ -136,6 +93,7 @@ public class PlayerState {
     long delay = scrobbler.getMillisecondsUntilScrobble(playbackItem);
 
     if (delay > -1) {
+      Log.d(TAG, "Scrobble scheduled");
       submissionTimer = new Timer();
       submissionTimer.schedule(new TimerTask() {
         @Override

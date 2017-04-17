@@ -3,12 +3,19 @@ package com.peterjosling.scroball;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
+
+import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import de.umass.lastfm.*;
+import de.umass.lastfm.Authenticator;
+import de.umass.lastfm.CallException;
+import de.umass.lastfm.Caller;
+import de.umass.lastfm.Result;
+import de.umass.lastfm.Session;
 import de.umass.lastfm.Track;
 import de.umass.lastfm.scrobble.ScrobbleData;
 import de.umass.lastfm.scrobble.ScrobbleResult;
@@ -17,6 +24,7 @@ public class LastfmClient {
 
   public static final int ERROR_CODE_AUTH = 4;
 
+  private static final String TAG = LastfmClient.class.getName();
   private static final String API_KEY = "17f6f4f55152871370780cd9c0761509";
   private static final String API_SECRET = "99eafa4c2412543f3141505121184b8a";
 
@@ -89,17 +97,18 @@ public class LastfmClient {
         try {
           return Track.updateNowPlaying(artist, track, session);
         } catch (CallException e) {
-          System.err.println("Exception thrown while updating now playing");
-          e.printStackTrace();
+          Log.e(TAG, "Failed to update now playing status", e);
         }
-
         return null;
       }
 
       @Override
       protected void onPostExecute(ScrobbleResult scrobbleResult) {
-        // TODO remove
-        System.out.println(scrobbleResult);
+        if (scrobbleResult.isSuccessful()) {
+          Log.i(TAG, "Now playing status updated");
+        } else {
+          Log.e(TAG, String.format("Failed to update now playing status: %s", scrobbleResult));
+        }
       }
     }.execute();
   }
@@ -118,11 +127,9 @@ public class LastfmClient {
         try {
           return Track.scrobble(scrobbleData, session);
         } catch (CallException e) {
-          System.err.println("Exception thrown while scrobbling");
-          e.printStackTrace();
+          Log.e(TAG, "Failed to submit scrobbles", e);
         }
-
-        return new ArrayList<>();
+        return ImmutableList.of();
       }
 
       @Override
@@ -130,7 +137,7 @@ public class LastfmClient {
         Message message = Message.obtain();
         message.obj = results;
         callback.handleMessage(message);
-        System.out.println(Arrays.toString(results.toArray()));
+        Log.i(TAG, String.format("Scrobbles submitted: %s", Arrays.toString(results.toArray())));
       }
     }.execute();
   }
@@ -142,10 +149,8 @@ public class LastfmClient {
         try {
           return Track.getInfo(artist, track, session.getApiKey());
         } catch (CallException e) {
-          System.err.println("Exception thrown while fetching track info");
-          e.printStackTrace();
+          Log.e(TAG, "Failed to fetch track info", e);
         }
-
         return null;
       }
 
