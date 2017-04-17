@@ -105,7 +105,7 @@ public class PlayerState {
       isPlaying = playbackItem.isPlaying();
     }
 
-    if (track.equals(currentTrack)) {
+    if (track.isSameTrack(currentTrack)) {
       // Update track in PlaybackItem, as this new one probably has updated details/more keys.
       playbackItem.setTrack(track);
     } else {

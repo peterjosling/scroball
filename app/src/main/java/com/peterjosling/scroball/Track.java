@@ -15,8 +15,8 @@ public abstract class Track {
   public abstract String artist();
   public abstract Optional<String> album();
   public abstract Optional<String> albumArtist();
-  @Value.Auxiliary public abstract Optional<Long> duration();
-  @Value.Auxiliary public abstract Optional<Bitmap> art();
+  public abstract Optional<Long> duration();
+  public abstract Optional<Bitmap> art();
 
   public boolean isValid() {
     return !track().equals("") && !artist().equals("");
@@ -61,6 +61,10 @@ public abstract class Track {
       new TitleExtractor().transform(builder.build());
     }
     return builder.build();
+  }
+
+  public boolean isSameTrack(Track track) {
+    return track != null && track.track().equals(track()) && track.artist().equals(artist());
   }
 
   @Value.Lazy
