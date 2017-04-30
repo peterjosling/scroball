@@ -104,7 +104,7 @@ public class LastfmClient {
 
       @Override
       protected void onPostExecute(ScrobbleResult scrobbleResult) {
-        if (scrobbleResult.isSuccessful()) {
+        if (scrobbleResult != null && scrobbleResult.isSuccessful()) {
           Log.i(TAG, "Now playing status updated");
         } else {
           Log.e(TAG, String.format("Failed to update now playing status: %s", scrobbleResult));
