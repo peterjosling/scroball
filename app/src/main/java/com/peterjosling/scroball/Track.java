@@ -44,7 +44,6 @@ public abstract class Track {
 
     ImmutableTrack.Builder builder = ImmutableTrack.builder()
         .track(title)
-        .artist(artist)
         .art(Optional.fromNullable(art));
 
     if (duration > 0) {
@@ -56,8 +55,9 @@ public abstract class Track {
     if (albumArtist != null && !albumArtist.isEmpty()) {
       builder.albumArtist(albumArtist);
     }
-
-    if (artist == null) {
+    if (artist != null) {
+      builder.artist(artist);
+    } else {
       new TitleExtractor().transform(builder.build());
     }
     return builder.build();
