@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 
 public class SplashScreen extends Activity {
 
@@ -46,7 +48,13 @@ public class SplashScreen extends Activity {
           .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-              startActivity(new Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
+              String action;
+              if (Build.VERSION.SDK_INT >= 22) {
+                action = Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS;
+              } else {
+                action = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
+              }
+              startActivity(new Intent(action));
             }
           })
           .show();
