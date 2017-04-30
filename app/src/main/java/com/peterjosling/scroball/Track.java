@@ -58,7 +58,7 @@ public abstract class Track {
     if (artist != null) {
       builder.artist(artist);
     } else {
-      new TitleExtractor().transform(builder.build());
+      return new TitleExtractor().transform(builder.build());
     }
     return builder.build();
   }
