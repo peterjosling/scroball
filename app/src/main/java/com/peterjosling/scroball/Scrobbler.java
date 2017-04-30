@@ -137,7 +137,7 @@ public class Scrobbler {
         if (message.obj == null) {
           Result result = Caller.getInstance().getLastResult();
 
-          if (result.getErrorCode() == 6) {
+          if (result != null && result.getErrorCode() == 6) {
             Log.w(TAG, "Track not found, cannot scrobble.");
           } else {
             // TODO check error code here.
