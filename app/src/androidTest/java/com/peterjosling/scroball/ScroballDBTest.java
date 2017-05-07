@@ -20,7 +20,7 @@ public class ScroballDBTest {
 
   Context context;
   ScroballDB scroballDB;
-  Track track = ImmutableTrack.builder()
+  Track track = Track.builder()
       .duration(1)
       .artist("Artist")
       .track("Track")
@@ -29,7 +29,7 @@ public class ScroballDBTest {
       .build();
 
   ScrobbleStatus scrobbleStatus = new ScrobbleStatus(0);
-  Scrobble scrobble = ImmutableScrobble.builder()
+  Scrobble scrobble = Scrobble.builder()
       .track(track)
       .timestamp((int) (System.currentTimeMillis() / 1000))
       .status(scrobbleStatus)
@@ -83,7 +83,7 @@ public class ScroballDBTest {
 
   @Test
   public void readPending_treatsErroredScrobblesAsPending() {
-    Scrobble erroredScrobble = ImmutableScrobble.builder().from(scrobble).build();
+    Scrobble erroredScrobble = scrobble.toBuilder().build();
     erroredScrobble.status().setErrorCode(1);
     scroballDB.writeScrobble(erroredScrobble);
 
@@ -108,7 +108,7 @@ public class ScroballDBTest {
   }
 
   private Scrobble copyScrobble(Scrobble input) {
-    return ImmutableScrobble.builder().from(input)
+    return input.toBuilder()
         .status(new ScrobbleStatus(input.status().getErrorCode(), input.status().getDbId()))
         .build();
   }

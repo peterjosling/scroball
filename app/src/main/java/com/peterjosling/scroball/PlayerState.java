@@ -41,7 +41,7 @@ public class PlayerState {
       scheduleSubmission();
     } else {
       Log.i(TAG, String.format("Track paused (state %d)", state));
-      postEvent(ImmutableTrack.empty());
+      postEvent(Track.empty());
       playbackItem.stopPlaying();
       notificationManager.removeNowPlaying();
       scrobbler.submit(playbackItem);
@@ -107,7 +107,7 @@ public class PlayerState {
 
   private void postEvent(Track track) {
     ScroballApplication.getEventBus().post(
-        ImmutableNowPlayingChangeEvent.builder()
+        NowPlayingChangeEvent.builder()
             .track(track)
             .source(player)
             .build());

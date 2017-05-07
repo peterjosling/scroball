@@ -101,7 +101,7 @@ public class Scrobbler {
       int itemTimestamp = (int) ((timestamp + i * duration) / 1000);
 
       // TODO set album title too
-      Scrobble scrobble = ImmutableScrobble.builder()
+      Scrobble scrobble = Scrobble.builder()
           .track(track)
           .timestamp(itemTimestamp)
           .build();

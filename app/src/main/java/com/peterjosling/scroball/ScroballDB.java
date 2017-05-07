@@ -62,7 +62,7 @@ public class ScroballDB {
       scrobble.status().setDbId(id);
     }
 
-    eventBus.post(ImmutableScroballDBUpdateEvent.builder().scrobble(scrobble).build());
+    eventBus.post(ScroballDBUpdateEvent.create(scrobble));
   }
 
   public void writeScrobbles(List<Scrobble> scrobbles) {
@@ -123,7 +123,7 @@ public class ScroballDB {
       String track = cursor.getString(cursor.getColumnIndexOrThrow(PendingPlaybackItemEntry.COLUMN_NAME_TRACK));
       String album = cursor.getString(cursor.getColumnIndexOrThrow(PendingPlaybackItemEntry.COLUMN_NAME_ALBUM));
 
-      ImmutableTrack.Builder trackBuilder = ImmutableTrack.builder()
+      Track.Builder trackBuilder = Track.builder()
           .artist(artist)
           .track(track);
 
@@ -178,7 +178,7 @@ public class ScroballDB {
 
       ScrobbleStatus statusObj = new ScrobbleStatus(status, id);
 
-      ImmutableTrack.Builder trackBuilder = ImmutableTrack.builder()
+      Track.Builder trackBuilder = Track.builder()
           .artist(artist)
           .track(track);
 
@@ -192,7 +192,7 @@ public class ScroballDB {
 
       Track trackObj = trackBuilder.build();
 
-      Scrobble scrobble = ImmutableScrobble.builder()
+      Scrobble scrobble = Scrobble.builder()
           .status(statusObj)
           .track(trackObj)
           .timestamp(timestamp)

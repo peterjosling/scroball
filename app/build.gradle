@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: "android-apt"
 
 android {
     compileSdkVersion 25
@@ -29,6 +28,7 @@ dependencies {
     compile 'com.android.support:mediarouter-v7:25.2.0'
     compile 'com.android.support:support-v4:25.2.0'
     compile 'com.google.android.gms:play-services-cast-framework:10.2.0'
+    compile 'com.google.auto.value:auto-value:1.4.1'
     compile 'com.google.truth:truth:0.28'
     compile 'com.google.guava:guava:19.0'
     compile 'de.u-mass:lastfm-java:0.1.2'
@@ -40,6 +40,5 @@ dependencies {
     androidTestCompile 'com.android.support:support-v4:25.2.0'
     androidTestCompile 'com.android.support.test:rules:0.5'
     androidTestCompile 'com.android.support.test:runner:0.5'
-    apt 'org.immutables:value:2.1.11'
-    provided 'org.immutables:value:2.1.11'
+    annotationProcessor 'com.google.auto.value:auto-value:1.4.1'
 }

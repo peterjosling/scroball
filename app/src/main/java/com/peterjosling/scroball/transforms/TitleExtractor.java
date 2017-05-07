@@ -1,7 +1,6 @@
 package com.peterjosling.scroball.transforms;
 
 import com.google.common.base.Joiner;
-import com.peterjosling.scroball.ImmutableTrack;
 import com.peterjosling.scroball.Track;
 
 import java.util.Arrays;
@@ -35,6 +34,6 @@ public class TitleExtractor implements MetadataTransform {
     title = title.trim();
     artist = artist.trim();
 
-    return ImmutableTrack.builder().from(track).artist(artist).track(title).build();
+    return track.toBuilder().artist(artist).track(title).build();
   }
 }

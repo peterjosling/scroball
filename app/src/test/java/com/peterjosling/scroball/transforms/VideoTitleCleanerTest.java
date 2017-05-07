@@ -1,6 +1,5 @@
 package com.peterjosling.scroball.transforms;
 
-import com.peterjosling.scroball.ImmutableTrack;
 import com.peterjosling.scroball.Track;
 
 import org.junit.Test;
@@ -19,7 +18,7 @@ public class VideoTitleCleanerTest {
     String title = "Some Track (with details)";
     String input = String.format("  %s   ", title);
 
-    Track result = transform.transform(ImmutableTrack.builder().track(input).artist("").build());
+    Track result = transform.transform(Track.builder().track(input).artist("").build());
 
     assertThat(result.track()).isEqualTo(title);
   }

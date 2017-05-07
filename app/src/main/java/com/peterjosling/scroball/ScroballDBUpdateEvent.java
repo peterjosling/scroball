@@ -1,9 +1,13 @@
 package com.peterjosling.scroball;
 
-import org.immutables.value.Value;
+import com.google.auto.value.AutoValue;
 
-@Value.Immutable
-public interface ScroballDBUpdateEvent {
+@AutoValue
+public abstract class ScroballDBUpdateEvent {
 
-  Scrobble scrobble();
+  public abstract Scrobble scrobble();
+
+  public static ScroballDBUpdateEvent create(Scrobble scrobble) {
+    return new AutoValue_ScroballDBUpdateEvent(scrobble);
+  }
 }

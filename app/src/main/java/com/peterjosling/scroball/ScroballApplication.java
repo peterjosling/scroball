@@ -10,7 +10,7 @@ import com.google.common.eventbus.Subscribe;
 public class ScroballApplication extends Application {
 
   private static EventBus eventBus = new EventBus();
-  private static NowPlayingChangeEvent lastEvent = ImmutableNowPlayingChangeEvent.builder().source("").track(Track.empty()).build();
+  private static NowPlayingChangeEvent lastEvent = NowPlayingChangeEvent.builder().source("").track(Track.empty()).build();
 
   private LastfmClient lastfmClient;
   private ScroballDB scroballDB;

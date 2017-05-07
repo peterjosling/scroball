@@ -3,12 +3,11 @@ package com.peterjosling.scroball;
 import android.graphics.Bitmap;
 import android.media.MediaMetadata;
 
+import com.google.auto.value.AutoValue;
 import com.google.common.base.Optional;
 import com.peterjosling.scroball.transforms.TitleExtractor;
 
-import org.immutables.value.Value;
-
-@Value.Immutable
+@AutoValue
 public abstract class Track {
 
   public abstract String track();
@@ -17,6 +16,7 @@ public abstract class Track {
   public abstract Optional<String> albumArtist();
   public abstract Optional<Long> duration();
   public abstract Optional<Bitmap> art();
+  public abstract Builder toBuilder();
 
   public boolean isValid() {
     return !track().equals("") && !artist().equals("");
@@ -42,9 +42,7 @@ public abstract class Track {
       art = metadata.getBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART);
     }
 
-    ImmutableTrack.Builder builder = ImmutableTrack.builder()
-        .track(title)
-        .art(Optional.fromNullable(art));
+    Track.Builder builder = Track.builder().track(title);
 
     if (duration > 0) {
       builder.duration(duration);
@@ -54,6 +52,9 @@ public abstract class Track {
     }
     if (albumArtist != null && !albumArtist.isEmpty()) {
       builder.albumArtist(albumArtist);
+    }
+    if (art != null) {
+      builder.art(art);
     }
     if (artist != null) {
       builder.artist(artist);
@@ -67,8 +68,23 @@ public abstract class Track {
     return track != null && track.track().equals(track()) && track.artist().equals(artist());
   }
 
-  @Value.Lazy
   public static Track empty() {
-    return ImmutableTrack.builder().track("").artist("").build();
+    return Track.builder().track("").artist("").build();
+  }
+
+  public static Builder builder() {
+    return new AutoValue_Track.Builder();
+  }
+
+  @AutoValue.Builder
+  public abstract static class Builder {
+
+    public abstract Builder track(String track);
+    public abstract Builder artist(String artist);
+    public abstract Builder album(String album);
+    public abstract Builder albumArtist(String albumArtist);
+    public abstract Builder duration(long duration);
+    public abstract Builder art(Bitmap art);
+    public abstract Track build();
   }
 }

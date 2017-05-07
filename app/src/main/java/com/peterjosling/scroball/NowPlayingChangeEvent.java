@@ -1,10 +1,22 @@
 package com.peterjosling.scroball;
 
-import org.immutables.value.Value;
+import com.google.auto.value.AutoValue;
 
-@Value.Immutable
-public interface NowPlayingChangeEvent {
+@AutoValue
+public abstract class NowPlayingChangeEvent {
 
-  Track track();
-  String source();
+  public abstract Track track();
+  public abstract String source();
+
+  public static Builder builder() {
+    return new AutoValue_NowPlayingChangeEvent.Builder();
+  }
+
+  @AutoValue.Builder
+  public static abstract class Builder {
+
+    public abstract Builder track(Track track);
+    public abstract Builder source(String source);
+    public abstract NowPlayingChangeEvent build();
+  }
 }

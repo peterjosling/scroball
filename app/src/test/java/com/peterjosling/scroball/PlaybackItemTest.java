@@ -9,7 +9,7 @@ import static com.google.common.truth.Truth.assertThat;
 @RunWith(JUnit4.class)
 public class PlaybackItemTest {
 
-  Track track = ImmutableTrack.builder()
+  Track track = Track.builder()
       .track("Track")
       .artist("Artist")
       .build();

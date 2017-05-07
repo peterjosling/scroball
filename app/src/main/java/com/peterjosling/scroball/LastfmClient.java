@@ -55,13 +55,13 @@ public class LastfmClient {
           String sessionKey = session.getKey();
           setSession(sessionKey);
 
-          return ImmutableAuthResult.builder()
+          return AuthResult.builder()
               .sessionKey(sessionKey)
               .build();
         }
 
         Result result = Caller.getInstance().getLastResult();
-        ImmutableAuthResult.Builder authResultBuilder = ImmutableAuthResult.builder();
+        AuthResult.Builder authResultBuilder = AuthResult.builder();
         int httpErrorCode = result.getHttpErrorCode();
         int errorCode = result.getErrorCode();
         String errorMessage = result.getErrorMessage();
@@ -159,7 +159,7 @@ public class LastfmClient {
         Message message = Message.obtain();
 
         if (updatedTrack != null) {
-          message.obj = ImmutableTrack.builder()
+          message.obj = com.peterjosling.scroball.Track.builder()
               .artist(artist)
               .track(track)
               .duration(updatedTrack.getDuration() * 1000)

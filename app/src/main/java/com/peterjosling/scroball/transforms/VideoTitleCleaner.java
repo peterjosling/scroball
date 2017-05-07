@@ -1,6 +1,5 @@
 package com.peterjosling.scroball.transforms;
 
-import com.peterjosling.scroball.ImmutableTrack;
 import com.peterjosling.scroball.Track;
 
 public class VideoTitleCleaner implements MetadataTransform {
@@ -56,6 +55,6 @@ public class VideoTitleCleaner implements MetadataTransform {
     for (String replacement : REPLACEMENTS) {
       title = title.replaceAll(replacement, "");
     }
-    return ImmutableTrack.builder().from(track).track(title).build();
+    return track.toBuilder().track(title).build();
   }
 }
