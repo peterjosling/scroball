@@ -92,13 +92,7 @@ public class ListenerService extends NotificationListenerService
     Log.i(TAG, "Active MediaSessions changed");
 
     Set<MediaController> existingControllers =
-        ImmutableSet.copyOf(
-            Iterables.filter(mediaControllers, new Predicate<MediaController>() {
-              @Override
-              public boolean apply(MediaController input) {
-                return controllerCallbacks.containsKey(input);
-              }
-            }));
+        ImmutableSet.copyOf(Iterables.filter(mediaControllers, controllerCallbacks::containsKey));
     Set<MediaController> newControllers = new HashSet<>(activeMediaControllers);
 
     Set<MediaController> toRemove = Sets.difference(existingControllers, newControllers);
