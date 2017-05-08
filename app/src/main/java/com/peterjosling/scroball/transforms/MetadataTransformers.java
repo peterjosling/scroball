@@ -5,16 +5,19 @@ import com.google.common.collect.ImmutableMultimap;
 import com.peterjosling.scroball.Track;
 
 import java.util.Collection;
+import java.util.List;
 
 public class MetadataTransformers {
 
   private static final MetadataTransform VIDEO_TITLE_CLEANER = new VideoTitleCleaner();
   private static final MetadataTransform TITLE_EXTRACTOR = new TitleExtractor();
 
+  private static final List<MetadataTransform> VIDEO_TRANSFORMS =
+      ImmutableList.of(TITLE_EXTRACTOR, VIDEO_TITLE_CLEANER);
   private static final ImmutableMultimap<String, MetadataTransform> APP_TRANSFORMS =
       ImmutableMultimap.<String, MetadataTransform>builder()
-          .putAll(
-              "com.google.android.youtube", ImmutableList.of(TITLE_EXTRACTOR, VIDEO_TITLE_CLEANER))
+          .putAll("com.google.android.youtube", VIDEO_TRANSFORMS)
+          .putAll("com.google.android.youtube.tv", VIDEO_TRANSFORMS)
           .build();
 
   public Track transformForPackageName(String packageName, Track track) {
