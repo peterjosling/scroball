@@ -44,6 +44,9 @@
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity">
         </activity>
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="9f73e09c31fe1db8981fe3cbcc5ec24aa4ffed81" />
     </application>
 
 </manifest>

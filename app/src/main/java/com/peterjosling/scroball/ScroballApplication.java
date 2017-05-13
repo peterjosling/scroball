@@ -4,8 +4,10 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import io.fabric.sdk.android.Fabric;
 
 public class ScroballApplication extends Application {
 
@@ -19,6 +21,7 @@ public class ScroballApplication extends Application {
   @Override
   public void onCreate() {
     super.onCreate();
+    Fabric.with(this, new Crashlytics());
 
     sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
