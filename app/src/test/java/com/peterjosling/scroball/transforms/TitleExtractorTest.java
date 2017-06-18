@@ -15,7 +15,7 @@ public class TitleExtractorTest {
 
   @Test
   public void transform_doesNotModifyWhenNoSeparator() {
-    Track input = Track.builder().track("Some Title").build();
+    Track input = Track.builder().track("Some Title").artist("").build();
 
     Track output = titleExtractor.transform(input);
 
