@@ -7,6 +7,8 @@ import android.preference.PreferenceManager;
 import com.crashlytics.android.Crashlytics;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import com.raizlabs.android.dbflow.config.FlowManager;
+
 import io.fabric.sdk.android.Fabric;
 
 public class ScroballApplication extends Application {
@@ -22,6 +24,7 @@ public class ScroballApplication extends Application {
   public void onCreate() {
     super.onCreate();
     Fabric.with(this, new Crashlytics());
+    FlowManager.init(this);
 
     sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -35,9 +38,7 @@ public class ScroballApplication extends Application {
       lastfmClient = new LastfmClient(userAgent);
     }
 
-    scroballDB = new ScroballDB(new ScroballDBHelper(this));
-    scroballDB.open();
-
+    scroballDB = new ScroballDB();
     eventBus.register(this);
   }
 

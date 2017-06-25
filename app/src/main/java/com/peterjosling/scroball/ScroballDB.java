@@ -1,66 +1,57 @@
 package com.peterjosling.scroball;
 
-import android.content.ContentValues;
-import android.database.Cursor;
-import android.database.DatabaseUtils;
-import android.database.sqlite.SQLiteDatabase;
-
+import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
-import com.peterjosling.scroball.ScroballDBContract.PendingPlaybackItemEntry;
-import com.peterjosling.scroball.ScroballDBContract.ScrobbleLogEntry;
+import com.peterjosling.scroball.db.PendingPlaybackItemEntry;
+import com.peterjosling.scroball.db.PendingPlaybackItemEntry_Table;
+import com.peterjosling.scroball.db.ScrobbleLogEntry;
+import com.peterjosling.scroball.db.ScrobbleLogEntry_Table;
+import com.raizlabs.android.dbflow.annotation.Database;
+import com.raizlabs.android.dbflow.sql.language.Delete;
+import com.raizlabs.android.dbflow.sql.language.SQLite;
 
-import java.util.ArrayList;
 import java.util.List;
 
+@Database(name = ScroballDB.NAME, version = ScroballDB.VERSION)
 public class ScroballDB {
+
+  static final String NAME = "ScroballDB";
+  static final int VERSION = 2;
 
   private static final int MAX_ROWS = 1000;
 
-  private SQLiteDatabase db;
-  private ScroballDBHelper dbHelper;
   private EventBus eventBus = ScroballApplication.getEventBus();
 
-  public ScroballDB(ScroballDBHelper scroballDBHelper) {
-    dbHelper = scroballDBHelper;
-  }
-
-  public void open() {
-      db = dbHelper.getWritableDatabase();
-  }
-
   public List<Scrobble> readScrobbles() {
-    String sortOrder = ScrobbleLogEntry.COLUMN_NAME_TIMESTAMP + " DESC";
-    Cursor cursor = db.query(ScrobbleLogEntry.TABLE_NAME, null, null, null, null, null, sortOrder);
-    List<Scrobble> scrobbles = readScrobblesFromCursor(cursor);
-    cursor.close();
-    return scrobbles;
+    List<ScrobbleLogEntry> entries =
+        SQLite.select()
+            .from(ScrobbleLogEntry.class)
+            .orderBy(ScrobbleLogEntry_Table.timestamp, false)
+            .queryList();
+    return scrobbleEntriesToScrobbles(entries);
   }
 
   public void writeScrobble(Scrobble scrobble) {
     Track track = scrobble.track();
     ScrobbleStatus status = scrobble.status();
-    ContentValues values = new ContentValues();
-    values.put(ScrobbleLogEntry.COLUMN_NAME_TIMESTAMP, scrobble.timestamp());
-    values.put(ScrobbleLogEntry.COLUMN_NAME_ARTIST, track.artist());
-    values.put(ScrobbleLogEntry.COLUMN_NAME_TRACK, track.track());
-    values.put(ScrobbleLogEntry.COLUMN_NAME_STATUS, scrobble.status().getErrorCode());
+    ScrobbleLogEntry logEntry = new ScrobbleLogEntry();
+    logEntry.timestamp = scrobble.timestamp();
+    logEntry.artist = track.artist();
+    logEntry.track = track.track();
+    logEntry.status = scrobble.status().getErrorCode();
 
     if (track.album().isPresent()) {
-      values.put(ScrobbleLogEntry.COLUMN_NAME_ALBUM, track.album().get());
+      logEntry.album = track.album().get();
     }
-
     if (track.albumArtist().isPresent()) {
-      values.put(ScrobbleLogEntry.COLUMN_NAME_ALBUM_ARTIST, track.albumArtist().get());
+      logEntry.albumArtist = track.albumArtist().get();
+    }
+    if (status.getDbId() > -1) {
+      logEntry.id = status.getDbId();
     }
 
-    if (status.getDbId() > -1) {
-      String selection = ScrobbleLogEntry._ID + " LIKE ?";
-      String[] selectionArgs = {String.valueOf(status.getDbId())};
-      db.update(ScrobbleLogEntry.TABLE_NAME, values, selection, selectionArgs);
-    } else {
-      long id = db.insert(ScrobbleLogEntry.TABLE_NAME, "null", values);
-      scrobble.status().setDbId(id);
-    }
+    logEntry.save();
+    scrobble.status().setDbId(logEntry.id);
 
     eventBus.post(ScroballDBUpdateEvent.create(scrobble));
   }
@@ -72,136 +63,106 @@ public class ScroballDB {
   }
 
   public List<Scrobble> readPendingScrobbles() {
-    String sortOrder = ScrobbleLogEntry.COLUMN_NAME_TIMESTAMP + " DESC";
-    String selection = ScrobbleLogEntry.COLUMN_NAME_STATUS + ">-1";
-    Cursor cursor = db.query(ScrobbleLogEntry.TABLE_NAME, null, selection, null, null, null, sortOrder);
-    List<Scrobble> pending = readScrobblesFromCursor(cursor);
-    cursor.close();
-    return pending;
+    List<ScrobbleLogEntry> entries =
+        SQLite.select()
+            .from(ScrobbleLogEntry.class)
+            .where(ScrobbleLogEntry_Table.status.greaterThan(-1))
+            .orderBy(ScrobbleLogEntry_Table.timestamp, false)
+            .queryList();
+    return scrobbleEntriesToScrobbles(entries);
   }
 
   public void writePendingPlaybackItem(PlaybackItem playbackItem) {
     Track track = playbackItem.getTrack();
-    ContentValues values = new ContentValues();
-    values.put(PendingPlaybackItemEntry.COLUMN_NAME_TIMESTAMP, playbackItem.getTimestamp());
-    values.put(PendingPlaybackItemEntry.COLUMN_NAME_ARTIST, track.artist());
-    values.put(PendingPlaybackItemEntry.COLUMN_NAME_TRACK, track.track());
-    values.put(PendingPlaybackItemEntry.COLUMN_NAME_AMOUNT_PLAYED, playbackItem.getAmountPlayed());
+    PendingPlaybackItemEntry entry = new PendingPlaybackItemEntry();
+    entry.timestamp = playbackItem.getTimestamp();
+    entry.artist = track.artist();
+    entry.track = track.track();
+    entry.amountPlayed = playbackItem.getAmountPlayed();
 
     if (track.album().isPresent()) {
-      values.put(ScrobbleLogEntry.COLUMN_NAME_ALBUM, track.album().get());
+      entry.album = track.album().get();
     }
-
     if (track.albumArtist().isPresent()) {
-      values.put(ScrobbleLogEntry.COLUMN_NAME_ALBUM_ARTIST, track.albumArtist().get());
+      entry.albumArtist = track.albumArtist().get();
+    }
+    if (playbackItem.getDbId() > -1) {
+      entry.id = playbackItem.getDbId();
     }
 
-    if (playbackItem.getDbId() > -1) {
-      String selection = PendingPlaybackItemEntry._ID + " LIKE ?";
-      String[] selectionArgs = {String.valueOf(playbackItem.getDbId())};
-      db.update(PendingPlaybackItemEntry.TABLE_NAME, values, selection, selectionArgs);
-    } else {
-      long id = db.insert(PendingPlaybackItemEntry.TABLE_NAME, "null", values);
-      playbackItem.setDbId(id);
-    }
+    entry.save();
+    playbackItem.setDbId(entry.id);
   }
 
   public List<PlaybackItem> readPendingPlaybackItems() {
-    String sortOrder = PendingPlaybackItemEntry.COLUMN_NAME_TIMESTAMP + " ASC";
-    Cursor cursor = db.query(PendingPlaybackItemEntry.TABLE_NAME, null, null, null, null, null, sortOrder);
-    List<PlaybackItem> playbackItems = new ArrayList<>();
-
-    int rows = cursor.getCount();
-    cursor.moveToFirst();
-
-    for (int i = 0; i < rows; i++) {
-      long id = cursor.getLong(cursor.getColumnIndexOrThrow(PendingPlaybackItemEntry._ID));
-      int timestamp = cursor.getInt(cursor.getColumnIndexOrThrow(PendingPlaybackItemEntry.COLUMN_NAME_TIMESTAMP));
-      long amountPlayed = cursor.getLong(cursor.getColumnIndexOrThrow(PendingPlaybackItemEntry.COLUMN_NAME_AMOUNT_PLAYED));
-      String artist = cursor.getString(cursor.getColumnIndexOrThrow(PendingPlaybackItemEntry.COLUMN_NAME_ARTIST));
-      String albumArtist = cursor.getString(cursor.getColumnIndexOrThrow(PendingPlaybackItemEntry.COLUMN_NAME_ALBUM_ARTIST));
-      String track = cursor.getString(cursor.getColumnIndexOrThrow(PendingPlaybackItemEntry.COLUMN_NAME_TRACK));
-      String album = cursor.getString(cursor.getColumnIndexOrThrow(PendingPlaybackItemEntry.COLUMN_NAME_ALBUM));
-
-      Track.Builder trackBuilder = Track.builder()
-          .artist(artist)
-          .track(track);
-
-      if (album != null) {
-        trackBuilder.album(album);
-      }
-
-      if (albumArtist != null) {
-        trackBuilder.albumArtist(albumArtist);
-      }
-
-      Track trackObj = trackBuilder.build();
-      PlaybackItem playbackItem = new PlaybackItem(trackObj, timestamp, amountPlayed, id);
-
-      playbackItems.add(playbackItem);
-      cursor.moveToNext();
-    }
-
-    cursor.close();
-    return playbackItems;
+    List<PendingPlaybackItemEntry> entries =
+        SQLite.select()
+            .from(PendingPlaybackItemEntry.class)
+            .orderBy(PendingPlaybackItemEntry_Table.timestamp, true)
+            .queryList();
+    return pendingPlaybackEntriesToPlaybackItems(entries);
   }
 
   public void prune() {
-    String[] cols = new String[]{ScrobbleLogEntry.COLUMN_NAME_STATUS};
-    long rowCount = DatabaseUtils.queryNumEntries(db, ScrobbleLogEntry.TABLE_NAME, "?<0", cols);
+    long rowCount =
+        SQLite.selectCountOf()
+            .from(ScrobbleLogEntry.class)
+            .where(ScrobbleLogEntry_Table.status.lessThan(0))
+            .count();
     long toRemove = MAX_ROWS - rowCount;
 
     if (toRemove > 0) {
-      // TODO
+      SQLite.delete(ScrobbleLogEntry_Table.class)
+          .where(ScrobbleLogEntry_Table.status.lessThan(0))
+          .orderBy(ScrobbleLogEntry_Table.id, true)
+          .limit((int) toRemove)
+          .async()
+          .execute();
     }
   }
 
   public void clear() {
-    db.delete(ScrobbleLogEntry.TABLE_NAME, null, null);
-    db.delete(PendingPlaybackItemEntry.TABLE_NAME, null, null);
+    Delete.tables(ScrobbleLogEntry.class, PendingPlaybackItemEntry.class);
   }
 
-  private List<Scrobble> readScrobblesFromCursor(Cursor cursor) {
-    List<Scrobble> scrobbles = new ArrayList<>();
+  private List<Scrobble> scrobbleEntriesToScrobbles(List<ScrobbleLogEntry> entries) {
+    ImmutableList.Builder<Scrobble> builder = ImmutableList.builder();
 
-    int rows = cursor.getCount();
-    cursor.moveToFirst();
-
-    for (int i = 0; i < rows; i++) {
-      long id = cursor.getLong(cursor.getColumnIndexOrThrow(ScrobbleLogEntry._ID));
-      int timestamp = cursor.getInt(cursor.getColumnIndexOrThrow(ScrobbleLogEntry.COLUMN_NAME_TIMESTAMP));
-      int status = cursor.getInt(cursor.getColumnIndexOrThrow(ScrobbleLogEntry.COLUMN_NAME_STATUS));
-      String artist = cursor.getString(cursor.getColumnIndexOrThrow(ScrobbleLogEntry.COLUMN_NAME_ARTIST));
-      String albumArtist = cursor.getString(cursor.getColumnIndexOrThrow(ScrobbleLogEntry.COLUMN_NAME_ALBUM_ARTIST));
-      String track = cursor.getString(cursor.getColumnIndexOrThrow(ScrobbleLogEntry.COLUMN_NAME_TRACK));
-      String album = cursor.getString(cursor.getColumnIndexOrThrow(ScrobbleLogEntry.COLUMN_NAME_ALBUM));
-
-      ScrobbleStatus statusObj = new ScrobbleStatus(status, id);
-
-      Track.Builder trackBuilder = Track.builder()
-          .artist(artist)
-          .track(track);
-
-      if (album != null) {
-        trackBuilder.album(album);
+    for (ScrobbleLogEntry entry : entries) {
+      Track.Builder track = Track.builder().track(entry.track).artist(entry.artist);
+      if (entry.albumArtist != null) {
+        track.albumArtist(entry.albumArtist);
+      }
+      if (entry.album != null) {
+        track.album(entry.album);
       }
 
-      if (albumArtist != null) {
-        trackBuilder.albumArtist(albumArtist);
-      }
+      Scrobble scrobble =
+          Scrobble.builder()
+              .timestamp(entry.timestamp)
+              .status(new ScrobbleStatus(entry.status, entry.id))
+              .track(track.build())
+              .build();
 
-      Track trackObj = trackBuilder.build();
-
-      Scrobble scrobble = Scrobble.builder()
-          .status(statusObj)
-          .track(trackObj)
-          .timestamp(timestamp)
-          .build();
-
-      scrobbles.add(scrobble);
-      cursor.moveToNext();
+      builder.add(scrobble);
     }
+    return builder.build();
+  }
 
-    return scrobbles;
+  private List<PlaybackItem> pendingPlaybackEntriesToPlaybackItems(
+      List<PendingPlaybackItemEntry> entries) {
+    ImmutableList.Builder<PlaybackItem> builder = ImmutableList.builder();
+
+    for (PendingPlaybackItemEntry entry : entries) {
+      Track.Builder track = Track.builder().track(entry.track).artist(entry.artist);
+      if (entry.albumArtist != null) {
+        track.albumArtist(entry.albumArtist);
+      }
+      if (entry.album != null) {
+        track.album(entry.album);
+      }
+      builder.add(new PlaybackItem(track.build(), entry.timestamp, entry.amountPlayed, entry.id));
+    }
+    return builder.build();
   }
 }

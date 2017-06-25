@@ -1,6 +1,7 @@
 package com.peterjosling.scroball;
 
 import com.google.auto.value.AutoValue;
+import com.raizlabs.android.dbflow.structure.Model;
 
 @AutoValue
 public abstract class Scrobble {

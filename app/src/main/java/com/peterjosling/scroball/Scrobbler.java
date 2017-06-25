@@ -40,8 +40,8 @@ public class Scrobbler {
     this.scroballDB = scroballDB;
     this.connectivityManager = connectivityManager;
     // TODO write unit test to ensure non-network plays get scrobbled with duration lookup.
-    this.pendingPlaybackItems = scroballDB.readPendingPlaybackItems();
-    this.pending = scroballDB.readPendingScrobbles();
+    this.pendingPlaybackItems = new ArrayList<>(scroballDB.readPendingPlaybackItems());
+    this.pending = new ArrayList<>(scroballDB.readPendingScrobbles());
   }
 
   public void updateNowPlaying(Track track) {
