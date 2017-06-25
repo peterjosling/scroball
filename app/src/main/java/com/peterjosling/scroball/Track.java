@@ -44,6 +44,12 @@ public abstract class Track {
 
     Track.Builder builder = Track.builder().track(title);
 
+    if (duration < 1000) {
+      // Apple Music incorrectly reports durations in seconds instead of ms (when it reports
+      // duration at all).
+      duration *= 1000;
+    }
+
     if (duration > 0) {
       builder.duration(duration);
     }
