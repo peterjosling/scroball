@@ -100,11 +100,11 @@ public class Scrobbler {
     for (int i = 0; i < playCount; i++) {
       int itemTimestamp = (int) ((timestamp + i * duration) / 1000);
 
-      // TODO set album title too
-      Scrobble scrobble = Scrobble.builder()
-          .track(track)
-          .timestamp(itemTimestamp)
-          .build();
+      Scrobble scrobble =
+          Scrobble.builder()
+              .track(track)
+              .timestamp(itemTimestamp)
+              .build();
 
       pending.add(scrobble);
       scroballDB.writeScrobble(scrobble);
@@ -190,38 +190,34 @@ public class Scrobbler {
       tracksToScrobble.remove(tracksToScrobble.size() - 1);
     }
 
-    client.scrobbleTracks(tracksToScrobble, new Handler.Callback() {
-      @Override
-      @SuppressWarnings(value = "unchecked")
-      public boolean handleMessage(Message message) {
-        List<ScrobbleResult> results = (List<ScrobbleResult>) message.obj;
-        boolean didError = false;
+    client.scrobbleTracks(tracksToScrobble, message -> {
+      List<ScrobbleResult> results = (List<ScrobbleResult>) message.obj;
+      boolean didError = false;
 
-        for (int i = 0; i < results.size(); i++) {
-          ScrobbleResult result = results.get(i);
-          Scrobble scrobble = tracksToScrobble.get(i);
+      for (int i = 0; i < results.size(); i++) {
+        ScrobbleResult result = results.get(i);
+        Scrobble scrobble = tracksToScrobble.get(i);
 
-          if (result.isSuccessful()) {
-            scrobble.status().setScrobbled(true);
-            scroballDB.writeScrobble(scrobble);
-            pending.remove(scrobble);
-          } else {
-            // TODO set error code.
-            scrobble.status().setErrorCode(1);
-            scroballDB.writeScrobble(scrobble);
-            didError = true;
-          }
+        if (result.isSuccessful()) {
+          scrobble.status().setScrobbled(true);
+          scroballDB.writeScrobble(scrobble);
+          pending.remove(scrobble);
+        } else {
+          // TODO set error code.
+          scrobble.status().setErrorCode(1);
+          scroballDB.writeScrobble(scrobble);
+          didError = true;
         }
-
-        isScrobbling = false;
-
-        // TODO need to wait if there was an error/rate limiting
-        if (!didError) {
-          scrobblePending();
-        }
-
-        return false;
       }
+
+      isScrobbling = false;
+
+      // TODO need to wait if there was an error/rate limiting
+      if (!didError) {
+        scrobblePending();
+      }
+
+      return false;
     });
   }
 
