@@ -1,7 +1,6 @@
 package com.peterjosling.scroball;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -85,15 +84,19 @@ public class MainActivity extends AppCompatActivity {
     new AlertDialog.Builder(this)
         .setTitle(R.string.are_you_sure)
         .setMessage(R.string.logout_confirm)
-        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-          public void onClick(DialogInterface dialog, int whichButton) {
-            SharedPreferences preferences = application.getSharedPreferences();
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.remove(getString(R.string.saved_session_key));
-            editor.apply();
+        .setPositiveButton(android.R.string.yes, (dialog, whichButton) -> {
+          SharedPreferences preferences = application.getSharedPreferences();
+          SharedPreferences.Editor editor = preferences.edit();
+          editor.remove(getString(R.string.saved_session_key));
+          editor.apply();
 
-            application.getScroballDB().clear();
-          }
+          application.getScroballDB().clear();
+          application.getLastfmClient().clearSession();
+
+          Intent intent = new Intent(this, SplashScreen.class);
+          intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+          startActivity(intent);
+          finish();
         })
         .setNegativeButton(android.R.string.no, null).show();
   }

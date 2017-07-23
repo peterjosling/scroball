@@ -171,6 +171,10 @@ public class LastfmClient {
     }.execute();
   }
 
+  public void clearSession() {
+    session = null;
+  }
+
   private void setSession(String sessionKey) {
     session = Session.createSession(API_KEY, API_SECRET, sessionKey);
   }
