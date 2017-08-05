@@ -55,18 +55,15 @@ public class ScrobbleHistoryFragment extends Fragment {
     final Scrobble scrobble = event.scrobble();
     final long id = scrobble.status().getDbId();
 
-    getActivity().runOnUiThread(new Runnable() {
-      @Override
-      public void run() {
-        if (scrobbleMap.get(id) != null) {
-          scrobbleMap.get(id).status().setFrom(scrobble.status());
-        } else {
-          scrobbleMap.put(id, scrobble);
-          adapter.insert(scrobble, 0);
-        }
-
-        adapter.notifyDataSetChanged();
+    getActivity().runOnUiThread(() -> {
+      if (scrobbleMap.get(id) != null) {
+        scrobbleMap.get(id).status().setFrom(scrobble.status());
+      } else {
+        scrobbleMap.put(id, scrobble);
+        adapter.insert(scrobble, 0);
       }
+
+      adapter.notifyDataSetChanged();
     });
   }
 
