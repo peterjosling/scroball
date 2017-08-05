@@ -125,6 +125,10 @@ public class ScroballDB {
     Delete.tables(ScrobbleLogEntry.class, PendingPlaybackItemEntry.class);
   }
 
+  public void clearPendingPlaybackItems() {
+    Delete.table(PendingPlaybackItemEntry.class);
+  }
+
   private List<Scrobble> scrobbleEntriesToScrobbles(List<ScrobbleLogEntry> entries) {
     ImmutableList.Builder<Scrobble> builder = ImmutableList.builder();
 

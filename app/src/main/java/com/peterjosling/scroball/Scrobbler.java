@@ -170,6 +170,7 @@ public class Scrobbler {
 
     List<PlaybackItem> playbackItems = new ArrayList<>(pendingPlaybackItems);
     pendingPlaybackItems.clear();
+    scroballDB.clearPendingPlaybackItems();
 
     if (!playbackItems.isEmpty()) {
       Log.i(TAG, "Re-processing queued items with missing durations.");
