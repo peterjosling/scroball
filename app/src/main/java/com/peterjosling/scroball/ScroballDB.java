@@ -12,6 +12,7 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.List;
 
+/** FlowDB database to store scrobble history and pending scrobbles for the application. */
 @Database(name = ScroballDB.NAME, version = ScroballDB.VERSION)
 public class ScroballDB {
 
@@ -22,6 +23,7 @@ public class ScroballDB {
 
   private EventBus eventBus = ScroballApplication.getEventBus();
 
+  /** Returns a list of all pending and submitted {@link Scrobble}s. */
   public List<Scrobble> readScrobbles() {
     List<ScrobbleLogEntry> entries =
         SQLite.select()
@@ -31,6 +33,10 @@ public class ScroballDB {
     return scrobbleEntriesToScrobbles(entries);
   }
 
+  /**
+   * Writes a single scrobble to the database. If the scrobble already has already been written it
+   * will be updated.
+   */
   public void writeScrobble(Scrobble scrobble) {
     Track track = scrobble.track();
     ScrobbleStatus status = scrobble.status();
@@ -56,12 +62,20 @@ public class ScroballDB {
     eventBus.post(ScroballDBUpdateEvent.create(scrobble));
   }
 
+  /**
+   * Writes a list of scrobbles to the database.
+   *
+   * @see #writeScrobble(Scrobble)
+   */
   public void writeScrobbles(List<Scrobble> scrobbles) {
     for (Scrobble scrobble : scrobbles) {
       writeScrobble(scrobble);
     }
   }
 
+  /**
+   * Returns a list of all pending {@link PlaybackItem}s which have been written to the database.
+   */
   public List<Scrobble> readPendingScrobbles() {
     List<ScrobbleLogEntry> entries =
         SQLite.select()
@@ -72,6 +86,10 @@ public class ScroballDB {
     return scrobbleEntriesToScrobbles(entries);
   }
 
+  /**
+   * Writes a single {@link PlaybackItem} to the database. If the item has already been written it
+   * will be updated.
+   */
   public void writePendingPlaybackItem(PlaybackItem playbackItem) {
     Track track = playbackItem.getTrack();
     PendingPlaybackItemEntry entry = new PendingPlaybackItemEntry();
@@ -94,6 +112,7 @@ public class ScroballDB {
     playbackItem.setDbId(entry.id);
   }
 
+  /** Returns a list of all {@link PlaybackItem}s which have been written to the database. */
   public List<PlaybackItem> readPendingPlaybackItems() {
     List<PendingPlaybackItemEntry> entries =
         SQLite.select()
@@ -103,6 +122,15 @@ public class ScroballDB {
     return pendingPlaybackEntriesToPlaybackItems(entries);
   }
 
+  /**
+   * Clears all {@link PlaybackItem}s from the database. This method should be called when pending
+   * items have been queued for re-submission.
+   */
+  public void clearPendingPlaybackItems() {
+    Delete.table(PendingPlaybackItemEntry.class);
+  }
+
+  /** Prunes old submitted {@link Scrobble}s from the database, limiting to {@code MAX_ROWS}. */
   public void prune() {
     long rowCount =
         SQLite.selectCountOf()
@@ -121,12 +149,9 @@ public class ScroballDB {
     }
   }
 
+  /** Clears all {@link Scrobble} and {@link PlaybackItem}s from the database. */
   public void clear() {
     Delete.tables(ScrobbleLogEntry.class, PendingPlaybackItemEntry.class);
-  }
-
-  public void clearPendingPlaybackItems() {
-    Delete.table(PendingPlaybackItemEntry.class);
   }
 
   private List<Scrobble> scrobbleEntriesToScrobbles(List<ScrobbleLogEntry> entries) {
