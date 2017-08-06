@@ -42,6 +42,11 @@ android {
         targetCompatibility 1.8
         sourceCompatibility 1.8
     }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -61,6 +66,7 @@ dependencies {
     compile 'com.github.Raizlabs.DBFlow:dbflow:4.0.3'
     provided 'com.google.auto.value:auto-value:1.4.1'
     testCompile 'com.google.truth:truth:0.32'
+    testCompile 'org.robolectric:robolectric:3.4.2'
     androidTestCompile 'com.google.truth:truth:0.32'
     androidTestCompile 'com.android.support:support-v4:26.0.0'
     androidTestCompile 'com.android.support.test:rules:1.0.0'

@@ -1,46 +1,48 @@
 package com.peterjosling.scroball;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.runner.AndroidJUnit4;
-import android.test.RenamingDelegatingContext;
-
 import com.google.common.collect.ImmutableList;
+import com.raizlabs.android.dbflow.config.FlowManager;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
 
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 
-@RunWith(AndroidJUnit4.class)
+@RunWith(RobolectricTestRunner.class)
 public class ScroballDBTest {
 
-  Context context;
-  ScroballDB scroballDB;
-  Track track = Track.builder()
-      .duration(1)
-      .artist("Artist")
-      .track("Track")
-      .album("Album")
-      .albumArtist("Album artist")
-      .build();
+  private ScroballDB scroballDB = new ScroballDB();
+  private Track track =
+      Track.builder()
+          .artist("Artist")
+          .track("Track")
+          .album("Album")
+          .albumArtist("Album artist")
+          .build();
 
-  ScrobbleStatus scrobbleStatus = new ScrobbleStatus(0);
-  Scrobble scrobble = Scrobble.builder()
-      .track(track)
-      .timestamp((int) (System.currentTimeMillis() / 1000))
-      .status(scrobbleStatus)
-      .build();
+  private ScrobbleStatus scrobbleStatus = new ScrobbleStatus(0);
+  private Scrobble scrobble =
+      Scrobble.builder()
+          .track(track)
+          .timestamp((int) (System.currentTimeMillis() / 1000))
+          .status(scrobbleStatus)
+          .build();
 
   @Before
-  public void before() throws Exception {
-    context = new RenamingDelegatingContext(InstrumentationRegistry.getContext(), "test_");
+  public void before() {
+    FlowManager.init(RuntimeEnvironment.application);
+  }
 
-    scroballDB = new ScroballDB(ScroballDBHelper.getTestInstance(context));
-    scroballDB.open();
+  @After
+  public void after() {
+    scroballDB.clear();
+    FlowManager.destroy();
   }
 
   @Test
@@ -62,10 +64,9 @@ public class ScroballDBTest {
 
   @Test
   public void write_updatesExistingEntries() {
-    long id = 5;
-    scrobble.status().setDbId(id);
     scroballDB.writeScrobble(scrobble);
-    assertThat(scrobble.status().getDbId()).isEqualTo(id);
+    scroballDB.writeScrobble(scrobble);
+    assertThat(scroballDB.readScrobbles()).hasSize(1);
   }
 
   @Test
@@ -108,7 +109,8 @@ public class ScroballDBTest {
   }
 
   private Scrobble copyScrobble(Scrobble input) {
-    return input.toBuilder()
+    return input
+        .toBuilder()
         .status(new ScrobbleStatus(input.status().getErrorCode(), input.status().getDbId()))
         .build();
   }
