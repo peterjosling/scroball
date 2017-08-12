@@ -50,6 +50,10 @@ public class ScroballApplication extends Application {
     }
   }
 
+  public void stopListenerService() {
+    stopService(new Intent(this, ListenerService.class));
+  }
+
   public LastfmClient getLastfmClient() {
     return lastfmClient;
   }

@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
               editor.remove(getString(R.string.saved_session_key));
               editor.apply();
 
+              application.stopListenerService();
               application.getScroballDB().clear();
               application.getLastfmClient().clearSession();
               Auth.CredentialsApi.disableAutoSignIn(mGoogleApiClient);
