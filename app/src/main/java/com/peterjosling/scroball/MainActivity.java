@@ -14,6 +14,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
@@ -32,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
   /** The {@link ViewPager} that will host the section contents. */
   private ViewPager mViewPager;
+
+  private GoogleApiClient mGoogleApiClient;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,12 @@ public class MainActivity extends AppCompatActivity {
 
     TabLayout tabLayout = findViewById(R.id.tabs);
     tabLayout.setupWithViewPager(mViewPager);
+
+    mGoogleApiClient =
+        new GoogleApiClient.Builder(this)
+            .enableAutoManage(this, 0, null)
+            .addApi(Auth.CREDENTIALS_API)
+            .build();
   }
 
   @Override
@@ -89,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
               application.getScroballDB().clear();
               application.getLastfmClient().clearSession();
+              Auth.CredentialsApi.disableAutoSignIn(mGoogleApiClient);
 
               Intent intent = new Intent(this, SplashScreen.class);
               intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

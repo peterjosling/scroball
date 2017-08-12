@@ -30,6 +30,7 @@
     <string name="error_internet">You are not connected to the internet</string>
     <string name="splash_notification_access">Notification Access required</string>
     <string name="splash_notification_access_text">The Notification Access permission is required by Scroball to read device playback state.</string>
+    <string name="lastfm_logo_description">Last.fm logo</string>
 
     <!-- Strings related to the main screen -->
     <string name="settings">Settings</string>

@@ -21,6 +21,7 @@
                 android:layout_width="200dip"
                 android:layout_height="100dip"
                 android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/lastfm_logo_description"
                 android:src="@drawable/lastfm_logo"
                 android:tint="@color/colorLastfmLogo"/>
 
