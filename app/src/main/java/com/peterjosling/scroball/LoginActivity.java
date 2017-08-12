@@ -1,15 +1,12 @@
 package com.peterjosling.scroball;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -29,8 +26,7 @@ public class LoginActivity extends AppCompatActivity {
   // UI references.
   private EditText mUsernameView;
   private EditText mPasswordView;
-  private View mProgressView;
-  private View mLoginFormView;
+  private ProgressDialog loadingDialog;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +48,6 @@ public class LoginActivity extends AppCompatActivity {
 
     Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
     mEmailSignInButton.setOnClickListener(view -> attemptLogin());
-
-    mLoginFormView = findViewById(R.id.login_form);
-    mProgressView = findViewById(R.id.login_progress);
 
     application = (ScroballApplication) getApplication();
   }
@@ -114,14 +107,14 @@ public class LoginActivity extends AppCompatActivity {
     } else {
       // Show a progress spinner, and kick off a background task to
       // perform the user login attempt.
-      showProgress(true);
+      showProgress();
       LastfmClient lastfmClient = application.getLastfmClient();
       lastfmClient.authenticate(
           username,
           password,
           message -> {
             mAuthTask = null;
-            showProgress(false);
+            hideProgress();
 
             AuthResult result = (AuthResult) message.obj;
 
@@ -148,36 +141,14 @@ public class LoginActivity extends AppCompatActivity {
     }
   }
 
-  /** Shows the progress UI and hides the login form. */
-  @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-  private void showProgress(final boolean show) {
-    int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+  /** Shows the modal progress dialog. */
+  private void showProgress() {
+    loadingDialog = ProgressDialog.show(this, null, getText(R.string.progress_logging_in));
+  }
 
-    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-    mLoginFormView
-        .animate()
-        .setDuration(shortAnimTime)
-        .alpha(show ? 0 : 1)
-        .setListener(
-            new AnimatorListenerAdapter() {
-              @Override
-              public void onAnimationEnd(Animator animation) {
-                mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-              }
-            });
-
-    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-    mProgressView
-        .animate()
-        .setDuration(shortAnimTime)
-        .alpha(show ? 1 : 0)
-        .setListener(
-            new AnimatorListenerAdapter() {
-              @Override
-              public void onAnimationEnd(Animator animation) {
-                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-              }
-            });
+  /** Hides the modal progress dialog. */
+  private void hideProgress() {
+    loadingDialog.cancel();
   }
 
   private void showErrorDialog(String message) {
