@@ -22,6 +22,10 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+  public static final String EXTRA_INITIAL_TAB = "initial_tab";
+  public static final int TAB_NOW_PLAYING = 0;
+  public static final int TAB_SCROBBLE_HISTORY = 1;
+
   private ScroballApplication application;
 
   /**
@@ -57,6 +61,10 @@ public class MainActivity extends AppCompatActivity {
 
     TabLayout tabLayout = findViewById(R.id.tabs);
     tabLayout.setupWithViewPager(mViewPager);
+
+    // Initial tab may have been specified in the intent.
+    int initialTab = getIntent().getIntExtra(EXTRA_INITIAL_TAB, TAB_NOW_PLAYING);
+    mViewPager.setCurrentItem(initialTab);
 
     mGoogleApiClient =
         new GoogleApiClient.Builder(this)

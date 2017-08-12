@@ -33,8 +33,8 @@ public class ScrobbleNotificationManager {
   public ScrobbleNotificationManager(Context context, SharedPreferences sharedPreferences) {
     this.context = context;
     this.sharedPreferences = sharedPreferences;
-    this.notificationManager = (NotificationManager)
-        context.getSystemService(Context.NOTIFICATION_SERVICE);
+    this.notificationManager =
+        (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
     context.registerReceiver(
         new NotificationDismissedReceiver(), new IntentFilter(NOTIFICATION_DISMISS_ACTION));
@@ -45,14 +45,21 @@ public class ScrobbleNotificationManager {
       return;
     }
 
-    Notification notification = new Notification.Builder(context)
-        .setSmallIcon(R.drawable.ic_notif)
-        .setContentTitle("Now playing")
-        .setContentText(String.format("%s — %s", track.artist(), track.track()))
-        .setOngoing(true)
-        .setCategory(Notification.CATEGORY_STATUS)
-        .setColor(Color.argb(255, 242, 72, 63))
-        .build();
+    Intent intent = new Intent(context, MainActivity.class);
+    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    PendingIntent pendingIntent =
+        PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+    Notification notification =
+        new Notification.Builder(context)
+            .setSmallIcon(R.drawable.ic_notif)
+            .setContentTitle("Now playing")
+            .setContentText(String.format("%s — %s", track.artist(), track.track()))
+            .setOngoing(true)
+            .setCategory(Notification.CATEGORY_STATUS)
+            .setColor(Color.argb(255, 242, 72, 63))
+            .setContentIntent(pendingIntent)
+            .build();
 
     notificationManager.notify(NOW_PLAYING_ID, notification);
   }
@@ -100,21 +107,33 @@ public class ScrobbleNotificationManager {
     }
 
     Joiner joiner = Joiner.on("\n");
-    Intent intent = new Intent(NOTIFICATION_DISMISS_ACTION);
-    PendingIntent pendingIntent = PendingIntent.getBroadcast(
-        context, SCROBBLE_ID, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    PendingIntent dismissIntent =
+        PendingIntent.getBroadcast(
+            context,
+            SCROBBLE_ID,
+            new Intent(NOTIFICATION_DISMISS_ACTION),
+            PendingIntent.FLAG_UPDATE_CURRENT);
 
-    Notification.Builder notificationBuilder = new Notification.Builder(context)
-        .setSmallIcon(R.drawable.ic_notif)
-        .setContentTitle(title)
-        .setContentText(text)
-        .setCategory(Notification.CATEGORY_STATUS)
-        .setColor(Color.argb(255, 139, 195, 74))
-        .setDeleteIntent(pendingIntent);
+    Intent clickIntent = new Intent(context, MainActivity.class);
+    clickIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    clickIntent.putExtra(MainActivity.EXTRA_INITIAL_TAB, MainActivity.TAB_SCROBBLE_HISTORY);
+    PendingIntent clickPendingIntent =
+        PendingIntent.getActivity(context, 0, clickIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+    Notification.Builder notificationBuilder =
+        new Notification.Builder(context)
+            .setSmallIcon(R.drawable.ic_notif)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setCategory(Notification.CATEGORY_STATUS)
+            .setColor(Color.argb(255, 139, 195, 74))
+            .setContentIntent(clickPendingIntent)
+            .setDeleteIntent(dismissIntent)
+            .setAutoCancel(true);
 
     if (tracks.size() > 1) {
-      notificationBuilder
-          .setStyle(new Notification.BigTextStyle().bigText(joiner.join(descriptions)));
+      notificationBuilder.setStyle(
+          new Notification.BigTextStyle().bigText(joiner.join(descriptions)));
     }
 
     notificationManager.notify(SCROBBLE_ID, notificationBuilder.build());
