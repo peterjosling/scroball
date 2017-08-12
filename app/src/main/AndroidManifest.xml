@@ -10,6 +10,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
@@ -44,9 +45,10 @@
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity">
         </activity>
+
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="9f73e09c31fe1db8981fe3cbcc5ec24aa4ffed81" />
+            android:value="9f73e09c31fe1db8981fe3cbcc5ec24aa4ffed81"/>
     </application>
 
 </manifest>
