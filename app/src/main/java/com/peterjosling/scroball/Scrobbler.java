@@ -2,8 +2,6 @@ package com.peterjosling.scroball;
 
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
 import com.google.common.base.Optional;
@@ -130,31 +128,28 @@ public class Scrobbler {
     }
 
     Track track = playbackItem.getTrack();
-    client.getTrackInfo(track.artist(), track.track(), new Handler.Callback() {
-      @Override
-      public boolean handleMessage(Message message) {
-        // TODO error handling
-        if (message.obj == null) {
-          Result result = Caller.getInstance().getLastResult();
+    client.getTrackInfo(track.artist(), track.track(), message -> {
+      // TODO error handling
+      if (message.obj == null) {
+        Result result = Caller.getInstance().getLastResult();
 
-          if (result != null && result.getErrorCode() == 6) {
-            Log.w(TAG, "Track not found, cannot scrobble.");
-          } else {
-            // TODO check error code here.
-            Log.w(TAG, "Failed to fetch track duration, saving for later.");
-            queuePendingPlaybackItem(playbackItem);
-          }
-
-          return true;
+        if (result != null && result.getErrorCode() == 6) {
+          Log.w(TAG, "Track not found, cannot scrobble.");
+        } else {
+          // TODO check error code here.
+          Log.w(TAG, "Failed to fetch track duration, saving for later.");
+          queuePendingPlaybackItem(playbackItem);
         }
 
-        Track updatedTrack = (Track) message.obj;
-        playbackItem.updateTrack(updatedTrack);
-        Log.i(TAG, String.format("Track info updated: %s", playbackItem));
-
-        submit(playbackItem);
         return true;
       }
+
+      Track updatedTrack = (Track) message.obj;
+      playbackItem.updateTrack(updatedTrack);
+      Log.i(TAG, String.format("Track info updated: %s", playbackItem));
+
+      submit(playbackItem);
+      return true;
     });
   }
 
