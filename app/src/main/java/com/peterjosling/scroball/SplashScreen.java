@@ -12,6 +12,7 @@ import android.provider.Settings;
 public class SplashScreen extends Activity {
 
   private AlertDialog alertDialog;
+  private ScroballApplication application;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -19,21 +20,14 @@ public class SplashScreen extends Activity {
     setContentView(R.layout.activity_splash_screen);
     PreferenceManager.setDefaultValues(this, R.xml.pref_notification, false);
     PreferenceManager.setDefaultValues(this, R.xml.pref_players, false);
-    startService();
+    application = (ScroballApplication) getApplication();
+    enableNotificationAccess();
   }
 
   @Override
   protected void onResume() {
     super.onResume();
-    startService();
-  }
-
-  private void startService() {
     enableNotificationAccess();
-
-    if (ListenerService.isNotificationAccessEnabled(this)) {
-      startService(new Intent(this, ListenerService.class));
-    }
   }
 
   private void enableNotificationAccess() {
@@ -61,8 +55,6 @@ public class SplashScreen extends Activity {
 
       return;
     }
-
-    ScroballApplication application = (ScroballApplication) getApplication();
 
     if (application.getLastfmClient().isAuthenticated()) {
       Intent intent = new Intent(this, MainActivity.class);

@@ -1,6 +1,7 @@
 package com.peterjosling.scroball;
 
 import android.app.Application;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
@@ -14,7 +15,8 @@ import io.fabric.sdk.android.Fabric;
 public class ScroballApplication extends Application {
 
   private static EventBus eventBus = new EventBus();
-  private static NowPlayingChangeEvent lastEvent = NowPlayingChangeEvent.builder().source("").track(Track.empty()).build();
+  private static NowPlayingChangeEvent lastEvent =
+      NowPlayingChangeEvent.builder().source("").track(Track.empty()).build();
 
   private LastfmClient lastfmClient;
   private ScroballDB scroballDB;
@@ -40,6 +42,12 @@ public class ScroballApplication extends Application {
 
     scroballDB = new ScroballDB();
     eventBus.register(this);
+  }
+
+  public void startListenerService() {
+    if (ListenerService.isNotificationAccessEnabled(this) && getLastfmClient().isAuthenticated()) {
+      startService(new Intent(this, ListenerService.class));
+    }
   }
 
   public LastfmClient getLastfmClient() {
