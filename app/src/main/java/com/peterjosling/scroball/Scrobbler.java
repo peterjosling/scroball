@@ -54,7 +54,7 @@ public class Scrobbler {
     if (!isConnected) {
       return;
     }
-    client.updateNowPlaying(track.artist(), track.track());
+    client.updateNowPlaying(track);
   }
 
   public void submit(PlaybackItem playbackItem) {
@@ -128,7 +128,7 @@ public class Scrobbler {
     }
 
     Track track = playbackItem.getTrack();
-    client.getTrackInfo(track.artist(), track.track(), message -> {
+    client.getTrackInfo(track, message -> {
       // TODO error handling
       if (message.obj == null) {
         Result result = Caller.getInstance().getLastResult();

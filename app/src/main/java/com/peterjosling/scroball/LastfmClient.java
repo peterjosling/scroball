@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.google.common.collect.ImmutableList;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,130 +44,37 @@ public class LastfmClient {
     return session != null;
   }
 
-  public void authenticate(final String username, final String password, final Handler.Callback callback) {
-    new AsyncTask<Void, Void, AuthResult>() {
-      @Override
-      protected AuthResult doInBackground(Void... voids) {
-        Session session = Authenticator.getMobileSession(username, password, API_KEY, API_SECRET);
-
-        if (session != null) {
-          String sessionKey = session.getKey();
-          setSession(sessionKey);
-
-          return AuthResult.builder()
-              .sessionKey(sessionKey)
-              .build();
-        }
-
-        Result result = Caller.getInstance().getLastResult();
-        AuthResult.Builder authResultBuilder = AuthResult.builder();
-        int httpErrorCode = result.getHttpErrorCode();
-        int errorCode = result.getErrorCode();
-        String errorMessage = result.getErrorMessage();
-
-        if (httpErrorCode > -1) {
-          authResultBuilder.httpErrorCode(httpErrorCode);
-        }
-
-        if (errorCode > -1) {
-          authResultBuilder.errorCode(errorCode);
-        }
-
-        if (errorMessage != null) {
-          authResultBuilder.error(errorMessage);
-        }
-
-        return authResultBuilder.build();
-      }
-
-      @Override
-      protected void onPostExecute(AuthResult authResult) {
-        Message message = Message.obtain();
-        message.obj = authResult;
-        callback.handleMessage(message);
-      }
-    }.execute();
+  public void authenticate(String username, String password, Handler.Callback callback) {
+    new AuthenticateTask(
+            message -> {
+              AuthResult result = (AuthResult) message.obj;
+              if (result.sessionKey().isPresent()) {
+                setSession(result.sessionKey().get());
+              }
+              callback.handleMessage(message);
+              return true;
+            })
+        .execute(AuthRequest.create(username, password));
   }
 
-  public void updateNowPlaying(final String artist, final String track) {
-    new AsyncTask<Object, Object, ScrobbleResult>() {
-      @Override
-      protected ScrobbleResult doInBackground(Object... params) {
-        try {
-          return Track.updateNowPlaying(artist, track, session);
-        } catch (CallException e) {
-          Log.e(TAG, "Failed to update now playing status", e);
-        }
-        return null;
-      }
-
-      @Override
-      protected void onPostExecute(ScrobbleResult scrobbleResult) {
-        if (scrobbleResult != null && scrobbleResult.isSuccessful()) {
-          Log.i(TAG, "Now playing status updated");
-        } else {
-          Log.e(TAG, String.format("Failed to update now playing status: %s", scrobbleResult));
-        }
-      }
-    }.execute();
+  public void updateNowPlaying(com.peterjosling.scroball.Track track) {
+    new UpdateNowPlayingTask(session).execute(track);
   }
 
-  public void scrobbleTracks(final List<Scrobble> scrobbles, final Handler.Callback callback) {
-    final List<ScrobbleData> scrobbleData = new ArrayList<>();
+  public void scrobbleTracks(List<Scrobble> scrobbles, Handler.Callback callback) {
+    final ScrobbleData[] scrobbleData = new ScrobbleData[scrobbles.size()];
 
-    for (Scrobble scrobble : scrobbles) {
+    for (int i = 0; i < scrobbles.size(); i++) {
+      Scrobble scrobble = scrobbles.get(i);
       com.peterjosling.scroball.Track track = scrobble.track();
-      scrobbleData.add(new ScrobbleData(track.artist(), track.track(), scrobble.timestamp()));
+      scrobbleData[i] = new ScrobbleData(track.artist(), track.track(), scrobble.timestamp());
     }
 
-    new AsyncTask<Object, Object, List<ScrobbleResult>>() {
-      @Override
-      protected List<ScrobbleResult> doInBackground(Object... params) {
-        try {
-          return Track.scrobble(scrobbleData, session);
-        } catch (CallException e) {
-          Log.e(TAG, "Failed to submit scrobbles", e);
-        }
-        return ImmutableList.of();
-      }
-
-      @Override
-      protected void onPostExecute(List<ScrobbleResult> results) {
-        Message message = Message.obtain();
-        message.obj = results;
-        callback.handleMessage(message);
-        Log.i(TAG, String.format("Scrobbles submitted: %s", Arrays.toString(results.toArray())));
-      }
-    }.execute();
+    new ScrobbleTracksTask(session, callback).execute(scrobbleData);
   }
 
-  public void getTrackInfo(final String artist, final String track, final Handler.Callback callback) {
-    new AsyncTask<Object, Object, Track>() {
-      @Override
-      protected Track doInBackground(Object... params) {
-        try {
-          return Track.getInfo(artist, track, session.getApiKey());
-        } catch (CallException e) {
-          Log.e(TAG, "Failed to fetch track info", e);
-        }
-        return null;
-      }
-
-      @Override
-      protected void onPostExecute(Track updatedTrack) {
-        Message message = Message.obtain();
-
-        if (updatedTrack != null) {
-          message.obj = com.peterjosling.scroball.Track.builder()
-              .artist(artist)
-              .track(track)
-              .duration(updatedTrack.getDuration() * 1000)
-              .build();
-        }
-
-        callback.handleMessage(message);
-      }
-    }.execute();
+  public void getTrackInfo(com.peterjosling.scroball.Track track, Handler.Callback callback) {
+    new GetTrackInfoTask(session, callback).execute(track);
   }
 
   public void clearSession() {
@@ -177,5 +83,148 @@ public class LastfmClient {
 
   private void setSession(String sessionKey) {
     session = Session.createSession(API_KEY, API_SECRET, sessionKey);
+  }
+
+  private static class AuthenticateTask extends AsyncTask<AuthRequest, Void, AuthResult> {
+    private final Handler.Callback callback;
+
+    public AuthenticateTask(Handler.Callback callback) {
+      this.callback = callback;
+    }
+
+    @Override
+    protected AuthResult doInBackground(AuthRequest... params) {
+      AuthRequest request = params[0];
+      Session session =
+          Authenticator.getMobileSession(
+              request.username(), request.password(), API_KEY, API_SECRET);
+
+      if (session != null) {
+        return AuthResult.builder().sessionKey(session.getKey()).build();
+      }
+
+      Result result = Caller.getInstance().getLastResult();
+      AuthResult.Builder authResultBuilder = AuthResult.builder();
+      int httpErrorCode = result.getHttpErrorCode();
+      int errorCode = result.getErrorCode();
+      String errorMessage = result.getErrorMessage();
+
+      if (httpErrorCode > -1) {
+        authResultBuilder.httpErrorCode(httpErrorCode);
+      }
+
+      if (errorCode > -1) {
+        authResultBuilder.errorCode(errorCode);
+      }
+
+      if (errorMessage != null) {
+        authResultBuilder.error(errorMessage);
+      }
+
+      return authResultBuilder.build();
+    }
+
+    @Override
+    protected void onPostExecute(AuthResult authResult) {
+      Message message = Message.obtain();
+      message.obj = authResult;
+      callback.handleMessage(message);
+    }
+  }
+
+  private static class UpdateNowPlayingTask
+      extends AsyncTask<com.peterjosling.scroball.Track, Object, ScrobbleResult> {
+    private final Session session;
+
+    public UpdateNowPlayingTask(Session session) {
+      this.session = session;
+    }
+
+    @Override
+    protected ScrobbleResult doInBackground(com.peterjosling.scroball.Track... params) {
+      com.peterjosling.scroball.Track track = params[0];
+      try {
+        return Track.updateNowPlaying(track.artist(), track.track(), session);
+      } catch (CallException e) {
+        Log.e(TAG, "Failed to update now playing status", e);
+      }
+      return null;
+    }
+
+    @Override
+    protected void onPostExecute(ScrobbleResult scrobbleResult) {
+      if (scrobbleResult != null && scrobbleResult.isSuccessful()) {
+        Log.i(TAG, "Now playing status updated");
+      } else {
+        Log.e(TAG, String.format("Failed to update now playing status: %s", scrobbleResult));
+      }
+    }
+  }
+
+  private static class ScrobbleTracksTask
+      extends AsyncTask<ScrobbleData, Object, List<ScrobbleResult>> {
+    private final Session session;
+    private final Handler.Callback callback;
+
+    ScrobbleTracksTask(Session session, Handler.Callback callback) {
+      this.callback = callback;
+      this.session = session;
+    }
+
+    @Override
+    protected List<ScrobbleResult> doInBackground(ScrobbleData... params) {
+      try {
+        return Track.scrobble(ImmutableList.copyOf(params), session);
+      } catch (CallException e) {
+        Log.e(TAG, "Failed to submit scrobbles", e);
+      }
+      return ImmutableList.of();
+    }
+
+    @Override
+    protected void onPostExecute(List<ScrobbleResult> results) {
+      Message message = Message.obtain();
+      message.obj = results;
+      callback.handleMessage(message);
+      Log.i(TAG, String.format("Scrobbles submitted: %s", Arrays.toString(results.toArray())));
+    }
+  }
+
+  private static class GetTrackInfoTask
+      extends AsyncTask<com.peterjosling.scroball.Track, Object, Track> {
+    private final Session session;
+    private final Handler.Callback callback;
+
+    public GetTrackInfoTask(Session session, Handler.Callback callback) {
+      this.session = session;
+      this.callback = callback;
+    }
+
+    @Override
+    protected Track doInBackground(com.peterjosling.scroball.Track... params) {
+      com.peterjosling.scroball.Track track = params[0];
+      try {
+        return Track.getInfo(track.artist(), track.track(), session.getApiKey());
+      } catch (CallException e) {
+        Log.e(TAG, "Failed to fetch track info", e);
+      }
+      return null;
+    }
+
+    @Override
+    protected void onPostExecute(Track updatedTrack) {
+      Message message = Message.obtain();
+
+      if (updatedTrack != null) {
+        message.obj =
+            com.peterjosling.scroball.Track.builder()
+                .artist(updatedTrack.getArtist())
+                .track(updatedTrack.getName())
+                .duration(updatedTrack.getDuration() * 1000)
+                .build();
+      }
+
+      callback.handleMessage(message);
+    }
   }
 }
