@@ -2,7 +2,6 @@ package com.peterjosling.scroball.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -43,17 +42,14 @@ public class SplashScreen extends Activity {
       alertDialog = new AlertDialog.Builder(this)
           .setTitle(R.string.splash_notification_access)
           .setMessage(R.string.splash_notification_access_text)
-          .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-              String action;
-              if (Build.VERSION.SDK_INT >= 22) {
-                action = Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS;
-              } else {
-                action = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
-              }
-              startActivity(new Intent(action));
+          .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
+            String action;
+            if (Build.VERSION.SDK_INT >= 22) {
+              action = Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS;
+            } else {
+              action = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
             }
+            startActivity(new Intent(action));
           })
           .show();
 
