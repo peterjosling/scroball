@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.peterjosling.scroball.SplashScreen">
+    tools:context="com.peterjosling.scroball.ui.SplashScreen">
 
     <ImageView
         android:layout_width="150dip"

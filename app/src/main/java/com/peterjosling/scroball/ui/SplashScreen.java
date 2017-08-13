@@ -1,4 +1,4 @@
-package com.peterjosling.scroball;
+package com.peterjosling.scroball.ui;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,6 +8,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+
+import com.peterjosling.scroball.ListenerService;
+import com.peterjosling.scroball.R;
+import com.peterjosling.scroball.ScroballApplication;
 
 public class SplashScreen extends Activity {
 

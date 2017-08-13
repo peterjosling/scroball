@@ -3,12 +3,12 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="com.peterjosling.scroball.SettingsActivity$PlayersPreferenceFragment"
+        android:fragment="com.peterjosling.scroball.ui.SettingsActivity$PlayersPreferenceFragment"
         android:icon="@drawable/ic_play_circle_outline"
         android:title="@string/pref_header_players" />
 
     <header
-        android:fragment="com.peterjosling.scroball.SettingsActivity$NotificationPreferenceFragment"
+        android:fragment="com.peterjosling.scroball.ui.SettingsActivity$NotificationPreferenceFragment"
         android:icon="@drawable/ic_notifications_black_24dp"
         android:title="@string/pref_header_notifications" />
 

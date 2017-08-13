@@ -1,4 +1,4 @@
-package com.peterjosling.scroball;
+package com.peterjosling.scroball.ui;
 
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -14,6 +14,10 @@ import android.widget.TextView;
 
 import com.google.common.base.Optional;
 import com.google.common.eventbus.Subscribe;
+import com.peterjosling.scroball.NowPlayingChangeEvent;
+import com.peterjosling.scroball.R;
+import com.peterjosling.scroball.ScroballApplication;
+import com.peterjosling.scroball.Track;
 
 public class NowPlayingFragment extends Fragment {
 

@@ -1,4 +1,4 @@
-package com.peterjosling.scroball;
+package com.peterjosling.scroball.ui;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -24,6 +24,10 @@ import com.google.android.gms.auth.api.credentials.CredentialRequest;
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
+import com.peterjosling.scroball.AuthResult;
+import com.peterjosling.scroball.LastfmClient;
+import com.peterjosling.scroball.R;
+import com.peterjosling.scroball.ScroballApplication;
 
 /** A login screen that offers login via email/password. */
 public class LoginActivity extends AppCompatActivity

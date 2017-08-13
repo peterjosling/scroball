@@ -1,4 +1,4 @@
-package com.peterjosling.scroball;
+package com.peterjosling.scroball.ui;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -17,6 +17,8 @@ import android.view.MenuItem;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.common.collect.ImmutableList;
+import com.peterjosling.scroball.R;
+import com.peterjosling.scroball.ScroballApplication;
 
 import java.util.List;
 

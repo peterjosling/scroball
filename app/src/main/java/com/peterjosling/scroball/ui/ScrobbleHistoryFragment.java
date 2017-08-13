@@ -1,4 +1,4 @@
-package com.peterjosling.scroball;
+package com.peterjosling.scroball.ui;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,6 +11,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.google.common.eventbus.Subscribe;
+import com.peterjosling.scroball.R;
+import com.peterjosling.scroball.ScroballApplication;
+import com.peterjosling.scroball.Scrobble;
 import com.peterjosling.scroball.db.ScroballDB;
 import com.peterjosling.scroball.db.ScroballDBUpdateEvent;
 

@@ -5,7 +5,7 @@
         android:layout_height="match_parent"
         android:gravity="center_horizontal"
         android:orientation="vertical"
-        tools:context="com.peterjosling.scroball.LoginActivity">
+        tools:context="com.peterjosling.scroball.ui.LoginActivity">
 
         <LinearLayout
             android:id="@+id/email_login_form"

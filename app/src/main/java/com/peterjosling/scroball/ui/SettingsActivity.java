@@ -1,4 +1,4 @@
-package com.peterjosling.scroball;
+package com.peterjosling.scroball.ui;
 
 
 import android.annotation.TargetApi;
@@ -18,6 +18,8 @@ import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
 import android.support.v7.app.ActionBar;
 import android.view.MenuItem;
+
+import com.peterjosling.scroball.R;
 
 import java.util.ArrayList;
 import java.util.List;

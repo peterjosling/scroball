@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.peterjosling.scroball.ScrobbleHistoryFragment">
+    tools:context="com.peterjosling.scroball.ui.ScrobbleHistoryFragment">
 
     <ListView
         android:id="@+id/scrobble_history_list_view"

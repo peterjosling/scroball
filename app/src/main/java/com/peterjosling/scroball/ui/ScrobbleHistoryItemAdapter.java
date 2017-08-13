@@ -1,4 +1,4 @@
-package com.peterjosling.scroball;
+package com.peterjosling.scroball.ui;
 
 import android.content.Context;
 import android.support.annotation.LayoutRes;
@@ -11,6 +11,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.peterjosling.scroball.R;
+import com.peterjosling.scroball.Scrobble;
 
 import java.text.DateFormat;
 import java.util.List;

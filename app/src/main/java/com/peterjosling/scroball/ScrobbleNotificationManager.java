@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 
 import com.google.common.base.Joiner;
+import com.peterjosling.scroball.ui.MainActivity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
