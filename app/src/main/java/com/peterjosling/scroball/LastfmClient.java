@@ -194,6 +194,7 @@ public class LastfmClient {
       extends AsyncTask<com.peterjosling.scroball.Track, Object, Track> {
     private final Session session;
     private final Handler.Callback callback;
+    private com.peterjosling.scroball.Track track;
 
     public GetTrackInfoTask(Session session, Handler.Callback callback) {
       this.session = session;
@@ -202,7 +203,7 @@ public class LastfmClient {
 
     @Override
     protected Track doInBackground(com.peterjosling.scroball.Track... params) {
-      com.peterjosling.scroball.Track track = params[0];
+      track = params[0];
       try {
         return Track.getInfo(track.artist(), track.track(), session.getApiKey());
       } catch (CallException e) {
@@ -216,12 +217,18 @@ public class LastfmClient {
       Message message = Message.obtain();
 
       if (updatedTrack != null) {
-        message.obj =
+        com.peterjosling.scroball.Track.Builder builder =
             com.peterjosling.scroball.Track.builder()
-                .artist(updatedTrack.getArtist())
-                .track(updatedTrack.getName())
-                .duration(updatedTrack.getDuration() * 1000)
-                .build();
+                .artist(track.artist())
+                .track(track.track())
+                .duration(updatedTrack.getDuration() * 1000);
+
+        if (track.album().isPresent()) {
+          builder.album(track.album().get());
+        } else {
+          builder.album(updatedTrack.getAlbum());
+        }
+        message.obj = builder.build();
       }
 
       callback.handleMessage(message);
