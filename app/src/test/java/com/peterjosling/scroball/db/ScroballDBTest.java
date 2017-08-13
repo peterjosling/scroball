@@ -1,6 +1,9 @@
-package com.peterjosling.scroball;
+package com.peterjosling.scroball.db;
 
 import com.google.common.collect.ImmutableList;
+import com.peterjosling.scroball.Scrobble;
+import com.peterjosling.scroball.ScrobbleStatus;
+import com.peterjosling.scroball.Track;
 import com.peterjosling.scroball.db.ScroballDB;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
