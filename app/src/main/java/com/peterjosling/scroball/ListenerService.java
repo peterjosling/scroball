@@ -18,6 +18,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.peterjosling.scroball.db.ScroballDB;
 
 import java.util.ArrayList;
 import java.util.HashSet;

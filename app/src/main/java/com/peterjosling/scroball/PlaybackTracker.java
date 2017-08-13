@@ -4,6 +4,7 @@ import android.media.MediaMetadata;
 import android.media.session.PlaybackState;
 import android.net.ConnectivityManager;
 
+import com.peterjosling.scroball.db.ScroballDB;
 import com.peterjosling.scroball.transforms.MetadataTransformers;
 
 import java.util.HashMap;

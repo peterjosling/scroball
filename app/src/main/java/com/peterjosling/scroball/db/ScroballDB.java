@@ -1,11 +1,12 @@
-package com.peterjosling.scroball;
+package com.peterjosling.scroball.db;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
-import com.peterjosling.scroball.db.PendingPlaybackItemEntry;
-import com.peterjosling.scroball.db.PendingPlaybackItemEntry_Table;
-import com.peterjosling.scroball.db.ScrobbleLogEntry;
-import com.peterjosling.scroball.db.ScrobbleLogEntry_Table;
+import com.peterjosling.scroball.PlaybackItem;
+import com.peterjosling.scroball.ScroballApplication;
+import com.peterjosling.scroball.Scrobble;
+import com.peterjosling.scroball.ScrobbleStatus;
+import com.peterjosling.scroball.Track;
 import com.raizlabs.android.dbflow.annotation.Database;
 import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.SQLite;

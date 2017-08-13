@@ -1,6 +1,7 @@
 package com.peterjosling.scroball;
 
 import com.google.common.collect.ImmutableList;
+import com.peterjosling.scroball.db.ScroballDB;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
 import org.junit.After;

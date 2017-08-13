@@ -5,6 +5,7 @@ import android.net.NetworkInfo;
 import android.util.Log;
 
 import com.google.common.base.Optional;
+import com.peterjosling.scroball.db.ScroballDB;
 
 import java.util.ArrayList;
 import java.util.List;

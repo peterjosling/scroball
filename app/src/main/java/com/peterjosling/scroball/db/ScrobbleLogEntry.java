@@ -1,6 +1,5 @@
 package com.peterjosling.scroball.db;
 
-import com.peterjosling.scroball.ScroballDB;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;

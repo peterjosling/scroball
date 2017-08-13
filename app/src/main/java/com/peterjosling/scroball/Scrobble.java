@@ -1,7 +1,6 @@
 package com.peterjosling.scroball;
 
 import com.google.auto.value.AutoValue;
-import com.raizlabs.android.dbflow.structure.Model;
 
 @AutoValue
 public abstract class Scrobble {
@@ -16,11 +15,11 @@ public abstract class Scrobble {
   }
 
   @AutoValue.Builder
-  abstract static class Builder {
+  public abstract static class Builder {
 
-    abstract Builder track(Track track);
-    abstract Builder timestamp(int timestamp);
-    abstract Builder status(ScrobbleStatus status);
-    abstract Scrobble build();
+    public abstract Builder track(Track track);
+    public abstract Builder timestamp(int timestamp);
+    public abstract Builder status(ScrobbleStatus status);
+    public abstract Scrobble build();
   }
 }

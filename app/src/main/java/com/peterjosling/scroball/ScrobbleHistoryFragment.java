@@ -11,6 +11,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.google.common.eventbus.Subscribe;
+import com.peterjosling.scroball.db.ScroballDB;
+import com.peterjosling.scroball.db.ScroballDBUpdateEvent;
 
 import java.util.ArrayList;
 import java.util.List;
