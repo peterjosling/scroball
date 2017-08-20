@@ -122,8 +122,8 @@ public class Scrobbler {
     NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
     boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
-    if (!isConnected) {
-      Log.i(TAG, "Offline, can't fetch track duration. Saving for later.");
+    if (!isConnected || !client.isAuthenticated()) {
+      Log.i(TAG, "Offline or unauthenticated, can't fetch track duration. Saving for later.");
       queuePendingPlaybackItem(playbackItem);
       return;
     }
