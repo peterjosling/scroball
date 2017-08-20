@@ -10,11 +10,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.AudioAttributes;
+import android.media.RingtoneManager;
 import android.os.Build;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.peterjosling.scroball.ui.MainActivity;
+import com.peterjosling.scroball.ui.SplashScreen;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,7 +29,10 @@ public class ScrobbleNotificationManager {
 
   private static final int NOW_PLAYING_ID = 0;
   private static final int SCROBBLE_ID = 1;
+  private static final int AUTH_ERROR_ID = 2;
+
   private static final String CHANNEL_ID_SCROBBLE = "scrobble";
+  private static final String CHANNEL_ID_ERROR = "error";
   private static final String CHANNEL_ID_NOW_PLAYING = "now_playing";
 
   private static final String NOTIFICATION_DISMISS_ACTION = "scrobble_notification_dismissed";
@@ -54,6 +60,18 @@ public class ScrobbleNotificationManager {
               context.getString(R.string.notification_channel_name_scrobble),
               NotificationManager.IMPORTANCE_DEFAULT);
 
+      NotificationChannel errorChannel =
+          new NotificationChannel(
+              CHANNEL_ID_ERROR,
+              context.getString(R.string.notification_channel_name_error),
+              NotificationManager.IMPORTANCE_HIGH);
+      errorChannel.enableLights(true);
+      errorChannel.setLightColor(Color.RED);
+      errorChannel.enableVibration(true);
+      errorChannel.setSound(
+          RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
+          new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build());
+
       NotificationChannel nowPlayingChannel =
           new NotificationChannel(
               CHANNEL_ID_NOW_PLAYING,
@@ -61,7 +79,7 @@ public class ScrobbleNotificationManager {
               NotificationManager.IMPORTANCE_DEFAULT);
 
       notificationManager.createNotificationChannels(
-          ImmutableList.of(scrobbleChannel, nowPlayingChannel));
+          ImmutableList.of(scrobbleChannel, errorChannel, nowPlayingChannel));
     }
   }
 
@@ -172,8 +190,37 @@ public class ScrobbleNotificationManager {
     notificationManager.notify(SCROBBLE_ID, notificationBuilder.build());
   }
 
-  public class NotificationDismissedReceiver extends BroadcastReceiver {
+  public void notifyAuthError() {
+    int color = Color.argb(255, 242, 72, 63);
+    PendingIntent contentIntent =
+        PendingIntent.getActivity(
+            context, 0, new Intent(context, SplashScreen.class), PendingIntent.FLAG_CANCEL_CURRENT);
 
+    Notification.Builder notification =
+        new Notification.Builder(context)
+            .setSmallIcon(android.R.drawable.ic_dialog_alert)
+            .setContentTitle(context.getString(R.string.authentication_error_title))
+            .setContentText(context.getString(R.string.authentication_error_content))
+            .setCategory(Notification.CATEGORY_ERROR)
+            .setColor(color)
+            .setContentIntent(contentIntent)
+            .setOngoing(true)
+            .setOnlyAlertOnce(true)
+            .setAutoCancel(true);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      notification.setChannelId(CHANNEL_ID_NOW_PLAYING);
+    } else {
+      notification
+          .setPriority(Notification.PRIORITY_HIGH)
+          .setLights(color, 500, 500)
+          .setVibrate(new long[] {0, 200, 100, 500});
+    }
+
+    notificationManager.notify(AUTH_ERROR_ID, notification.build());
+  }
+
+  public class NotificationDismissedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
       tracks.clear();

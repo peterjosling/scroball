@@ -101,6 +101,22 @@ public class LastfmClient {
     session = Session.createSession(API_KEY, API_SECRET, sessionKey);
   }
 
+  /**
+   * Returns {@code true} if the specified {@code errorCode} is transient, and the request should be
+   * retried.
+   */
+  public static boolean isTransientError(int errorCode) {
+    return TRANSIENT_ERROR_CODES.contains(errorCode);
+  }
+
+  /**
+   * Returns {@code true} if the specified {@code errorCode} indicates an authentication error,
+   * and the user must reauthenticate.
+   */
+  public static boolean isAuthenticationError(int errorCode) {
+    return errorCode == ERROR_INVALID_SESSION || errorCode == ERROR_UNAUTHORIZED_TOKEN;
+  }
+
   private static class AuthenticateTask extends AsyncTask<AuthRequest, Void, AuthResult> {
     private final Handler.Callback callback;
 

@@ -83,6 +83,11 @@ public class ScroballApplication extends Application {
     lastEvent = event;
   }
 
+  @Subscribe
+  public void onAuthError(AuthErrorEvent event) {
+    logout();
+  }
+
   public static EventBus getEventBus() {
     return eventBus;
   }
