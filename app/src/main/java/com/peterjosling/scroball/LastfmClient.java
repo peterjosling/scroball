@@ -21,7 +21,7 @@ import de.umass.lastfm.scrobble.ScrobbleResult;
 
 public class LastfmClient {
 
-  public static final int ERROR_CODE_AUTH = 4;
+  public static final int ERROR_AUTH_FAILED = 4;
 
   private static final String TAG = LastfmClient.class.getName();
   private static final String API_KEY = "17f6f4f55152871370780cd9c0761509";

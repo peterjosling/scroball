@@ -163,7 +163,7 @@ public class LoginActivity extends AppCompatActivity
             saveCredential(credential);
           } else {
             enableForm();
-            if (result.errorCode().or(0) == LastfmClient.ERROR_CODE_AUTH) {
+            if (result.errorCode().or(0) == LastfmClient.ERROR_AUTH_FAILED) {
               mPasswordView.setError(getString(R.string.error_incorrect_password));
             } else {
               String errorMessage = result.error().or(getString(R.string.error_unknown));
