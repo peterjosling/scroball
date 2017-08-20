@@ -157,6 +157,7 @@ public class ScrobbleNotificationManager {
             .setColor(Color.argb(255, 139, 195, 74))
             .setContentIntent(clickPendingIntent)
             .setDeleteIntent(dismissIntent)
+            .setNumber(tracks.size())
             .setAutoCancel(true);
 
     if (tracks.size() > 1) {
