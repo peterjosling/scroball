@@ -178,7 +178,6 @@ public class Scrobbler {
     boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     boolean tracksPending = !(pending.isEmpty() && pendingPlaybackItems.isEmpty());
 
-    // TODO listen for changes in connectivity and trigger this method then.
     if (isScrobbling || !tracksPending || !isConnected || !client.isAuthenticated()) {
       return;
     }
