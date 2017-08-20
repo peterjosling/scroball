@@ -56,9 +56,7 @@ public class ListenerService extends NotificationListenerService
     Scrobbler scrobbler =
         new Scrobbler(lastfmClient, scrobbleNotificationManager, scroballDB, connectivityManager);
 
-    playbackTracker =
-        new PlaybackTracker(
-            scrobbleNotificationManager, scroballDB, connectivityManager, scrobbler);
+    playbackTracker = new PlaybackTracker(scrobbleNotificationManager, scrobbler);
 
     Log.i(TAG, "NotificationListenerService started");
 
