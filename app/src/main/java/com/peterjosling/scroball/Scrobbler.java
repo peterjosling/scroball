@@ -28,6 +28,8 @@ public class Scrobbler {
   private final List<PlaybackItem> pendingPlaybackItems;
   private final List<Scrobble> pending;
   private boolean isScrobbling = false;
+  private long lastScrobbleTime = 0;
+  private long nextScrobbleDelay = 0;
 
   public Scrobbler(
       LastfmClient client,
@@ -177,8 +179,9 @@ public class Scrobbler {
     NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
     boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     boolean tracksPending = !(pending.isEmpty() && pendingPlaybackItems.isEmpty());
+    boolean backoff = lastScrobbleTime + nextScrobbleDelay > System.currentTimeMillis();
 
-    if (isScrobbling || !tracksPending || !isConnected || !client.isAuthenticated()) {
+    if (isScrobbling || !tracksPending || !isConnected || !client.isAuthenticated() || backoff) {
       return;
     }
 
@@ -209,7 +212,7 @@ public class Scrobbler {
         tracksToScrobble,
         message -> {
           List<ScrobbleResult> results = (List<ScrobbleResult>) message.obj;
-          boolean didError = false;
+          boolean shouldBackoff = false;
 
           for (int i = 0; i < results.size(); i++) {
             ScrobbleResult result = results.get(i);
@@ -226,6 +229,7 @@ public class Scrobbler {
               }
               if (!LastfmClient.isTransientError(errorCode)) {
                 pending.remove(scrobble);
+                shouldBackoff = true;
               }
               if (LastfmClient.isAuthenticationError(errorCode)) {
                 notificationManager.notifyAuthError();
@@ -233,17 +237,25 @@ public class Scrobbler {
               }
               scrobble.status().setErrorCode(errorCode);
               scroballDB.writeScrobble(scrobble);
-              didError = true;
             }
           }
 
           isScrobbling = false;
+          lastScrobbleTime = System.currentTimeMillis();
 
-          // TODO need to wait if there was an error/rate limiting
-          if (!didError) {
+          if (shouldBackoff) {
+            // Back off starting at 1 second, up to an hour max.
+            if (nextScrobbleDelay == 0) {
+              nextScrobbleDelay = 1000;
+            } else if (nextScrobbleDelay < 60 * 60 * 1000) {
+              nextScrobbleDelay *= 4;
+            }
+          } else {
+            nextScrobbleDelay = 0;
+
+            // There may be more tracks waiting to scrobble. Keep going.
             scrobblePending();
           }
-
           return false;
         });
   }
