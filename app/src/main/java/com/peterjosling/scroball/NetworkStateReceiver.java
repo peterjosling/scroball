@@ -24,7 +24,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
           (NetworkInfo) intent.getExtras().get(ConnectivityManager.EXTRA_NETWORK_INFO);
 
       if (networkInfo != null && networkInfo.getState() == NetworkInfo.State.CONNECTED) {
-        Log.i(TAG, "Network connected, scrobbling");
+        Log.d(TAG, "Network connected, scrobbling");
         scrobbler.scrobblePending();
       }
     }

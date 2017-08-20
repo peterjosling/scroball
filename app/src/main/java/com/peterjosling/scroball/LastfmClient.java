@@ -180,7 +180,7 @@ public class LastfmClient {
       try {
         return Track.updateNowPlaying(track.artist(), track.track(), session);
       } catch (CallException e) {
-        Log.e(TAG, "Failed to update now playing status", e);
+        Log.d(TAG, "Failed to update now playing status", e);
       }
       return null;
     }
@@ -188,9 +188,9 @@ public class LastfmClient {
     @Override
     protected void onPostExecute(ScrobbleResult scrobbleResult) {
       if (scrobbleResult != null && scrobbleResult.isSuccessful()) {
-        Log.i(TAG, "Now playing status updated");
+        Log.d(TAG, "Now playing status updated");
       } else {
-        Log.e(TAG, String.format("Failed to update now playing status: %s", scrobbleResult));
+        Log.d(TAG, String.format("Failed to update now playing status: %s", scrobbleResult));
       }
 
       Message message = Message.obtain();
@@ -214,7 +214,7 @@ public class LastfmClient {
       try {
         return Track.scrobble(ImmutableList.copyOf(params), session);
       } catch (CallException e) {
-        Log.e(TAG, "Failed to submit scrobbles", e);
+        Log.d(TAG, "Failed to submit scrobbles", e);
       }
 
       ArrayList<ScrobbleResult> output = new ArrayList<>();
@@ -229,7 +229,7 @@ public class LastfmClient {
       Message message = Message.obtain();
       message.obj = results;
       callback.handleMessage(message);
-      Log.i(TAG, String.format("Scrobbles submitted: %s", Arrays.toString(results.toArray())));
+      Log.d(TAG, String.format("Scrobbles submitted: %s", Arrays.toString(results.toArray())));
     }
   }
 
@@ -250,7 +250,7 @@ public class LastfmClient {
       try {
         return Track.getInfo(track.artist(), track.track(), session.getApiKey());
       } catch (CallException e) {
-        Log.e(TAG, "Failed to fetch track info", e);
+        Log.d(TAG, "Failed to fetch track info", e);
       }
       return null;
     }

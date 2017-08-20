@@ -58,7 +58,7 @@ public class ListenerService extends NotificationListenerService
 
     playbackTracker = new PlaybackTracker(scrobbleNotificationManager, scrobbler);
 
-    Log.i(TAG, "NotificationListenerService started");
+    Log.d(TAG, "NotificationListenerService started");
 
     MediaSessionManager mediaSessionManager =
         (MediaSessionManager)
@@ -85,7 +85,7 @@ public class ListenerService extends NotificationListenerService
 
   @Override
   public void onActiveSessionsChanged(List<MediaController> activeMediaControllers) {
-    Log.i(TAG, "Active MediaSessions changed");
+    Log.d(TAG, "Active MediaSessions changed");
 
     Set<MediaController> existingControllers =
         ImmutableSet.copyOf(Iterables.filter(mediaControllers, controllerCallbacks::containsKey));
@@ -113,11 +113,11 @@ public class ListenerService extends NotificationListenerService
       }
 
       if (!sharedPreferences.getBoolean(prefKey, true)) {
-        Log.i(TAG, String.format("Ignoring player %s", packageName));
+        Log.d(TAG, String.format("Ignoring player %s", packageName));
         continue;
       }
 
-      Log.i(TAG, String.format("Listening for events from %s", packageName));
+      Log.d(TAG, String.format("Listening for events from %s", packageName));
 
       MediaController.Callback callback =
           new MediaController.Callback() {
@@ -149,10 +149,10 @@ public class ListenerService extends NotificationListenerService
       final String packageName = key.substring(7);
 
       if (sharedPreferences.getBoolean(key, true)) {
-        Log.i(TAG, "Player enabled, re-registering callbacks");
+        Log.d(TAG, "Player enabled, re-registering callbacks");
         onActiveSessionsChanged(mediaControllers);
       } else {
-        Log.i(TAG, "Player disabled, stopping any current tracking");
+        Log.d(TAG, "Player disabled, stopping any current tracking");
         final Optional<MediaController> optionalController =
             Iterables.tryFind(
                 mediaControllers, input -> input.getPackageName().equals(packageName));

@@ -47,7 +47,7 @@ public class Scrobbler {
 
   public void updateNowPlaying(Track track) {
     if (!client.isAuthenticated()) {
-      Log.i(TAG, "Skipping now playing update, not logged in.");
+      Log.d(TAG, "Skipping now playing update, not logged in.");
       return;
     }
 
@@ -122,7 +122,7 @@ public class Scrobbler {
     }
 
     if (playCount > 0) {
-      Log.i(TAG, String.format("Queued %d scrobbles", playCount));
+      Log.d(TAG, String.format("Queued %d scrobbles", playCount));
     }
 
     notificationManager.notifyScrobbled(track, playCount);
@@ -134,7 +134,7 @@ public class Scrobbler {
     boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
     if (!isConnected || !client.isAuthenticated()) {
-      Log.i(TAG, "Offline or unauthenticated, can't fetch track duration. Saving for later.");
+      Log.d(TAG, "Offline or unauthenticated, can't fetch track duration. Saving for later.");
       queuePendingPlaybackItem(playbackItem);
       return;
     }
@@ -151,11 +151,11 @@ public class Scrobbler {
               errorCode = result.getErrorCode();
             }
             if (errorCode == 6) {
-              Log.w(TAG, "Track not found, cannot scrobble.");
+              Log.d(TAG, "Track not found, cannot scrobble.");
               // TODO prompt user to scrobble anyway
             } else {
               if (LastfmClient.isTransientError(errorCode)) {
-                Log.w(TAG, "Failed to fetch track duration, saving for later.");
+                Log.d(TAG, "Failed to fetch track duration, saving for later.");
                 queuePendingPlaybackItem(playbackItem);
               }
               if (LastfmClient.isAuthenticationError(errorCode)) {
@@ -168,7 +168,7 @@ public class Scrobbler {
 
           Track updatedTrack = (Track) message.obj;
           playbackItem.updateTrack(updatedTrack);
-          Log.i(TAG, String.format("Track info updated: %s", playbackItem));
+          Log.d(TAG, String.format("Track info updated: %s", playbackItem));
 
           submit(playbackItem);
           return true;
@@ -190,7 +190,7 @@ public class Scrobbler {
     scroballDB.clearPendingPlaybackItems();
 
     if (!playbackItems.isEmpty()) {
-      Log.i(TAG, "Re-processing queued items with missing durations.");
+      Log.d(TAG, "Re-processing queued items with missing durations.");
     }
 
     for (PlaybackItem playbackItem : playbackItems) {
@@ -277,9 +277,9 @@ public class Scrobbler {
 
     if (duration < MINIMUM_SCROBBLE_TIME) {
       if (optionalDuration.isPresent()) {
-        Log.i(TAG, String.format("Not scheduling scrobble, track is too short (%d)", duration));
+        Log.d(TAG, String.format("Not scheduling scrobble, track is too short (%d)", duration));
       } else {
-        Log.i(TAG, "Not scheduling scrobble, track duration not known");
+        Log.d(TAG, "Not scheduling scrobble, track duration not known");
       }
       return -1;
     }

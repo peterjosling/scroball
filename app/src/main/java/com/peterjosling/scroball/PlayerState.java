@@ -34,13 +34,13 @@ public class PlayerState {
     boolean isPlaying = state == PlaybackState.STATE_PLAYING;
 
     if (isPlaying) {
-      Log.i(TAG, "Track playing");
+      Log.d(TAG, "Track playing");
       postEvent(playbackItem.getTrack());
       playbackItem.startPlaying();
       notificationManager.updateNowPlaying(playbackItem.getTrack());
       scheduleSubmission();
     } else {
-      Log.i(TAG, String.format("Track paused (state %d)", state));
+      Log.d(TAG, String.format("Track paused (state %d)", state));
       postEvent(Track.empty());
       playbackItem.stopPlaying();
       notificationManager.removeNowPlaying();
@@ -59,12 +59,12 @@ public class PlayerState {
     }
 
     if (track.isSameTrack(currentTrack)) {
-      Log.i(TAG, String.format("Track metadata updated: %s", track));
+      Log.d(TAG, String.format("Track metadata updated: %s", track));
 
       // Update track in PlaybackItem, as this new one probably has updated details/more keys.
       playbackItem.setTrack(track);
     } else {
-      Log.i(TAG, String.format("Changed track: %s", track));
+      Log.d(TAG, String.format("Changed track: %s", track));
 
       if (playbackItem != null) {
         playbackItem.stopPlaying();

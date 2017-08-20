@@ -258,7 +258,7 @@ public class LoginActivity extends AppCompatActivity
               } else if (status.getStatusCode() == CommonStatusCodes.SIGN_IN_REQUIRED) {
                 Log.d(TAG, "Sign in required");
               } else {
-                Log.w(TAG, "Unrecognized status code: " + status.getStatusCode());
+                Log.d(TAG, "Unrecognized status code: " + status.getStatusCode());
               }
             });
   }
@@ -273,7 +273,7 @@ public class LoginActivity extends AppCompatActivity
         status.startResolutionForResult(this, requestCode);
         mIsResolving = true;
       } catch (IntentSender.SendIntentException e) {
-        Log.e(TAG, "STATUS: Failed to send resolution.", e);
+        Log.d(TAG, "STATUS: Failed to send resolution.", e);
       }
     } else {
       goToApp();
@@ -301,14 +301,14 @@ public class LoginActivity extends AppCompatActivity
         mReceivedCredential = data.getParcelableExtra(Credential.EXTRA_KEY);
         doLogin(mReceivedCredential.getId(), mReceivedCredential.getPassword());
       } else {
-        Log.e(TAG, "Credential Read: NOT OK");
+        Log.d(TAG, "Credential Read: NOT OK");
       }
     } else if (requestCode == RC_SAVE) {
       Log.d(TAG, "Result code: " + resultCode);
       if (resultCode == RESULT_OK) {
         Log.d(TAG, "Credential Save: OK");
       } else {
-        Log.e(TAG, "Credential Save Failed");
+        Log.d(TAG, "Credential Save Failed");
       }
       goToApp();
     }

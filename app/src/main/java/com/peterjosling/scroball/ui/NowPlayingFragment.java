@@ -80,7 +80,7 @@ public class NowPlayingFragment extends Fragment {
           Drawable icon = getActivity().getPackageManager().getApplicationIcon(event.source());
           artImageView.setImageDrawable(icon);
         } catch (PackageManager.NameNotFoundException e) {
-          Log.w(TAG, "Failed to read application icon for player", e);
+          Log.d(TAG, "Failed to read application icon for player", e);
         }
       }
 
