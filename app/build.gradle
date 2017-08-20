@@ -59,7 +59,7 @@ dependencies {
     compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true
     }
-    compile 'com.google.android.gms:play-services-auth:11.0.2'
+    compile 'com.google.android.gms:play-services-auth:11.2.0'
     compile 'com.google.guava:guava:22.0-android'
     compile 'de.u-mass:lastfm-java:0.1.2'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
