@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Scroball</string>
-    <string name="user_agent">tst</string>
 
     <!-- Strings related to Settings -->
     <string name="saved_session_key">sessionKey</string>

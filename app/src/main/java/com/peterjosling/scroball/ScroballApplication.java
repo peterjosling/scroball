@@ -11,6 +11,8 @@ import com.google.common.eventbus.Subscribe;
 import com.peterjosling.scroball.db.ScroballDB;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
+import java.util.Locale;
+
 import io.fabric.sdk.android.Fabric;
 
 public class ScroballApplication extends Application {
@@ -31,7 +33,8 @@ public class ScroballApplication extends Application {
 
     sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-    String userAgent = getString(R.string.user_agent);
+    String userAgent =
+        String.format(Locale.UK, "%s.%d", BuildConfig.APPLICATION_ID, BuildConfig.VERSION_CODE);
     String sessionKeyKey = getString(R.string.saved_session_key);
 
     if (sharedPreferences.contains(sessionKeyKey)) {
