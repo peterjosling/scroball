@@ -195,7 +195,7 @@ public class Scrobbler {
         ScrobbleResult result = results.get(i);
         Scrobble scrobble = tracksToScrobble.get(i);
 
-        if (result.isSuccessful()) {
+        if (result != null && result.isSuccessful()) {
           scrobble.status().setScrobbled(true);
           scroballDB.writeScrobble(scrobble);
           pending.remove(scrobble);

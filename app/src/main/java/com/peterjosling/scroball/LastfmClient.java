@@ -8,6 +8,7 @@ import android.util.Log;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -193,7 +194,12 @@ public class LastfmClient {
       } catch (CallException e) {
         Log.e(TAG, "Failed to submit scrobbles", e);
       }
-      return ImmutableList.of();
+
+      ArrayList<ScrobbleResult> output = new ArrayList<>();
+      for (int i = 0; i < params.length; i++) {
+        output.add(null);
+      }
+      return ImmutableList.copyOf(output);
     }
 
     @Override
