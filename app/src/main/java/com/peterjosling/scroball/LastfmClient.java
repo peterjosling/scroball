@@ -73,8 +73,8 @@ public class LastfmClient {
         .execute(AuthRequest.create(username, password));
   }
 
-  public void updateNowPlaying(com.peterjosling.scroball.Track track) {
-    new UpdateNowPlayingTask(session).execute(track);
+  public void updateNowPlaying(com.peterjosling.scroball.Track track, Handler.Callback callback) {
+    new UpdateNowPlayingTask(session, callback).execute(track);
   }
 
   public void scrobbleTracks(List<Scrobble> scrobbles, Handler.Callback callback) {
@@ -151,9 +151,11 @@ public class LastfmClient {
   private static class UpdateNowPlayingTask
       extends AsyncTask<com.peterjosling.scroball.Track, Object, ScrobbleResult> {
     private final Session session;
+    private final Handler.Callback callback;
 
-    public UpdateNowPlayingTask(Session session) {
+    public UpdateNowPlayingTask(Session session, Handler.Callback callback) {
       this.session = session;
+      this.callback = callback;
     }
 
     @Override
@@ -174,6 +176,10 @@ public class LastfmClient {
       } else {
         Log.e(TAG, String.format("Failed to update now playing status: %s", scrobbleResult));
       }
+
+      Message message = Message.obtain();
+      message.obj = scrobbleResult;
+      callback.handleMessage(message);
     }
   }
 

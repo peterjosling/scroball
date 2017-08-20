@@ -55,7 +55,9 @@ public class Scrobbler {
     if (!isConnected) {
       return;
     }
-    client.updateNowPlaying(track);
+    client.updateNowPlaying(track, message -> {
+      return true;
+    });
   }
 
   public void submit(PlaybackItem playbackItem) {
