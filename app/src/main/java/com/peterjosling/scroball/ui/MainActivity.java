@@ -13,6 +13,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.common.collect.ImmutableList;
@@ -72,6 +74,10 @@ public class MainActivity extends AppCompatActivity {
             .enableAutoManage(this, 0, null)
             .addApi(Auth.CREDENTIALS_API)
             .build();
+
+    AdView mAdView = findViewById(R.id.adView);
+    AdRequest adRequest = new AdRequest.Builder().build();
+    mAdView.loadAd(adRequest);
   }
 
   @Override
