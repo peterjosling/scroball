@@ -14,7 +14,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
-import com.google.common.base.Predicate;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -153,17 +153,13 @@ public class ListenerService extends NotificationListenerService
         onActiveSessionsChanged(mediaControllers);
       } else {
         Log.i(TAG, "Player disabled, stopping any current tracking");
-        final MediaController controller =
-            Iterables.find(
-                mediaControllers,
-                new Predicate<MediaController>() {
-                  @Override
-                  public boolean apply(MediaController input) {
-                    return input.getPackageName().equals(packageName);
-                  }
-                });
+        final Optional<MediaController> optionalController =
+            Iterables.tryFind(
+                mediaControllers, input -> input.getPackageName().equals(packageName));
 
-        if (controller != null && controllerCallbacks.containsKey(controller)) {
+        if (optionalController.isPresent()
+            && controllerCallbacks.containsKey(optionalController.get())) {
+          MediaController controller = optionalController.get();
           controller.unregisterCallback(controllerCallbacks.get(controller));
           playbackTracker.handleSessionTermination(controller.getPackageName());
           controllerCallbacks.remove(controller);
