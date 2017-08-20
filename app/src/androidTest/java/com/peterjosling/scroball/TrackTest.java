@@ -92,13 +92,9 @@ public class TrackTest {
   @Test
   public void fromMediaMetadata_nonPositiveDurationIsAbsent() {
     MediaMetadata input1 =
-        new MediaMetadata.Builder()
-            .putLong(MediaMetadata.METADATA_KEY_DURATION, 0)
-            .build();
+        new MediaMetadata.Builder().putLong(MediaMetadata.METADATA_KEY_DURATION, 0).build();
     MediaMetadata input2 =
-        new MediaMetadata.Builder()
-            .putLong(MediaMetadata.METADATA_KEY_DURATION, -1)
-            .build();
+        new MediaMetadata.Builder().putLong(MediaMetadata.METADATA_KEY_DURATION, -1).build();
 
     Track output1 = Track.fromMediaMetadata(input1);
     Track output2 = Track.fromMediaMetadata(input2);

@@ -9,10 +9,7 @@ import static com.google.common.truth.Truth.assertThat;
 @RunWith(JUnit4.class)
 public class PlaybackItemTest {
 
-  Track track = Track.builder()
-      .track("Track")
-      .artist("Artist")
-      .build();
+  Track track = Track.builder().track("Track").artist("Artist").build();
 
   @Test
   public void updateAmountPlayed_hasNoEffectWhenNotPlaying() {
@@ -47,8 +44,8 @@ public class PlaybackItemTest {
     playbackItem1.stopPlaying();
     playbackItem2.updateAmountPlayed();
 
-//    assertThat(playbackItem1.getAmountPlayed() / 1000).isEqualTo(delay / 1000);
-//    assertThat(playbackItem2.getAmountPlayed() / 1000).isEqualTo((delay + alreadyPlayed) / 1000);
+    //    assertThat(playbackItem1.getAmountPlayed() / 1000).isEqualTo(delay / 1000);
+    //    assertThat(playbackItem2.getAmountPlayed() / 1000).isEqualTo((delay + alreadyPlayed) / 1000);
     // TODO use fake clock to fix this test.
   }
 
