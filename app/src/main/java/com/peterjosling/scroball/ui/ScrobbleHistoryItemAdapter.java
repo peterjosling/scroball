@@ -21,9 +21,7 @@ import java.util.List;
 public class ScrobbleHistoryItemAdapter extends ArrayAdapter<Scrobble> {
 
   public ScrobbleHistoryItemAdapter(
-      @NonNull Context context,
-      @LayoutRes int resource,
-      @NonNull List<Scrobble> objects) {
+      @NonNull Context context, @LayoutRes int resource, @NonNull List<Scrobble> objects) {
     super(context, resource, objects);
   }
 

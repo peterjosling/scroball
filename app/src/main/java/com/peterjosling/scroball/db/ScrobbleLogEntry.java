@@ -11,21 +11,15 @@ public class ScrobbleLogEntry extends BaseModel {
   @PrimaryKey(autoincrement = true)
   public long id;
 
-  @Column
-  public int timestamp;
+  @Column public int timestamp;
 
-  @Column
-  public String artist;
+  @Column public String artist;
 
-  @Column
-  public String albumArtist;
+  @Column public String albumArtist;
 
-  @Column
-  public String album;
+  @Column public String album;
 
-  @Column
-  public String track;
+  @Column public String track;
 
-  @Column
-  public int status;
+  @Column public int status;
 }

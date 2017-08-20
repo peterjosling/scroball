@@ -6,6 +6,7 @@ import com.google.auto.value.AutoValue;
 public abstract class NowPlayingChangeEvent {
 
   public abstract Track track();
+
   public abstract String source();
 
   public static Builder builder() {
@@ -13,10 +14,12 @@ public abstract class NowPlayingChangeEvent {
   }
 
   @AutoValue.Builder
-  public static abstract class Builder {
+  public abstract static class Builder {
 
     public abstract Builder track(Track track);
+
     public abstract Builder source(String source);
+
     public abstract NowPlayingChangeEvent build();
   }
 }

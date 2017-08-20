@@ -6,6 +6,7 @@ import com.google.auto.value.AutoValue;
 public abstract class AuthRequest {
 
   public abstract String username();
+
   public abstract String password();
 
   public static AuthRequest create(String username, String password) {

@@ -39,19 +39,22 @@ public class SplashScreen extends Activity {
     }
 
     if (!ListenerService.isNotificationAccessEnabled(this)) {
-      alertDialog = new AlertDialog.Builder(this)
-          .setTitle(R.string.splash_notification_access)
-          .setMessage(R.string.splash_notification_access_text)
-          .setPositiveButton(android.R.string.ok, (dialogInterface, i) -> {
-            String action;
-            if (Build.VERSION.SDK_INT >= 22) {
-              action = Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS;
-            } else {
-              action = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
-            }
-            startActivity(new Intent(action));
-          })
-          .show();
+      alertDialog =
+          new AlertDialog.Builder(this)
+              .setTitle(R.string.splash_notification_access)
+              .setMessage(R.string.splash_notification_access_text)
+              .setPositiveButton(
+                  android.R.string.ok,
+                  (dialogInterface, i) -> {
+                    String action;
+                    if (Build.VERSION.SDK_INT >= 22) {
+                      action = Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS;
+                    } else {
+                      action = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
+                    }
+                    startActivity(new Intent(action));
+                  })
+              .show();
 
       return;
     }

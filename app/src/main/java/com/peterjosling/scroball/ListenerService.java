@@ -29,7 +29,7 @@ import java.util.WeakHashMap;
 
 public class ListenerService extends NotificationListenerService
     implements MediaSessionManager.OnActiveSessionsChangedListener,
-    SharedPreferences.OnSharedPreferenceChangeListener {
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
   private static final String TAG = ListenerService.class.getName();
 
@@ -53,21 +53,18 @@ public class ListenerService extends NotificationListenerService
 
     LastfmClient lastfmClient = application.getLastfmClient();
 
-    Scrobbler scrobbler = new Scrobbler(
-        lastfmClient,
-        scrobbleNotificationManager,
-        scroballDB, connectivityManager);
+    Scrobbler scrobbler =
+        new Scrobbler(lastfmClient, scrobbleNotificationManager, scroballDB, connectivityManager);
 
-    playbackTracker = new PlaybackTracker(
-        scrobbleNotificationManager,
-        scroballDB,
-        connectivityManager,
-        scrobbler);
+    playbackTracker =
+        new PlaybackTracker(
+            scrobbleNotificationManager, scroballDB, connectivityManager, scrobbler);
 
     Log.i(TAG, "NotificationListenerService started");
 
-    MediaSessionManager mediaSessionManager = (MediaSessionManager) getApplicationContext()
-        .getSystemService(Context.MEDIA_SESSION_SERVICE);
+    MediaSessionManager mediaSessionManager =
+        (MediaSessionManager)
+            getApplicationContext().getSystemService(Context.MEDIA_SESSION_SERVICE);
 
     ComponentName componentName = new ComponentName(this, this.getClass());
     mediaSessionManager.addOnActiveSessionsChangedListener(this, componentName);
@@ -124,17 +121,18 @@ public class ListenerService extends NotificationListenerService
 
       Log.i(TAG, String.format("Listening for events from %s", packageName));
 
-      MediaController.Callback callback = new MediaController.Callback() {
-        @Override
-        public void onPlaybackStateChanged(@NonNull PlaybackState state) {
-          controllerPlaybackStateChanged(controller, state);
-        }
+      MediaController.Callback callback =
+          new MediaController.Callback() {
+            @Override
+            public void onPlaybackStateChanged(@NonNull PlaybackState state) {
+              controllerPlaybackStateChanged(controller, state);
+            }
 
-        @Override
-        public void onMetadataChanged(MediaMetadata metadata) {
-          controllerMetadataChanged(controller, metadata);
-        }
-      };
+            @Override
+            public void onMetadataChanged(MediaMetadata metadata) {
+              controllerMetadataChanged(controller, metadata);
+            }
+          };
 
       controllerCallbacks.put(controller, callback);
       controller.registerCallback(callback);
@@ -157,12 +155,15 @@ public class ListenerService extends NotificationListenerService
         onActiveSessionsChanged(mediaControllers);
       } else {
         Log.i(TAG, "Player disabled, stopping any current tracking");
-        final MediaController controller = Iterables.find(mediaControllers, new Predicate<MediaController>() {
-          @Override
-          public boolean apply(MediaController input) {
-            return input.getPackageName().equals(packageName);
-          }
-        });
+        final MediaController controller =
+            Iterables.find(
+                mediaControllers,
+                new Predicate<MediaController>() {
+                  @Override
+                  public boolean apply(MediaController input) {
+                    return input.getPackageName().equals(packageName);
+                  }
+                });
 
         if (controller != null && controllerCallbacks.containsKey(controller)) {
           controller.unregisterCallback(controllerCallbacks.get(controller));

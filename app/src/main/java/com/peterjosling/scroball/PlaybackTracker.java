@@ -57,9 +57,10 @@ public class PlaybackTracker {
 
   public void handleSessionTermination(String player) {
     PlayerState playerState = getOrCreatePlayerState(player);
-    PlaybackState playbackState = new PlaybackState.Builder()
-        .setState(PlaybackState.STATE_PAUSED, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 1)
-        .build();
+    PlaybackState playbackState =
+        new PlaybackState.Builder()
+            .setState(PlaybackState.STATE_PAUSED, PlaybackState.PLAYBACK_POSITION_UNKNOWN, 1)
+            .build();
     playerState.setPlaybackState(playbackState);
   }
 

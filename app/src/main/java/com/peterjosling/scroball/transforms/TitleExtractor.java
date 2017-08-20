@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class TitleExtractor implements MetadataTransform {
 
   private static final String[] SEPARATORS =
-      new String[]{" -- ", "--", " - ", " – ", " — ", "-", "–", "—", ":", "|", "///"};
+      new String[] {" -- ", "--", " - ", " – ", " — ", "-", "–", "—", ":", "|", "///"};
 
   @Override
   public Track transform(Track track) {

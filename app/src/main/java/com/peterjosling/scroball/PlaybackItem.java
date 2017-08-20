@@ -96,8 +96,8 @@ public class PlaybackItem {
   public String toString() {
     return String.format(
         Locale.getDefault(),
-        "PlaybackItem{Track=%s, timestamp=%d, isPlaying=%s, amountPlayed=%d, playbackStartTime=%d, " +
-            "playsScrobbled=%d}",
+        "PlaybackItem{Track=%s, timestamp=%d, isPlaying=%s, amountPlayed=%d, playbackStartTime=%d, "
+            + "playsScrobbled=%d}",
         track.toString(),
         timestamp,
         Boolean.toString(isPlaying),

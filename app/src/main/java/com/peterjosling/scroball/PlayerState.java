@@ -95,21 +95,20 @@ public class PlayerState {
     if (delay > -1) {
       Log.d(TAG, "Scrobble scheduled");
       submissionTimer = new Timer();
-      submissionTimer.schedule(new TimerTask() {
-        @Override
-        public void run() {
-          scrobbler.submit(playbackItem);
-          scheduleSubmission();
-        }
-      }, delay);
+      submissionTimer.schedule(
+          new TimerTask() {
+            @Override
+            public void run() {
+              scrobbler.submit(playbackItem);
+              scheduleSubmission();
+            }
+          },
+          delay);
     }
   }
 
   private void postEvent(Track track) {
-    ScroballApplication.getEventBus().post(
-        NowPlayingChangeEvent.builder()
-            .track(track)
-            .source(player)
-            .build());
+    ScroballApplication.getEventBus()
+        .post(NowPlayingChangeEvent.builder().track(track).source(player).build());
   }
 }

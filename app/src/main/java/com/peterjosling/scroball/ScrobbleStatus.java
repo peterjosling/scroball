@@ -35,7 +35,7 @@ public class ScrobbleStatus {
   }
 
   public long getDbId() {
-      return dbId;
+    return dbId;
   }
 
   public void setDbId(long dbId) {

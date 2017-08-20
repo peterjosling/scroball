@@ -55,18 +55,20 @@ public class Scrobbler {
     if (!isConnected) {
       return;
     }
-    client.updateNowPlaying(track, message -> {
-      ScrobbleResult result = (ScrobbleResult) message.obj;
-      int errorCode = 1;
-      if (result != null) {
-        errorCode = result.getErrorCode();
-      }
-      if (LastfmClient.isAuthenticationError(errorCode)) {
-        notificationManager.notifyAuthError();
-        ScroballApplication.getEventBus().post(AuthErrorEvent.create(errorCode));
-      }
-      return true;
-    });
+    client.updateNowPlaying(
+        track,
+        message -> {
+          ScrobbleResult result = (ScrobbleResult) message.obj;
+          int errorCode = 1;
+          if (result != null) {
+            errorCode = result.getErrorCode();
+          }
+          if (LastfmClient.isAuthenticationError(errorCode)) {
+            notificationManager.notifyAuthError();
+            ScroballApplication.getEventBus().post(AuthErrorEvent.create(errorCode));
+          }
+          return true;
+        });
   }
 
   public void submit(PlaybackItem playbackItem) {
@@ -110,11 +112,7 @@ public class Scrobbler {
     for (int i = 0; i < playCount; i++) {
       int itemTimestamp = (int) ((timestamp + i * duration) / 1000);
 
-      Scrobble scrobble =
-          Scrobble.builder()
-              .track(track)
-              .timestamp(itemTimestamp)
-              .build();
+      Scrobble scrobble = Scrobble.builder().track(track).timestamp(itemTimestamp).build();
 
       pending.add(scrobble);
       scroballDB.writeScrobble(scrobble);
@@ -140,37 +138,39 @@ public class Scrobbler {
     }
 
     Track track = playbackItem.getTrack();
-    client.getTrackInfo(track, message -> {
-      if (message.obj == null) {
-        Result result = Caller.getInstance().getLastResult();
-        int errorCode = 1;
+    client.getTrackInfo(
+        track,
+        message -> {
+          if (message.obj == null) {
+            Result result = Caller.getInstance().getLastResult();
+            int errorCode = 1;
 
-        if (result != null) {
-          errorCode = result.getErrorCode();
-        }
-        if (errorCode == 6) {
-          Log.w(TAG, "Track not found, cannot scrobble.");
-          // TODO prompt user to scrobble anyway
-        } else {
-          if (LastfmClient.isTransientError(errorCode)) {
-            Log.w(TAG, "Failed to fetch track duration, saving for later.");
-            queuePendingPlaybackItem(playbackItem);
+            if (result != null) {
+              errorCode = result.getErrorCode();
+            }
+            if (errorCode == 6) {
+              Log.w(TAG, "Track not found, cannot scrobble.");
+              // TODO prompt user to scrobble anyway
+            } else {
+              if (LastfmClient.isTransientError(errorCode)) {
+                Log.w(TAG, "Failed to fetch track duration, saving for later.");
+                queuePendingPlaybackItem(playbackItem);
+              }
+              if (LastfmClient.isAuthenticationError(errorCode)) {
+                notificationManager.notifyAuthError();
+                ScroballApplication.getEventBus().post(AuthErrorEvent.create(errorCode));
+              }
+            }
+            return true;
           }
-          if (LastfmClient.isAuthenticationError(errorCode)) {
-            notificationManager.notifyAuthError();
-            ScroballApplication.getEventBus().post(AuthErrorEvent.create(errorCode));
-          }
-        }
-        return true;
-      }
 
-      Track updatedTrack = (Track) message.obj;
-      playbackItem.updateTrack(updatedTrack);
-      Log.i(TAG, String.format("Track info updated: %s", playbackItem));
+          Track updatedTrack = (Track) message.obj;
+          playbackItem.updateTrack(updatedTrack);
+          Log.i(TAG, String.format("Track info updated: %s", playbackItem));
 
-      submit(playbackItem);
-      return true;
-    });
+          submit(playbackItem);
+          return true;
+        });
   }
 
   public void scrobblePending() {
@@ -206,51 +206,52 @@ public class Scrobbler {
       tracksToScrobble.remove(tracksToScrobble.size() - 1);
     }
 
-    client.scrobbleTracks(tracksToScrobble, message -> {
-      List<ScrobbleResult> results = (List<ScrobbleResult>) message.obj;
-      boolean didError = false;
+    client.scrobbleTracks(
+        tracksToScrobble,
+        message -> {
+          List<ScrobbleResult> results = (List<ScrobbleResult>) message.obj;
+          boolean didError = false;
 
-      for (int i = 0; i < results.size(); i++) {
-        ScrobbleResult result = results.get(i);
-        Scrobble scrobble = tracksToScrobble.get(i);
+          for (int i = 0; i < results.size(); i++) {
+            ScrobbleResult result = results.get(i);
+            Scrobble scrobble = tracksToScrobble.get(i);
 
-        if (result != null && result.isSuccessful()) {
-          scrobble.status().setScrobbled(true);
-          scroballDB.writeScrobble(scrobble);
-          pending.remove(scrobble);
-        } else {
-          int errorCode = 1;
-          if (result != null) {
-            errorCode = result.getErrorCode();
+            if (result != null && result.isSuccessful()) {
+              scrobble.status().setScrobbled(true);
+              scroballDB.writeScrobble(scrobble);
+              pending.remove(scrobble);
+            } else {
+              int errorCode = 1;
+              if (result != null) {
+                errorCode = result.getErrorCode();
+              }
+              if (!LastfmClient.isTransientError(errorCode)) {
+                pending.remove(scrobble);
+              }
+              if (LastfmClient.isAuthenticationError(errorCode)) {
+                notificationManager.notifyAuthError();
+                ScroballApplication.getEventBus().post(AuthErrorEvent.create(errorCode));
+              }
+              scrobble.status().setErrorCode(errorCode);
+              scroballDB.writeScrobble(scrobble);
+              didError = true;
+            }
           }
-          if (!LastfmClient.isTransientError(errorCode)) {
-            pending.remove(scrobble);
+
+          isScrobbling = false;
+
+          // TODO need to wait if there was an error/rate limiting
+          if (!didError) {
+            scrobblePending();
           }
-          if (LastfmClient.isAuthenticationError(errorCode)) {
-            notificationManager.notifyAuthError();
-            ScroballApplication.getEventBus().post(AuthErrorEvent.create(errorCode));
-          }
-          scrobble.status().setErrorCode(errorCode);
-          scroballDB.writeScrobble(scrobble);
-          didError = true;
-        }
-      }
 
-      isScrobbling = false;
-
-      // TODO need to wait if there was an error/rate limiting
-      if (!didError) {
-        scrobblePending();
-      }
-
-      return false;
-    });
+          return false;
+        });
   }
 
   /**
-   * Calculates the number of milliseconds of playback time remaining until the specified
-   * {@param PlaybackItem} can be scrobbled, i.e. reaches 50% of track duration or
-   * SCROBBLE_THRESHOLD.
+   * Calculates the number of milliseconds of playback time remaining until the specified {@param
+   * PlaybackItem} can be scrobbled, i.e. reaches 50% of track duration or SCROBBLE_THRESHOLD.
    *
    * @return The number of milliseconds remaining until the next scrobble for the current playback
    *     item can be submitted, or -1 if the track's duration is below MINIMUM_SCROBBLE_TIME.

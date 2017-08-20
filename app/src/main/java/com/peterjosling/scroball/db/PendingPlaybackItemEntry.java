@@ -11,21 +11,15 @@ public class PendingPlaybackItemEntry extends BaseModel {
   @PrimaryKey(autoincrement = true)
   public long id;
 
-  @Column
-  public long timestamp;
+  @Column public long timestamp;
 
-  @Column
-  public String artist;
+  @Column public String artist;
 
-  @Column
-  public String albumArtist;
+  @Column public String albumArtist;
 
-  @Column
-  public String track;
+  @Column public String track;
 
-  @Column
-  public String album;
+  @Column public String album;
 
-  @Column
-  public long amountPlayed;
+  @Column public long amountPlayed;
 }

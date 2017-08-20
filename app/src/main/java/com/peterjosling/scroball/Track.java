@@ -11,11 +11,17 @@ import com.peterjosling.scroball.transforms.TitleExtractor;
 public abstract class Track {
 
   public abstract String track();
+
   public abstract String artist();
+
   public abstract Optional<String> album();
+
   public abstract Optional<String> albumArtist();
+
   public abstract Optional<Long> duration();
+
   public abstract Optional<Bitmap> art();
+
   public abstract Builder toBuilder();
 
   public boolean isValid() {
@@ -33,7 +39,7 @@ public abstract class Track {
     if (title == null) {
       title = metadata.getString(MediaMetadata.METADATA_KEY_DISPLAY_TITLE);
 
-      if (title  == null) {
+      if (title == null) {
         title = "";
       }
     }
@@ -86,11 +92,17 @@ public abstract class Track {
   public abstract static class Builder {
 
     public abstract Builder track(String track);
+
     public abstract Builder artist(String artist);
+
     public abstract Builder album(String album);
+
     public abstract Builder albumArtist(String albumArtist);
+
     public abstract Builder duration(long duration);
+
     public abstract Builder art(Bitmap art);
+
     public abstract Track build();
   }
 }

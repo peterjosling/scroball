@@ -30,7 +30,8 @@ public class NowPlayingFragment extends Fragment {
   private TextView nothingPlayingTextView;
 
   @Override
-  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(
+      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View rootView = inflater.inflate(R.layout.fragment_now_playing, container, false);
     detailGroup = (ViewGroup) rootView.findViewById(R.id.now_playing_detail);
     artImageView = (ImageView) rootView.findViewById(R.id.now_playing_art);

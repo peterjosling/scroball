@@ -110,8 +110,8 @@ public class LastfmClient {
   }
 
   /**
-   * Returns {@code true} if the specified {@code errorCode} indicates an authentication error,
-   * and the user must reauthenticate.
+   * Returns {@code true} if the specified {@code errorCode} indicates an authentication error, and
+   * the user must reauthenticate.
    */
   public static boolean isAuthenticationError(int errorCode) {
     return errorCode == ERROR_INVALID_SESSION || errorCode == ERROR_UNAUTHORIZED_TOKEN;

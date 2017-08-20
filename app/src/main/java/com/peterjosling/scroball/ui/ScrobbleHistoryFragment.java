@@ -29,13 +29,16 @@ public class ScrobbleHistoryFragment extends Fragment {
 
   @Nullable
   @Override
-  public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(
+      LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
     View rootView = inflater.inflate(R.layout.fragment_scrobble_history, container, false);
 
     scroballDB = ((ScroballApplication) getActivity().getApplication()).getScroballDB();
     refreshData();
 
-    adapter = new ScrobbleHistoryItemAdapter(getContext(), android.R.layout.simple_list_item_1, scrobbles);
+    adapter =
+        new ScrobbleHistoryItemAdapter(
+            getContext(), android.R.layout.simple_list_item_1, scrobbles);
     ListView listView = (ListView) rootView.findViewById(R.id.scrobble_history_list_view);
     listView.setAdapter(adapter);
 
@@ -60,16 +63,18 @@ public class ScrobbleHistoryFragment extends Fragment {
     final Scrobble scrobble = event.scrobble();
     final long id = scrobble.status().getDbId();
 
-    getActivity().runOnUiThread(() -> {
-      if (scrobbleMap.get(id) != null) {
-        scrobbleMap.get(id).status().setFrom(scrobble.status());
-      } else {
-        scrobbleMap.put(id, scrobble);
-        adapter.insert(scrobble, 0);
-      }
+    getActivity()
+        .runOnUiThread(
+            () -> {
+              if (scrobbleMap.get(id) != null) {
+                scrobbleMap.get(id).status().setFrom(scrobble.status());
+              } else {
+                scrobbleMap.put(id, scrobble);
+                adapter.insert(scrobble, 0);
+              }
 
-      adapter.notifyDataSetChanged();
-    });
+              adapter.notifyDataSetChanged();
+            });
   }
 
   private void refreshData() {

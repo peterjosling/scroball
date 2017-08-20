@@ -7,8 +7,11 @@ import com.google.common.base.Optional;
 public abstract class AuthResult {
 
   public abstract Optional<String> sessionKey();
+
   public abstract Optional<Integer> httpErrorCode();
+
   public abstract Optional<Integer> errorCode();
+
   public abstract Optional<String> error();
 
   public static Builder builder() {
@@ -19,9 +22,13 @@ public abstract class AuthResult {
   abstract static class Builder {
 
     abstract Builder sessionKey(String sessionKey);
+
     abstract Builder httpErrorCode(int httpErrorCode);
+
     abstract Builder errorCode(int errorCode);
+
     abstract Builder error(String error);
+
     abstract AuthResult build();
   }
 }
