@@ -4,6 +4,9 @@
         android:id="@+id/settings_item"
         android:title="@string/settings"/>
     <item
+        android:id="@+id/remove_ads_item"
+        android:title="@string/remove_ads"/>
+    <item
         android:id="@+id/logout_item"
         android:title="@string/logout"/>
 </menu>
