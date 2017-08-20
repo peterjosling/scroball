@@ -55,6 +55,17 @@ public class ScroballApplication extends Application {
     stopService(new Intent(this, ListenerService.class));
   }
 
+  public void logout() {
+    SharedPreferences preferences = getSharedPreferences();
+    SharedPreferences.Editor editor = preferences.edit();
+    editor.remove(getString(R.string.saved_session_key));
+    editor.apply();
+
+    stopListenerService();
+    getScroballDB().clear();
+    getLastfmClient().clearSession();
+  }
+
   public LastfmClient getLastfmClient() {
     return lastfmClient;
   }

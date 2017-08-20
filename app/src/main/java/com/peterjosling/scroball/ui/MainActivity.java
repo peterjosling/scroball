@@ -2,7 +2,6 @@ package com.peterjosling.scroball.ui;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -103,14 +102,7 @@ public class MainActivity extends AppCompatActivity {
         .setPositiveButton(
             android.R.string.yes,
             (dialog, whichButton) -> {
-              SharedPreferences preferences = application.getSharedPreferences();
-              SharedPreferences.Editor editor = preferences.edit();
-              editor.remove(getString(R.string.saved_session_key));
-              editor.apply();
-
-              application.stopListenerService();
-              application.getScroballDB().clear();
-              application.getLastfmClient().clearSession();
+              application.logout();
               Auth.CredentialsApi.disableAutoSignIn(mGoogleApiClient);
 
               Intent intent = new Intent(this, SplashScreen.class);
