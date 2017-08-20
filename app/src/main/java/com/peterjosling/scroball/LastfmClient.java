@@ -6,6 +6,7 @@ import android.os.Message;
 import android.util.Log;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,7 +22,21 @@ import de.umass.lastfm.scrobble.ScrobbleResult;
 
 public class LastfmClient {
 
+  public static final int ERROR_NO_ERROR = 0;
+  public static final int ERROR_UNKNOWN = 1;
   public static final int ERROR_AUTH_FAILED = 4;
+  public static final int ERROR_OPERATION_FAILED = 8;
+  public static final int ERROR_INVALID_SESSION = 9;
+  public static final int ERROR_SERVICE_OFFLINE = 11;
+  public static final int ERROR_UNAUTHORIZED_TOKEN = 14;
+  public static final int ERROR_SERVICE_TEMPORARILY_UNAVAILABLE = 16;
+  public static final ImmutableSet<Integer> TRANSIENT_ERROR_CODES =
+      ImmutableSet.of(
+          ERROR_NO_ERROR,
+          ERROR_UNKNOWN,
+          ERROR_OPERATION_FAILED,
+          ERROR_SERVICE_OFFLINE,
+          ERROR_SERVICE_TEMPORARILY_UNAVAILABLE);
 
   private static final String TAG = LastfmClient.class.getName();
   private static final String API_KEY = "17f6f4f55152871370780cd9c0761509";

@@ -2,6 +2,7 @@ package com.peterjosling.scroball.db;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.eventbus.EventBus;
+import com.peterjosling.scroball.LastfmClient;
 import com.peterjosling.scroball.PlaybackItem;
 import com.peterjosling.scroball.ScroballApplication;
 import com.peterjosling.scroball.Scrobble;
@@ -81,7 +82,7 @@ public class ScroballDB {
     List<ScrobbleLogEntry> entries =
         SQLite.select()
             .from(ScrobbleLogEntry.class)
-            .where(ScrobbleLogEntry_Table.status.greaterThan(-1))
+            .where(ScrobbleLogEntry_Table.status.in(LastfmClient.TRANSIENT_ERROR_CODES))
             .orderBy(ScrobbleLogEntry_Table.timestamp, false)
             .queryList();
     return scrobbleEntriesToScrobbles(entries);
