@@ -1,6 +1,7 @@
 package com.peterjosling.scroball;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -9,8 +10,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.ImmutableList;
 import com.peterjosling.scroball.ui.MainActivity;
 
 import java.util.ArrayList;
@@ -23,6 +26,9 @@ public class ScrobbleNotificationManager {
 
   private static final int NOW_PLAYING_ID = 0;
   private static final int SCROBBLE_ID = 1;
+  private static final String CHANNEL_ID_SCROBBLE = "scrobble";
+  private static final String CHANNEL_ID_NOW_PLAYING = "now_playing";
+
   private static final String NOTIFICATION_DISMISS_ACTION = "scrobble_notification_dismissed";
 
   private final Context context;
@@ -39,6 +45,24 @@ public class ScrobbleNotificationManager {
 
     context.registerReceiver(
         new NotificationDismissedReceiver(), new IntentFilter(NOTIFICATION_DISMISS_ACTION));
+
+    // Create notification channels, where available.
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+      NotificationChannel scrobbleChannel =
+          new NotificationChannel(
+              CHANNEL_ID_SCROBBLE,
+              context.getString(R.string.notification_channel_name_scrobble),
+              NotificationManager.IMPORTANCE_DEFAULT);
+
+      NotificationChannel nowPlayingChannel =
+          new NotificationChannel(
+              CHANNEL_ID_NOW_PLAYING,
+              context.getString(R.string.notification_channel_name_now_playing),
+              NotificationManager.IMPORTANCE_DEFAULT);
+
+      notificationManager.createNotificationChannels(
+          ImmutableList.of(scrobbleChannel, nowPlayingChannel));
+    }
   }
 
   public void updateNowPlaying(Track track) {
@@ -51,7 +75,7 @@ public class ScrobbleNotificationManager {
     PendingIntent pendingIntent =
         PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-    Notification notification =
+    Notification.Builder notification =
         new Notification.Builder(context)
             .setSmallIcon(R.drawable.ic_notif)
             .setContentTitle("Now playing")
@@ -59,10 +83,13 @@ public class ScrobbleNotificationManager {
             .setOngoing(true)
             .setCategory(Notification.CATEGORY_STATUS)
             .setColor(Color.argb(255, 242, 72, 63))
-            .setContentIntent(pendingIntent)
-            .build();
+            .setContentIntent(pendingIntent);
 
-    notificationManager.notify(NOW_PLAYING_ID, notification);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      notification.setChannelId(CHANNEL_ID_NOW_PLAYING);
+    }
+
+    notificationManager.notify(NOW_PLAYING_ID, notification.build());
   }
 
   public void removeNowPlaying() {
@@ -135,6 +162,10 @@ public class ScrobbleNotificationManager {
     if (tracks.size() > 1) {
       notificationBuilder.setStyle(
           new Notification.BigTextStyle().bigText(joiner.join(descriptions)));
+    }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      notificationBuilder.setChannelId(CHANNEL_ID_SCROBBLE);
     }
 
     notificationManager.notify(SCROBBLE_ID, notificationBuilder.build());

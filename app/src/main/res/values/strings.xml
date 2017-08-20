@@ -40,4 +40,12 @@
 
     <!-- Strings related to the now playing screen -->
     <string name="nothing_playing">Nothing playing</string>
+
+    <!-- Strings related to notifications -->
+    <string name="notification_channel_name_scrobble">Scrobbles</string>
+    <string name="notification_channel_name_error">Errors</string>
+    <string name="notification_channel_name_now_playing">Now Playing</string>
+    <string name="authentication_error_title">Scroball authentication error</string>
+    <string name="authentication_error_content">You have been logged out from
+        Scroball and scrobbling is paused. Tap here to login.</string>
 </resources>
