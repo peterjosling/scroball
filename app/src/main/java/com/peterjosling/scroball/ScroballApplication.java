@@ -14,6 +14,7 @@ import com.raizlabs.android.dbflow.config.FlowManager;
 
 import java.util.Locale;
 
+import de.umass.lastfm.Caller;
 import io.fabric.sdk.android.Fabric;
 
 public class ScroballApplication extends Application {
@@ -38,12 +39,14 @@ public class ScroballApplication extends Application {
     String userAgent =
         String.format(Locale.UK, "%s.%d", BuildConfig.APPLICATION_ID, BuildConfig.VERSION_CODE);
     String sessionKeyKey = getString(R.string.saved_session_key);
+    LastfmApi api = new LastfmApi();
+    Caller caller = Caller.getInstance();
 
     if (sharedPreferences.contains(sessionKeyKey)) {
       String sessionKey = sharedPreferences.getString(sessionKeyKey, null);
-      lastfmClient = new LastfmClient(userAgent, sessionKey);
+      lastfmClient = new LastfmClient(api, caller, userAgent, sessionKey);
     } else {
-      lastfmClient = new LastfmClient(userAgent);
+      lastfmClient = new LastfmClient(api, caller, userAgent);
     }
 
     scroballDB = new ScroballDB();

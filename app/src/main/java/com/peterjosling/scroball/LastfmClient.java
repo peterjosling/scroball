@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Arrays;
 import java.util.List;
 
-import de.umass.lastfm.Authenticator;
 import de.umass.lastfm.CallException;
 import de.umass.lastfm.Caller;
 import de.umass.lastfm.Session;
@@ -43,15 +42,18 @@ public class LastfmClient {
   private static final String API_KEY = "17f6f4f55152871370780cd9c0761509";
   private static final String API_SECRET = "99eafa4c2412543f3141505121184b8a";
 
+  private final LastfmApi api;
+  private final Caller caller;
   private Session session;
 
-  public LastfmClient(String userAgent, String sessionKey) {
-    this(userAgent);
+  public LastfmClient(LastfmApi api, Caller caller, String userAgent, String sessionKey) {
+    this(api, caller, userAgent);
     setSession(sessionKey);
   }
 
-  public LastfmClient(String userAgent) {
-    Caller caller = Caller.getInstance();
+  public LastfmClient(LastfmApi api, Caller caller, String userAgent) {
+    this.api = api;
+    this.caller = caller;
     caller.setUserAgent(userAgent);
     caller.setCache(null);
   }
@@ -62,6 +64,8 @@ public class LastfmClient {
 
   public void authenticate(String username, String password, Handler.Callback callback) {
     new AuthenticateTask(
+        api,
+        caller,
         message -> {
           AuthResult result = (AuthResult) message.obj;
           if (result.sessionKey().isPresent()) {
@@ -74,7 +78,7 @@ public class LastfmClient {
   }
 
   public void updateNowPlaying(com.peterjosling.scroball.Track track, Handler.Callback callback) {
-    new UpdateNowPlayingTask(session, callback).execute(track);
+    new UpdateNowPlayingTask(api, session, callback).execute(track);
   }
 
   public void scrobbleTracks(List<Scrobble> scrobbles, Handler.Callback callback) {
@@ -96,11 +100,11 @@ public class LastfmClient {
       scrobbleData[i] = data;
     }
 
-    new ScrobbleTracksTask(session, callback).execute(scrobbleData);
+    new ScrobbleTracksTask(api, session, callback).execute(scrobbleData);
   }
 
   public void getTrackInfo(com.peterjosling.scroball.Track track, Handler.Callback callback) {
-    new GetTrackInfoTask(session, callback).execute(track);
+    new GetTrackInfoTask(api, session, callback).execute(track);
   }
 
   public void clearSession() {
@@ -128,9 +132,13 @@ public class LastfmClient {
   }
 
   private static class AuthenticateTask extends AsyncTask<AuthRequest, Void, AuthResult> {
+    private final LastfmApi api;
+    private final Caller caller;
     private final Handler.Callback callback;
 
-    public AuthenticateTask(Handler.Callback callback) {
+    public AuthenticateTask(LastfmApi api, Caller caller, Handler.Callback callback) {
+      this.api = api;
+      this.caller = caller;
       this.callback = callback;
     }
 
@@ -138,14 +146,14 @@ public class LastfmClient {
     protected AuthResult doInBackground(AuthRequest... params) {
       AuthRequest request = params[0];
       Session session =
-          Authenticator.getMobileSession(
+          api.getMobileSession(
               request.username(), request.password(), API_KEY, API_SECRET);
 
       if (session != null) {
         return AuthResult.builder().sessionKey(session.getKey()).build();
       }
 
-      de.umass.lastfm.Result result = Caller.getInstance().getLastResult();
+      de.umass.lastfm.Result result = caller.getLastResult();
       AuthResult.Builder authResultBuilder = AuthResult.builder();
       int httpErrorCode = result.getHttpErrorCode();
       int errorCode = result.getErrorCode();
@@ -176,10 +184,12 @@ public class LastfmClient {
 
   private static class UpdateNowPlayingTask
       extends AsyncTask<com.peterjosling.scroball.Track, Object, ScrobbleResult> {
+    private final LastfmApi api;
     private final Session session;
     private final Handler.Callback callback;
 
-    public UpdateNowPlayingTask(Session session, Handler.Callback callback) {
+    public UpdateNowPlayingTask(LastfmApi api, Session session, Handler.Callback callback) {
+      this.api = api;
       this.session = session;
       this.callback = callback;
     }
@@ -188,7 +198,7 @@ public class LastfmClient {
     protected ScrobbleResult doInBackground(com.peterjosling.scroball.Track... params) {
       com.peterjosling.scroball.Track track = params[0];
       try {
-        return Track.updateNowPlaying(track.artist(), track.track(), session);
+        return api.updateNowPlaying(track.artist(), track.track(), session);
       } catch (CallException e) {
         Log.d(TAG, "Failed to update now playing status", e);
       }
@@ -211,10 +221,12 @@ public class LastfmClient {
 
   private static class ScrobbleTracksTask
       extends AsyncTask<ScrobbleData, Object, List<Result>> {
+    private final LastfmApi api;
     private final Session session;
     private final Handler.Callback callback;
 
-    ScrobbleTracksTask(Session session, Handler.Callback callback) {
+    ScrobbleTracksTask(LastfmApi api, Session session, Handler.Callback callback) {
+      this.api = api;
       this.callback = callback;
       this.session = session;
     }
@@ -222,7 +234,7 @@ public class LastfmClient {
     @Override
     protected List<Result> doInBackground(ScrobbleData... params) {
       try {
-        List<ScrobbleResult> results = Track.scrobble(ImmutableList.copyOf(params), session);
+        List<ScrobbleResult> results = api.scrobble(ImmutableList.copyOf(params), session);
         ImmutableList.Builder<Result> builder = ImmutableList.builder();
 
         for (ScrobbleResult result : results) {
@@ -256,11 +268,13 @@ public class LastfmClient {
 
   private static class GetTrackInfoTask
       extends AsyncTask<com.peterjosling.scroball.Track, Object, Track> {
+    private final LastfmApi api;
     private final Session session;
     private final Handler.Callback callback;
     private com.peterjosling.scroball.Track track;
 
-    public GetTrackInfoTask(Session session, Handler.Callback callback) {
+    public GetTrackInfoTask(LastfmApi api, Session session, Handler.Callback callback) {
+      this.api = api;
       this.session = session;
       this.callback = callback;
     }
