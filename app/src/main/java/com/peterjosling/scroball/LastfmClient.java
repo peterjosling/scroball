@@ -5,17 +5,17 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.google.auto.value.AutoValue;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import de.umass.lastfm.Authenticator;
 import de.umass.lastfm.CallException;
 import de.umass.lastfm.Caller;
-import de.umass.lastfm.Result;
 import de.umass.lastfm.Session;
 import de.umass.lastfm.Track;
 import de.umass.lastfm.scrobble.ScrobbleData;
@@ -145,7 +145,7 @@ public class LastfmClient {
         return AuthResult.builder().sessionKey(session.getKey()).build();
       }
 
-      Result result = Caller.getInstance().getLastResult();
+      de.umass.lastfm.Result result = Caller.getInstance().getLastResult();
       AuthResult.Builder authResultBuilder = AuthResult.builder();
       int httpErrorCode = result.getHttpErrorCode();
       int errorCode = result.getErrorCode();
@@ -210,7 +210,7 @@ public class LastfmClient {
   }
 
   private static class ScrobbleTracksTask
-      extends AsyncTask<ScrobbleData, Object, List<ScrobbleResult>> {
+      extends AsyncTask<ScrobbleData, Object, List<Result>> {
     private final Session session;
     private final Handler.Callback callback;
 
@@ -220,22 +220,33 @@ public class LastfmClient {
     }
 
     @Override
-    protected List<ScrobbleResult> doInBackground(ScrobbleData... params) {
+    protected List<Result> doInBackground(ScrobbleData... params) {
       try {
-        return Track.scrobble(ImmutableList.copyOf(params), session);
+        List<ScrobbleResult> results = Track.scrobble(ImmutableList.copyOf(params), session);
+        ImmutableList.Builder<Result> builder = ImmutableList.builder();
+
+        for (ScrobbleResult result : results) {
+          if (result.isSuccessful()) {
+            builder.add(Result.success());
+          } else {
+            int errorCode = result.getErrorCode();
+            builder.add(Result.error(errorCode >= 0 ? errorCode : ERROR_UNKNOWN));
+          }
+        }
+        return builder.build();
       } catch (CallException e) {
         Log.d(TAG, "Failed to submit scrobbles", e);
       }
 
-      ArrayList<ScrobbleResult> output = new ArrayList<>();
-      for (int i = 0; i < params.length; i++) {
-        output.add(null);
+      ImmutableList.Builder<Result> results = ImmutableList.builder();
+      for (ScrobbleData p : params) {
+        results.add(Result.error(ERROR_UNKNOWN));
       }
-      return ImmutableList.copyOf(output);
+      return results.build();
     }
 
     @Override
-    protected void onPostExecute(List<ScrobbleResult> results) {
+    protected void onPostExecute(List<Result> results) {
       Message message = Message.obtain();
       message.obj = results;
       callback.handleMessage(message);
@@ -285,6 +296,25 @@ public class LastfmClient {
       }
 
       callback.handleMessage(message);
+    }
+  }
+
+  @AutoValue
+  public abstract static class Result {
+
+    public abstract int errorCode();
+
+    public boolean isSuccessful() {
+      return errorCode() < 0;
+    }
+
+    public static Result error(int errorCode) {
+      Preconditions.checkArgument(errorCode >= 0, "Negative error codes are not possible");
+      return new AutoValue_LastfmClient_Result(errorCode);
+    }
+
+    public static Result success() {
+      return new AutoValue_LastfmClient_Result(-1);
     }
   }
 }
