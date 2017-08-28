@@ -83,7 +83,17 @@ public class LastfmClient {
     for (int i = 0; i < scrobbles.size(); i++) {
       Scrobble scrobble = scrobbles.get(i);
       com.peterjosling.scroball.Track track = scrobble.track();
-      scrobbleData[i] = new ScrobbleData(track.artist(), track.track(), scrobble.timestamp());
+      ScrobbleData data = new ScrobbleData(track.artist(), track.track(), scrobble.timestamp());
+      if (track.album().isPresent()) {
+        data.setAlbum(track.album().get());
+      }
+      if (track.albumArtist().isPresent()) {
+        data.setAlbumArtist(track.albumArtist().get());
+      }
+      if (track.duration().isPresent()) {
+        data.setDuration((int) (track.duration().get() / 1000));
+      }
+      scrobbleData[i] = data;
     }
 
     new ScrobbleTracksTask(session, callback).execute(scrobbleData);
