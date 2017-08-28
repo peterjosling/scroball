@@ -94,7 +94,7 @@ public class LastfmClient {
       if (track.albumArtist().isPresent()) {
         data.setAlbumArtist(track.albumArtist().get());
       }
-      if (track.duration().isPresent()) {
+      if (track.duration().isPresent() && track.duration().get() > 0) {
         data.setDuration((int) (track.duration().get() / 1000));
       }
       scrobbleData[i] = data;
