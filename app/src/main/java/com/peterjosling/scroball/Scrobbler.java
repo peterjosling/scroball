@@ -211,11 +211,11 @@ public class Scrobbler {
     client.scrobbleTracks(
         tracksToScrobble,
         message -> {
-          List<Result> results = (List<Result>) message.obj;
+          List<LastfmClient.Result> results = (List<LastfmClient.Result>) message.obj;
           boolean shouldBackoff = false;
 
           for (int i = 0; i < results.size(); i++) {
-            Result result = results.get(i);
+            LastfmClient.Result result = results.get(i);
             Scrobble scrobble = tracksToScrobble.get(i);
 
             if (result.isSuccessful()) {
@@ -223,7 +223,7 @@ public class Scrobbler {
               scroballDB.writeScrobble(scrobble);
               pending.remove(scrobble);
             } else {
-              int errorCode = result.getErrorCode();
+              int errorCode = result.errorCode();
               if (!LastfmClient.isTransientError(errorCode)) {
                 pending.remove(scrobble);
                 shouldBackoff = true;
