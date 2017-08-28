@@ -289,7 +289,7 @@ public class LastfmClient {
 
         if (track.album().isPresent()) {
           builder.album(track.album().get());
-        } else {
+        } else if (updatedTrack.getAlbum() != null) {
           builder.album(updatedTrack.getAlbum());
         }
         message.obj = builder.build();
