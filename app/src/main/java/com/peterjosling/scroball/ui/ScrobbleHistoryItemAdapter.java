@@ -36,17 +36,13 @@ public class ScrobbleHistoryItemAdapter extends ArrayAdapter<Scrobble> {
       LayoutInflater inflater = LayoutInflater.from(getContext());
       convertView = inflater.inflate(R.layout.scrobble_history_item, parent, false);
 
-      viewHolder.title = (TextView) convertView.findViewById(R.id.scrobble_history_item_title);
-      viewHolder.artist = (TextView) convertView.findViewById(R.id.scrobble_history_item_artist);
-      viewHolder.timestamp =
-          (TextView) convertView.findViewById(R.id.scrobble_history_item_timestamp);
+      viewHolder.title = convertView.findViewById(R.id.scrobble_history_item_title);
+      viewHolder.artist = convertView.findViewById(R.id.scrobble_history_item_artist);
+      viewHolder.timestamp = convertView.findViewById(R.id.scrobble_history_item_timestamp);
 
-      viewHolder.successIcon =
-          (ImageView) convertView.findViewById(R.id.scrobble_history_item_success_icon);
-      viewHolder.pendingIcon =
-          (ImageView) convertView.findViewById(R.id.scrobble_history_item_pending_icon);
-      viewHolder.warningIcon =
-          (ImageView) convertView.findViewById(R.id.scrobble_history_item_warning_icon);
+      viewHolder.successIcon = convertView.findViewById(R.id.scrobble_history_item_success_icon);
+      viewHolder.pendingIcon = convertView.findViewById(R.id.scrobble_history_item_pending_icon);
+      viewHolder.warningIcon = convertView.findViewById(R.id.scrobble_history_item_warning_icon);
 
       convertView.setTag(viewHolder);
     } else {

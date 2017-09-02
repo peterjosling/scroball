@@ -39,7 +39,7 @@ public class ScrobbleHistoryFragment extends Fragment {
     adapter =
         new ScrobbleHistoryItemAdapter(
             getContext(), android.R.layout.simple_list_item_1, scrobbles);
-    ListView listView = (ListView) rootView.findViewById(R.id.scrobble_history_list_view);
+    ListView listView = rootView.findViewById(R.id.scrobble_history_list_view);
     listView.setAdapter(adapter);
 
     return rootView;
