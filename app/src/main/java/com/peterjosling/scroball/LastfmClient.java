@@ -104,7 +104,7 @@ public class LastfmClient {
   }
 
   public void getTrackInfo(com.peterjosling.scroball.Track track, Handler.Callback callback) {
-    new GetTrackInfoTask(api, session, callback).execute(track);
+    new GetTrackInfoTask(session, callback).execute(track);
   }
 
   public void clearSession() {
@@ -268,13 +268,11 @@ public class LastfmClient {
 
   private static class GetTrackInfoTask
       extends AsyncTask<com.peterjosling.scroball.Track, Object, Track> {
-    private final LastfmApi api;
     private final Session session;
     private final Handler.Callback callback;
     private com.peterjosling.scroball.Track track;
 
-    public GetTrackInfoTask(LastfmApi api, Session session, Handler.Callback callback) {
-      this.api = api;
+    public GetTrackInfoTask(Session session, Handler.Callback callback) {
       this.session = session;
       this.callback = callback;
     }
