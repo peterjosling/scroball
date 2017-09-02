@@ -20,6 +20,12 @@ import de.umass.lastfm.Track;
 import de.umass.lastfm.scrobble.ScrobbleData;
 import de.umass.lastfm.scrobble.ScrobbleResult;
 
+/**
+ * Client for accessing the Last.fm API.
+ *
+ * <p>Acts as a wrapper around the client in {@link de.umass.lastfm}, providing asynchronous methods
+ * and transforming between the Scroball and internal API data types.
+ */
 public class LastfmClient {
 
   public static final int ERROR_NO_ERROR = 0;
@@ -30,6 +36,10 @@ public class LastfmClient {
   public static final int ERROR_SERVICE_OFFLINE = 11;
   public static final int ERROR_UNAUTHORIZED_TOKEN = 14;
   public static final int ERROR_SERVICE_TEMPORARILY_UNAVAILABLE = 16;
+
+  /**
+   * The set of error codes which indicate transient errors, for which requests should be retried.
+   */
   public static final ImmutableSet<Integer> TRANSIENT_ERROR_CODES =
       ImmutableSet.of(
           ERROR_NO_ERROR,
@@ -46,11 +56,16 @@ public class LastfmClient {
   private final Caller caller;
   private Session session;
 
+  /** Creates a new authenticated client. */
   public LastfmClient(LastfmApi api, Caller caller, String userAgent, String sessionKey) {
     this(api, caller, userAgent);
     setSession(sessionKey);
   }
 
+  /**
+   * Creates a new unauthenticated client. The only allowed client method on this instance will be
+   * {@link #authenticate(String, String, Handler.Callback)}
+   */
   public LastfmClient(LastfmApi api, Caller caller, String userAgent) {
     this.api = api;
     this.caller = caller;
@@ -58,10 +73,23 @@ public class LastfmClient {
     caller.setCache(null);
   }
 
+  /**
+   * Returns {@code true} if this client is authenticated and can be used to make calls to the
+   * Last.fm API. A client will be authenticated if it was created with {@link
+   * LastfmClient(LastfmApi, Caller, String, String)}, or was authenticated after creation with
+   * {@link #authenticate(String, String, Handler.Callback)}.
+   */
   public boolean isAuthenticated() {
     return session != null;
   }
 
+  /**
+   * Authenticates with the Last.fm API as a mobile app with the specified {@code username} and
+   * {@code password}, setting up an active session on this client.
+   *
+   * @param callback callback which will be called with an {@link AuthResult} as the message
+   *     payload.
+   */
   public void authenticate(String username, String password, Handler.Callback callback) {
     new AuthenticateTask(
             api,
@@ -77,10 +105,24 @@ public class LastfmClient {
         .execute(AuthRequest.create(username, password));
   }
 
+  /**
+   * Updates the user's Now Playing status on the Last.fm API.
+   *
+   * @param track the track to take metadata from. Only track and artist will be used.
+   * @param callback the callback which will be invoked with the request result, with a {@link
+   *     Result} as the message payload.
+   */
   public void updateNowPlaying(com.peterjosling.scroball.Track track, Handler.Callback callback) {
     new UpdateNowPlayingTask(api, session, callback).execute(track);
   }
 
+  /**
+   * Submits the specified scrobbles to the Last.fm API for the current user.
+   *
+   * @param scrobbles the list of scrobbles to submit. Must be 50 or fewer items.
+   * @param callback the callback which will be invoked with the results of the submissions, with a
+   *     list of {@link Result} as the message payload.
+   */
   public void scrobbleTracks(List<Scrobble> scrobbles, Handler.Callback callback) {
     Preconditions.checkArgument(
         scrobbles.size() <= 50, "Cannot submit more than 50 scrobbles at once");
@@ -321,6 +363,7 @@ public class LastfmClient {
     }
   }
 
+  /** Represents the result of an API call. */
   @AutoValue
   public abstract static class Result {
 
