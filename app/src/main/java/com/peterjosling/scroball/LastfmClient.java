@@ -146,8 +146,7 @@ public class LastfmClient {
     protected AuthResult doInBackground(AuthRequest... params) {
       AuthRequest request = params[0];
       Session session =
-          api.getMobileSession(
-              request.username(), request.password(), API_KEY, API_SECRET);
+          api.getMobileSession(request.username(), request.password(), API_KEY, API_SECRET);
 
       if (session != null) {
         return AuthResult.builder().sessionKey(session.getKey()).build();
@@ -229,8 +228,7 @@ public class LastfmClient {
     }
   }
 
-  private static class ScrobbleTracksTask
-      extends AsyncTask<ScrobbleData, Object, List<Result>> {
+  private static class ScrobbleTracksTask extends AsyncTask<ScrobbleData, Object, List<Result>> {
     private final LastfmApi api;
     private final Session session;
     private final Handler.Callback callback;
