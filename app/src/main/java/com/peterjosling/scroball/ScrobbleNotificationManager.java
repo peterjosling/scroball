@@ -40,7 +40,6 @@ public class ScrobbleNotificationManager {
   private final Context context;
   private final SharedPreferences sharedPreferences;
   private final NotificationManager notificationManager;
-  private final List<Track> tracks = new ArrayList<>();
   private final Map<Track, Integer> playCounts = new HashMap<>();
 
   public ScrobbleNotificationManager(Context context, SharedPreferences sharedPreferences) {
@@ -125,15 +124,12 @@ public class ScrobbleNotificationManager {
 
     if (playCounts.containsKey(track)) {
       count += playCounts.get(track);
-    } else {
-      tracks.add(track);
     }
-
     playCounts.put(track, count);
 
     List<String> descriptions = new ArrayList<>();
 
-    for (Track t : tracks) {
+    for (Track t : playCounts.keySet()) {
       String plays = "";
       int c = playCounts.get(t);
 
@@ -144,10 +140,10 @@ public class ScrobbleNotificationManager {
       descriptions.add(String.format("%s%s — %s", plays, t.artist(), t.track()));
     }
 
-    String text = String.format(Locale.getDefault(), "%d tracks", tracks.size());
+    String text = String.format(Locale.getDefault(), "%d tracks", playCounts.size());
     String title = "Tracks scrobbled";
 
-    if (tracks.size() == 1) {
+    if (playCounts.size() == 1) {
       text = descriptions.get(0);
       title = "Track scrobbled";
     }
@@ -175,10 +171,10 @@ public class ScrobbleNotificationManager {
             .setColor(Color.argb(255, 139, 195, 74))
             .setContentIntent(clickPendingIntent)
             .setDeleteIntent(dismissIntent)
-            .setNumber(tracks.size())
+            .setNumber(playCounts.size())
             .setAutoCancel(true);
 
-    if (tracks.size() > 1) {
+    if (playCounts.size() > 1) {
       notificationBuilder.setStyle(
           new Notification.BigTextStyle().bigText(joiner.join(descriptions)));
     }
@@ -223,7 +219,6 @@ public class ScrobbleNotificationManager {
   public class NotificationDismissedReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-      tracks.clear();
       playCounts.clear();
     }
   }
