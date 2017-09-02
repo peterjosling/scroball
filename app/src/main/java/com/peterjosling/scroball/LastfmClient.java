@@ -64,16 +64,16 @@ public class LastfmClient {
 
   public void authenticate(String username, String password, Handler.Callback callback) {
     new AuthenticateTask(
-        api,
-        caller,
-        message -> {
-          AuthResult result = (AuthResult) message.obj;
-          if (result.sessionKey().isPresent()) {
-            setSession(result.sessionKey().get());
-          }
-          callback.handleMessage(message);
-          return true;
-        })
+            api,
+            caller,
+            message -> {
+              AuthResult result = (AuthResult) message.obj;
+              if (result.sessionKey().isPresent()) {
+                setSession(result.sessionKey().get());
+              }
+              callback.handleMessage(message);
+              return true;
+            })
         .execute(AuthRequest.create(username, password));
   }
 
