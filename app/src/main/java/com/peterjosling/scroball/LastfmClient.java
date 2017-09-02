@@ -213,8 +213,18 @@ public class LastfmClient {
         Log.d(TAG, String.format("Failed to update now playing status: %s", scrobbleResult));
       }
 
+      Result result = Result.error(ERROR_UNKNOWN);
+      if (scrobbleResult != null) {
+        if (scrobbleResult.isSuccessful()) {
+          result = Result.success();
+        } else {
+          int errorCode = scrobbleResult.getErrorCode();
+          result = Result.error(errorCode >= 0 ? errorCode : ERROR_UNKNOWN);
+        }
+      }
+
       Message message = Message.obtain();
-      message.obj = scrobbleResult;
+      message.obj = result;
       callback.handleMessage(message);
     }
   }

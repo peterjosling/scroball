@@ -12,7 +12,6 @@ import java.util.List;
 
 import de.umass.lastfm.Caller;
 import de.umass.lastfm.Result;
-import de.umass.lastfm.scrobble.ScrobbleResult;
 
 public class Scrobbler {
 
@@ -60,11 +59,8 @@ public class Scrobbler {
     client.updateNowPlaying(
         track,
         message -> {
-          ScrobbleResult result = (ScrobbleResult) message.obj;
-          int errorCode = 1;
-          if (result != null) {
-            errorCode = result.getErrorCode();
-          }
+          LastfmClient.Result result = (LastfmClient.Result) message.obj;
+          int errorCode = result.errorCode();
           if (LastfmClient.isAuthenticationError(errorCode)) {
             notificationManager.notifyAuthError();
             ScroballApplication.getEventBus().post(AuthErrorEvent.create(errorCode));
