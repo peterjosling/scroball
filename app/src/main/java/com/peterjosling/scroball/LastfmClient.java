@@ -82,6 +82,8 @@ public class LastfmClient {
   }
 
   public void scrobbleTracks(List<Scrobble> scrobbles, Handler.Callback callback) {
+    Preconditions.checkArgument(
+        scrobbles.size() <= 50, "Cannot submit more than 50 scrobbles at once");
     final ScrobbleData[] scrobbleData = new ScrobbleData[scrobbles.size()];
 
     for (int i = 0; i < scrobbles.size(); i++) {
