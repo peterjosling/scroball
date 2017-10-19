@@ -1,0 +1,54 @@
+<resources>
+    <string name="app_name">Scroball</string>
+
+    <!-- Strings related to Settings -->
+    <string name="saved_session_key">会话密钥</string>
+
+    <!-- Example General settings -->
+    <string name="title_activity_settings">设置</string>
+    <string name="pref_header_players">已启用的媒体播放器</string>
+
+    <string name="pref_title_new_players">自动从新播放器上记录</string>
+
+    <!-- Example settings for Notifications -->
+    <string name="pref_header_notifications">通知</string>
+
+    <string name="title_activity_login">登录</string>
+    <string name="pref_title_notifications_now_playing">正在播放</string>
+    <string name="pref_title_notifications_scrobble">已记录音轨</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_username">用户名</string>
+    <string name="prompt_password">密码</string>
+    <string name="action_sign_in">登录</string>
+    <string name="progress_logging_in">登录中…</string>
+    <string name="error">错误</string>
+    <string name="error_incorrect_password">用户名或密码无效</string>
+    <string name="error_field_required">此框为必填项</string>
+    <string name="error_unknown">发生了未知错误</string>
+    <string name="error_internet">您没有联网</string>
+    <string name="splash_notification_access">需要通知使用权</string>
+    <string name="splash_notification_access_text">Scroball需要通知使用权权限才能读取设备的回放状态。</string>
+    <string name="lastfm_logo_description">Last.fm logo</string>
+
+    <!-- Strings related to the main screen -->
+    <string name="settings">设置</string>
+    <string name="remove_ads">移除广告</string>
+    <string name="logout">登出</string>
+    <string name="are_you_sure">您确定吗？string>
+    <string name="logout_confirm">登出会清除所有尚未提交的记录。继续吗？</string>
+
+    <!-- Strings related to the now playing screen -->
+    <string name="nothing_playing">鸦雀无声</string>
+
+    <!-- Strings related to notifications -->
+    <string name="notification_channel_name_scrobble">记录</string>
+    <string name="notification_channel_name_error">错误</string>
+    <string name="notification_channel_name_now_playing">正在播放</string>
+    <string name="authentication_error_title">Scroball身份验证错误</string>
+    <string name="authentication_error_content">您已从Scroball登出，记录已
+		暂停。轻触这里登录。</string>
+
+    <!-- Strings related to IAPs -->
+    <string name="purchase_failed">购买失败</string>
+</resources>

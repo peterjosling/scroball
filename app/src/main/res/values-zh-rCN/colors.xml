@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#F2483F</color>
+    <color name="colorPrimaryDark">#D03D32</color>
+    <color name="colorAccent">#D51007</color>
+    <color name="colorLastfmLogo">#D51007</color>
+    <color name="successGreen">#4CAF50</color>
+    <color name="warningYellow">#FDD835</color>
+</resources>
