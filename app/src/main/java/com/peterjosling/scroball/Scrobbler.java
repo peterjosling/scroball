@@ -105,9 +105,7 @@ public class Scrobbler {
       playCount++;
     }
 
-    playCount -= playbackItem.getPlaysScrobbled();
-
-    for (int i = 0; i < playCount; i++) {
+    for (int i = playbackItem.getPlaysScrobbled(); i < playCount; i++) {
       int itemTimestamp = (int) ((timestamp + i * duration) / 1000);
 
       Scrobble scrobble = Scrobble.builder().track(track).timestamp(itemTimestamp).build();
