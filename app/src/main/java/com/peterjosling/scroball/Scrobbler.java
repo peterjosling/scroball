@@ -105,6 +105,7 @@ public class Scrobbler {
       playCount++;
     }
 
+    int newScrobbles = playCount - playbackItem.getPlaysScrobbled();
     for (int i = playbackItem.getPlaysScrobbled(); i < playCount; i++) {
       int itemTimestamp = (int) ((timestamp + i * duration) / 1000);
 
@@ -115,11 +116,11 @@ public class Scrobbler {
       playbackItem.addScrobble();
     }
 
-    if (playCount > 0) {
+    if (newScrobbles > 0) {
       Log.d(TAG, String.format("Queued %d scrobbles", playCount));
     }
 
-    notificationManager.notifyScrobbled(track, playCount);
+    notificationManager.notifyScrobbled(track, newScrobbles);
     scrobblePending();
   }
 
