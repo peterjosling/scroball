@@ -4,20 +4,25 @@
     <!-- Strings related to Settings -->
     <string name="saved_session_key">sessionKey</string>
 
-    <!-- Example General settings -->
+    <!-- Settings menu item -->
     <string name="title_activity_settings">Settings</string>
-    <string name="pref_header_players">Enabled media players</string>
 
+    <!-- Enabled players settings -->
+    <string name="pref_header_players">Enabled media players</string>
     <string name="pref_title_new_players">Scrobble from new players automatically</string>
 
-    <!-- Example settings for Notifications -->
+    <!-- Notification settings -->
     <string name="pref_header_notifications">Notifications</string>
-
-    <string name="title_activity_login">Sign in</string>
+    <string name="pref_group_title_notification_types">Notification types</string>
     <string name="pref_title_notifications_now_playing">Now Playing</string>
     <string name="pref_title_notifications_scrobble">Track scrobbled</string>
+    <string name="pref_group_title_notification_settings">Notification settings</string>
+    <string name="pref_title_notification_vibrate">Vibrate</string>
+    <string name="pref_title_notification_sound">Sound</string>
+    <string name="pref_title_notification_light">Light</string>
 
     <!-- Strings related to login -->
+    <string name="title_activity_login">Sign in</string>
     <string name="prompt_username">Username</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in</string>

@@ -1,13 +1,38 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="notifications_now_playing"
-        android:title="@string/pref_title_notifications_now_playing" />
+    <PreferenceCategory
+        android:key="notifications_types_settings"
+        android:title="@string/pref_group_title_notification_types">
 
-    <SwitchPreference
-        android:defaultValue="true"
-        android:key="notifications_scrobble"
-        android:title="@string/pref_title_notifications_scrobble" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="notifications_now_playing"
+            android:title="@string/pref_title_notifications_now_playing"/>
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="notifications_scrobble"
+            android:title="@string/pref_title_notifications_scrobble"/>
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="notifications_behaviour_settings"
+        android:title="@string/pref_group_title_notification_settings">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="notifications_vibrate"
+            android:title="@string/pref_title_notification_vibrate"/>
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="notifications_sound"
+            android:title="@string/pref_title_notification_sound"/>
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="notifications_light"
+            android:title="@string/pref_title_notification_light"/>
+    </PreferenceCategory>
 
 </PreferenceScreen>

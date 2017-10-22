@@ -53,11 +53,22 @@ public class ScrobbleNotificationManager {
 
     // Create notification channels, where available.
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+      boolean enableSound = sharedPreferences.getBoolean("notification_sound", false);
+      boolean enableVibrate = sharedPreferences.getBoolean("notification_vibrate", false);
+      boolean enableLight = sharedPreferences.getBoolean("notification_light", false);
+
       NotificationChannel scrobbleChannel =
           new NotificationChannel(
               CHANNEL_ID_SCROBBLE,
               context.getString(R.string.notification_channel_name_scrobble),
               NotificationManager.IMPORTANCE_DEFAULT);
+      scrobbleChannel.enableVibration(enableVibrate);
+      scrobbleChannel.enableLights(enableLight);
+      if (enableSound) {
+        scrobbleChannel.setSound(
+            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
+            new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build());
+      }
 
       NotificationChannel errorChannel =
           new NotificationChannel(
@@ -182,6 +193,14 @@ public class ScrobbleNotificationManager {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       notificationBuilder.setChannelId(CHANNEL_ID_SCROBBLE);
     }
+
+    boolean enableSound = sharedPreferences.getBoolean("notifications_sound", false);
+    boolean enableVibrate = sharedPreferences.getBoolean("notifications_vibrate", false);
+    boolean enableLight = sharedPreferences.getBoolean("notifications_light", false);
+    notificationBuilder.setDefaults(
+        ((enableSound) ? Notification.DEFAULT_SOUND : 0)
+            | ((enableVibrate) ? Notification.DEFAULT_VIBRATE : 0)
+            | ((enableLight) ? Notification.DEFAULT_LIGHTS : 0));
 
     notificationManager.notify(SCROBBLE_ID, notificationBuilder.build());
   }
