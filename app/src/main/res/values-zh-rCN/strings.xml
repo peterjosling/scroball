@@ -2,7 +2,7 @@
     <string name="app_name">Scroball</string>
 
     <!-- Strings related to Settings -->
-    <string name="saved_session_key">会话密钥</string>
+    <string name="saved_session_key">sessionKey</string>
 
     <!-- Example General settings -->
     <string name="title_activity_settings">设置</string>
