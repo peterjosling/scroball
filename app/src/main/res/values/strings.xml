@@ -5,55 +5,54 @@
     <string name="saved_session_key">sessionKey</string>
 
     <!-- Settings menu item -->
-    <string name="title_activity_settings">Settings</string>
+    <string name="title_activity_settings">Настройки</string>
 
     <!-- Enabled players settings -->
-    <string name="pref_header_players">Enabled media players</string>
-    <string name="pref_title_new_players">Scrobble from new players automatically</string>
+    <string name="pref_header_players">Включенные медиаплееры</string>
+    <string name="pref_title_new_players">Выполнять скробблинг из обнаруженных плееров автоматически</string>
 
     <!-- Notification settings -->
-    <string name="pref_header_notifications">Notifications</string>
-    <string name="pref_group_title_notification_types">Notification types</string>
-    <string name="pref_title_notifications_now_playing">Now Playing</string>
-    <string name="pref_title_notifications_scrobble">Track scrobbled</string>
-    <string name="pref_group_title_notification_settings">Notification settings</string>
-    <string name="pref_title_notification_vibrate">Vibrate</string>
-    <string name="pref_title_notification_sound">Sound</string>
-    <string name="pref_title_notification_light">Light</string>
+    <string name="pref_header_notifications">Уведомления</string>
+    <string name="pref_group_title_notification_types">Типы уведомлений</string>
+    <string name="pref_title_notifications_now_playing">Сейчас играет</string>
+    <string name="pref_title_notifications_scrobble">Всего заскробблено</string>
+    <string name="pref_group_title_notification_settings">Настройки уведомлений</string>
+    <string name="pref_title_notification_vibrate">Вибрация</string>
+    <string name="pref_title_notification_sound">Звук</string>
+    <string name="pref_title_notification_light">Световой индикатор</string>
 
     <!-- Strings related to login -->
-    <string name="title_activity_login">Sign in</string>
-    <string name="prompt_username">Username</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in</string>
-    <string name="progress_logging_in">Logging in…</string>
-    <string name="error">Error</string>
-    <string name="error_incorrect_password">Invalid username or password</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="error_unknown">An unknown error occurred</string>
-    <string name="error_internet">You are not connected to the internet</string>
-    <string name="splash_notification_access">Notification Access required</string>
-    <string name="splash_notification_access_text">The Notification Access permission is required by Scroball to read device playback state.</string>
-    <string name="lastfm_logo_description">Last.fm logo</string>
+    <string name="title_activity_login">Войти в профиль</string>
+    <string name="prompt_username">Логин</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="action_sign_in">Войти</string>
+    <string name="progress_logging_in">Выполняется вход…</string>
+    <string name="error">Ошибка</string>
+    <string name="error_incorrect_password">Неправильное имя пользователя или пароль</string>
+    <string name="error_field_required">Это поле обязательно к заполнению</string>
+    <string name="error_unknown">Произошла неизвестная ошибка</string>
+    <string name="error_internet">Вы не подключены к Интернету</string>
+    <string name="splash_notification_access">Требуется доступ к уведомлениям</string>
+    <string name="splash_notification_access_text">Для чтения состояния воспроизведения устройства Scroball требуется разрешение на доступ к уведомлениям.</string>
+    <string name="lastfm_logo_description">Лого Last.fm</string>
 
     <!-- Strings related to the main screen -->
-    <string name="settings">Settings</string>
-    <string name="remove_ads">Remove ads</string>
-    <string name="logout">Logout</string>
-    <string name="are_you_sure">Are you sure?</string>
-    <string name="logout_confirm">Logging out will clear any scrobbles which have yet to be submitted. Continue?</string>
+    <string name="settings">Настройки</string>
+    <string name="remove_ads">Убрать рекламу</string>
+    <string name="logout">Выйти из профиля</string>
+    <string name="are_you_sure">Вы уверены?</string>
+    <string name="logout_confirm">После выхода из системы вы не сможете передавать информацию о скробблинге. Продолжить?</string>
 
     <!-- Strings related to the now playing screen -->
-    <string name="nothing_playing">Nothing playing</string>
+    <string name="nothing_playing">Сейчас ничего не играет</string>
 
     <!-- Strings related to notifications -->
-    <string name="notification_channel_name_scrobble">Scrobbles</string>
-    <string name="notification_channel_name_error">Errors</string>
-    <string name="notification_channel_name_now_playing">Now Playing</string>
-    <string name="authentication_error_title">Scroball authentication error</string>
-    <string name="authentication_error_content">You have been logged out from
-        Scroball and scrobbling is paused. Tap here to login.</string>
+    <string name="notification_channel_name_scrobble">Скробблинги</string>
+    <string name="notification_channel_name_error">Ошибки</string>
+    <string name="notification_channel_name_now_playing">Сейчас играет</string>
+    <string name="authentication_error_title">Ошибка аутентификации Scroball</string>
+    <string name="authentication_error_content">Вы вышли из Scroball и скробблинг был прекращён. Нажмите здесь для входа.</string>
 
     <!-- Strings related to IAPs -->
-    <string name="purchase_failed">Purchase failed</string>
+    <string name="purchase_failed">Ошибка при оплате</string>
 </resources>
