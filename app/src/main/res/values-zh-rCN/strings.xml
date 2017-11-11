@@ -35,7 +35,7 @@
     <string name="settings">设置</string>
     <string name="remove_ads">移除广告</string>
     <string name="logout">登出</string>
-    <string name="are_you_sure">您确定吗？string>
+    <string name="are_you_sure">您确定吗？</string>
     <string name="logout_confirm">登出会清除所有尚未提交的记录。继续吗？</string>
 
     <!-- Strings related to the now playing screen -->
