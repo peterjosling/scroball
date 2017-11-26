@@ -235,9 +235,9 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
     public CharSequence getPageTitle(int position) {
       switch (position) {
         case 0:
-          return "Now Playing";
+          return getString(R.string.tab_now_playing);
         case 1:
-          return "History";
+          return getString(R.string.tab_history);
       }
       return null;
     }
