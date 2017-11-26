@@ -46,8 +46,7 @@
     <string name="notification_channel_name_error">错误</string>
     <string name="notification_channel_name_now_playing">正在播放</string>
     <string name="authentication_error_title">Scroball身份验证错误</string>
-    <string name="authentication_error_content">您已从Scroball登出，记录已
-		暂停。轻触这里登录。</string>
+    <string name="authentication_error_content">您已从Scroball登出，记录已 暂停。轻触这里登录。</string>
 
     <!-- Strings related to IAPs -->
     <string name="purchase_failed">购买失败</string>
