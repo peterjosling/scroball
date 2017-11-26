@@ -90,6 +90,22 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
             .addApi(Auth.CREDENTIALS_API)
             .build();
 
+    adView = findViewById(R.id.adView);
+    if (this.adsRemoved) {
+      RelativeLayout parent = (RelativeLayout) adView.getParent();
+      if (parent != null) {
+        parent.removeView(adView);
+      }
+    } else {
+      AdRequest adRequest =
+          new AdRequest.Builder().addTestDevice("86193DC9EBC8E1C3873178900C9FCCFC").build();
+      adView.loadAd(adRequest);
+    }
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
     billingClient = new BillingClient.Builder(this).setListener(this).build();
     billingClient.startConnection(
         new BillingClientStateListener() {
@@ -106,18 +122,12 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
           @Override
           public void onBillingServiceDisconnected() {}
         });
+  }
 
-    adView = findViewById(R.id.adView);
-    if (this.adsRemoved) {
-      RelativeLayout parent = (RelativeLayout) adView.getParent();
-      if (parent != null) {
-        parent.removeView(adView);
-      }
-    } else {
-      AdRequest adRequest =
-          new AdRequest.Builder().addTestDevice("86193DC9EBC8E1C3873178900C9FCCFC").build();
-      adView.loadAd(adRequest);
-    }
+  @Override
+  protected void onPause() {
+    super.onPause();
+    billingClient.endConnection();
   }
 
   @Override
