@@ -70,6 +70,9 @@ public abstract class Track {
     }
     if (artist != null) {
       builder.artist(artist);
+    } else if (albumArtist != null) {
+      // Some apps (Telegram) set ALBUM_ARTIST but not ARTIST.
+      builder.artist(albumArtist);
     } else {
       return new TitleExtractor().transform(builder.artist("").build());
     }

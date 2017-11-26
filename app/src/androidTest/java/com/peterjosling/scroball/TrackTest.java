@@ -122,4 +122,16 @@ public class TrackTest {
     assertThat(output1.duration()).hasValue(threeMinutesMs);
     assertThat(output2.duration()).hasValue(threeMinutesMs);
   }
+
+  @Test
+  public void fromMediaMetadata_usesAlbumArtistIfArtistMissing() {
+    MediaMetadata input =
+        new MediaMetadata.Builder()
+            .putString(MediaMetadata.METADATA_KEY_ALBUM_ARTIST, "Artist")
+            .build();
+
+    Track output = Track.fromMediaMetadata(input);
+
+    assertThat(output.artist()).isEqualTo("Artist");
+  }
 }
