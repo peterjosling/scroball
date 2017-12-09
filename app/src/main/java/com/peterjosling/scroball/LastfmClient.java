@@ -1,5 +1,6 @@
 package com.peterjosling.scroball;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
@@ -30,7 +31,6 @@ public class LastfmClient {
 
   public static final int ERROR_NO_ERROR = 0;
   public static final int ERROR_UNKNOWN = 1;
-  public static final int ERROR_AUTH_FAILED = 4;
   public static final int ERROR_OPERATION_FAILED = 8;
   public static final int ERROR_INVALID_SESSION = 9;
   public static final int ERROR_SERVICE_OFFLINE = 11;
@@ -64,7 +64,7 @@ public class LastfmClient {
 
   /**
    * Creates a new unauthenticated client. The only allowed client method on this instance will be
-   * {@link #authenticate(String, String, Handler.Callback)}
+   * {@link #getSession(String, Handler.Callback)}
    */
   public LastfmClient(LastfmApi api, Caller caller, String userAgent) {
     this.api = api;
@@ -77,21 +77,28 @@ public class LastfmClient {
    * Returns {@code true} if this client is authenticated and can be used to make calls to the
    * Last.fm API. A client will be authenticated if it was created with {@link
    * LastfmClient(LastfmApi, Caller, String, String)}, or was authenticated after creation with
-   * {@link #authenticate(String, String, Handler.Callback)}.
+   * {@link #getSession(String, Handler.Callback)}.
    */
   public boolean isAuthenticated() {
     return session != null;
   }
 
+  /** Returns the URL to redirect users to for browser-based authentication. */
+  public Uri getAuthUrl() {
+    return Uri.parse(
+        "http://www.last.fm/api/auth/?api_key=" + API_KEY + "&cb=scroball://authenticate");
+  }
+
   /**
-   * Authenticates with the Last.fm API as a mobile app with the specified {@code username} and
-   * {@code password}, setting up an active session on this client.
+   * Authenticates with the Last.fm API using the browser-based token authentication, setting up an
+   * active session on this client.
    *
+   * @param token token received from the Last.fm API through a redirect.
    * @param callback callback which will be called with an {@link AuthResult} as the message
    *     payload.
    */
-  public void authenticate(String username, String password, Handler.Callback callback) {
-    new AuthenticateTask(
+  public void getSession(String token, Handler.Callback callback) {
+    new GetSessionTask(
             api,
             caller,
             message -> {
@@ -102,7 +109,7 @@ public class LastfmClient {
               callback.handleMessage(message);
               return true;
             })
-        .execute(AuthRequest.create(username, password));
+        .execute(token);
   }
 
   /**
@@ -175,23 +182,22 @@ public class LastfmClient {
     return errorCode == ERROR_INVALID_SESSION || errorCode == ERROR_UNAUTHORIZED_TOKEN;
   }
 
-  private static class AuthenticateTask extends AsyncTask<AuthRequest, Void, AuthResult> {
+  private static class GetSessionTask extends AsyncTask<String, Void, AuthResult> {
     private final LastfmApi api;
     private final Caller caller;
     private final Handler.Callback callback;
 
-    public AuthenticateTask(LastfmApi api, Caller caller, Handler.Callback callback) {
+    public GetSessionTask(LastfmApi api, Caller caller, Handler.Callback callback) {
       this.api = api;
       this.caller = caller;
       this.callback = callback;
     }
 
     @Override
-    protected AuthResult doInBackground(AuthRequest... params) {
-      AuthRequest request = params[0];
-      Session session =
-          api.getMobileSession(request.username(), request.password(), API_KEY, API_SECRET);
+    protected AuthResult doInBackground(String... params) {
+      String token = params[0];
 
+      Session session = api.getSession(token, API_KEY, API_SECRET);
       if (session != null) {
         return AuthResult.builder().sessionKey(session.getKey()).build();
       }

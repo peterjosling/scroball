@@ -35,6 +35,12 @@
         <activity
             android:name=".ui.LoginActivity"
             android:label="@string/title_activity_login">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="scroball" android:host="authenticate" />
+            </intent-filter>
         </activity>
         <activity
             android:name=".ui.MainActivity"

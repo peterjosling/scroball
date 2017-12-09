@@ -23,8 +23,6 @@ import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.common.collect.ImmutableList;
 import com.peterjosling.scroball.R;
 import com.peterjosling.scroball.ScroballApplication;
@@ -55,8 +53,6 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
   /** The {@link ViewPager} that will host the section contents. */
   private ViewPager mViewPager;
 
-  private GoogleApiClient mGoogleApiClient;
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -83,12 +79,6 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
     mViewPager.setCurrentItem(initialTab);
 
     this.adsRemoved = application.getSharedPreferences().getBoolean(REMOVE_ADS_SKU, false);
-
-    mGoogleApiClient =
-        new GoogleApiClient.Builder(this)
-            .enableAutoManage(this, 0, null)
-            .addApi(Auth.CREDENTIALS_API)
-            .build();
 
     adView = findViewById(R.id.adView);
     if (this.adsRemoved) {
@@ -174,7 +164,6 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
             android.R.string.yes,
             (dialog, whichButton) -> {
               application.logout();
-              Auth.CredentialsApi.disableAutoSignIn(mGoogleApiClient);
 
               Intent intent = new Intent(this, SplashScreen.class);
               intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

@@ -23,13 +23,9 @@
 
     <!-- Strings related to login -->
     <string name="title_activity_login">Увійти в профіль</string>
-    <string name="prompt_username">Логін</string>
-    <string name="prompt_password">Пароль</string>
     <string name="action_sign_in">Увійти</string>
     <string name="progress_logging_in">Виконується вхід…</string>
     <string name="error">Помилка</string>
-    <string name="error_incorrect_password">Неправильне ім\'я користувача або пароль</string>
-    <string name="error_field_required">Це поле є обов`язковим для заповнення</string>
     <string name="error_unknown">Виникла невідома помилка</string>
     <string name="error_internet">Ви не підключені до Інтернету</string>
     <string name="splash_notification_access">Потрібен доступ до оповіщень</string>

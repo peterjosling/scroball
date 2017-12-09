@@ -36,9 +36,9 @@ public class LastfmApi {
   }
 
   /**
-   * @see Authenticator#getMobileSession(String, String, String, String)
+   * @see Authenticator#getSession(String, String, String)
    */
-  public Session getMobileSession(String username, String password, String apiKey, String secret) {
-    return Authenticator.getMobileSession(username, password, apiKey, secret);
+  public Session getSession(String token, String apiKey, String secret) {
+    return Authenticator.getSession(token, apiKey, secret);
   }
 }
