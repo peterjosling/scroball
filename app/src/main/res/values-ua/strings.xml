@@ -4,6 +4,10 @@
     <!-- Strings related to Settings -->
     <string name="saved_session_key">sessionKey</string>
 
+    <!-- Main window tabs -->
+    <string name="tab_now_playing">Now Playing</string>
+    <string name="tab_history">History</string>
+
     <!-- Settings menu item -->
     <string name="title_activity_settings">Настройки</string>
 
