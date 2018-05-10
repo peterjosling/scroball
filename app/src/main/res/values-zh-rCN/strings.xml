@@ -5,8 +5,8 @@
     <string name="saved_session_key">sessionKey</string>
 
     <!-- Main window tabs -->
-    <string name="tab_now_playing">Now Playing</string>
-    <string name="tab_history">History</string>
+    <string name="tab_now_playing">正在播放</string>
+    <string name="tab_history">历史记录</string>
 
     <!-- Settings menu item -->
     <string name="title_activity_settings">设置</string>
@@ -17,13 +17,13 @@
 
     <!-- Notification settings -->
     <string name="pref_header_notifications">通知</string>
-    <string name="pref_group_title_notification_types">Notification types</string>
+    <string name="pref_group_title_notification_types">通知类型</string>
     <string name="pref_title_notifications_now_playing">正在播放</string>
     <string name="pref_title_notifications_scrobble">已记录音轨</string>
-    <string name="pref_group_title_notification_settings">Notification settings</string>
-    <string name="pref_title_notification_vibrate">Vibrate</string>
-    <string name="pref_title_notification_sound">Sound</string>
-    <string name="pref_title_notification_light">Light</string>
+    <string name="pref_group_title_notification_settings">通知设置</string>
+    <string name="pref_title_notification_vibrate">震动</string>
+    <string name="pref_title_notification_sound">声音</string>
+    <string name="pref_title_notification_light">灯光</string>
 
     <!-- Strings related to login -->
     <string name="title_activity_login">登录</string>
@@ -33,7 +33,7 @@
     <string name="error_unknown">发生了未知错误</string>
     <string name="error_internet">您没有联网</string>
     <string name="splash_notification_access">需要通知使用权</string>
-    <string name="splash_notification_access_text">Scroball需要通知使用权权限才能读取设备的回放状态。</string>
+    <string name="splash_notification_access_text">Scroball 需要通知使用权权限才能读取设备的回放状态。</string>
     <string name="lastfm_logo_description">Last.fm logo</string>
 
     <!-- Strings related to the main screen -->
@@ -50,8 +50,8 @@
     <string name="notification_channel_name_scrobble">记录</string>
     <string name="notification_channel_name_error">错误</string>
     <string name="notification_channel_name_now_playing">正在播放</string>
-    <string name="authentication_error_title">Scroball身份验证错误</string>
-    <string name="authentication_error_content">您已从Scroball登出，记录已 暂停。轻触这里登录。</string>
+    <string name="authentication_error_title">Scroball 身份验证错误</string>
+    <string name="authentication_error_content">您已从 Scroball 登出，记录已暂停。轻触这里登录。</string>
 
     <!-- Strings related to IAPs -->
     <string name="purchase_failed">购买失败</string>
