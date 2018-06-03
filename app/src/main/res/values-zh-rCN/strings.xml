@@ -53,6 +53,9 @@
     <string name="authentication_error_title">Scroball 身份验证错误</string>
     <string name="authentication_error_content">您已从 Scroball 登出，记录已暂停。轻触这里登录。</string>
 
+    <!-- "Love" button in the Now Playing notification to love the current playing track -->
+    <string name="notification_action_love">Love</string>
+
     <!-- Strings related to IAPs -->
     <string name="purchase_failed">购买失败</string>
 </resources>

@@ -54,6 +54,9 @@
     <string name="authentication_error_content">You have been logged out from
         Scroball and scrobbling is paused. Tap here to login.</string>
 
+    <!-- "Love" button in the Now Playing notification to love the current playing track -->
+    <string name="notification_action_love">Love</string>
+
     <!-- Strings related to IAPs -->
     <string name="purchase_failed">Purchase failed</string>
 </resources>

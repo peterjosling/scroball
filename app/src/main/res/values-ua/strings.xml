@@ -53,6 +53,9 @@
     <string name="authentication_error_title">Помилка аутентифікації Scroball</string>
     <string name="authentication_error_content">Ви вийшли з Scroball і скробблінг був припинений. Натисніть тут для входу.</string>
 
+    <!-- "Love" button in the Now Playing notification to love the current playing track -->
+    <string name="notification_action_love">Love</string>
+
     <!-- Strings related to IAPs -->
     <string name="purchase_failed">Помилка при оплаті</string>
 </resources>
