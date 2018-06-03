@@ -71,7 +71,7 @@ dependencies {
     compileOnly 'com.google.auto.value:auto-value:1.5.2'
     testImplementation 'com.google.truth:truth:0.32'
     testImplementation 'org.mockito:mockito-core:2.9.0'
-    testImplementation 'org.robolectric:robolectric:3.4.2'
+    testImplementation 'org.robolectric:robolectric:3.8'
     androidTestImplementation 'com.google.truth:truth:0.32'
     androidTestImplementation 'com.android.support:support-v4:26.1.0'
     androidTestImplementation 'com.android.support.test:rules:1.0.1'
