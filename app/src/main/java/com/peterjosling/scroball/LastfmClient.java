@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.auto.value.AutoValue;
@@ -120,7 +121,8 @@ public class LastfmClient {
    *     Result} as the message payload.
    */
   public void updateNowPlaying(com.peterjosling.scroball.Track track, Handler.Callback callback) {
-    new UpdateNowPlayingTask(api, session, callback).execute(track);
+    int now = (int) System.currentTimeMillis() / 1000;
+    new UpdateNowPlayingTask(api, session, callback).execute(getScrobbleData(track, now));
   }
 
   /**
@@ -137,18 +139,7 @@ public class LastfmClient {
 
     for (int i = 0; i < scrobbles.size(); i++) {
       Scrobble scrobble = scrobbles.get(i);
-      com.peterjosling.scroball.Track track = scrobble.track();
-      ScrobbleData data = new ScrobbleData(track.artist(), track.track(), scrobble.timestamp());
-      if (track.album().isPresent()) {
-        data.setAlbum(track.album().get());
-      }
-      if (track.albumArtist().isPresent()) {
-        data.setAlbumArtist(track.albumArtist().get());
-      }
-      if (track.duration().isPresent() && track.duration().get() > 0) {
-        data.setDuration((int) (track.duration().get() / 1000));
-      }
-      scrobbleData[i] = data;
+      scrobbleData[i] = getScrobbleData(scrobble.track(), scrobble.timestamp());
     }
 
     new ScrobbleTracksTask(api, session, callback).execute(scrobbleData);
@@ -180,6 +171,21 @@ public class LastfmClient {
    */
   public static boolean isAuthenticationError(int errorCode) {
     return errorCode == ERROR_INVALID_SESSION || errorCode == ERROR_UNAUTHORIZED_TOKEN;
+  }
+
+  @NonNull
+  private ScrobbleData getScrobbleData(com.peterjosling.scroball.Track track, int timestamp) {
+    ScrobbleData data = new ScrobbleData(track.artist(), track.track(), timestamp);
+    if (track.album().isPresent()) {
+      data.setAlbum(track.album().get());
+    }
+    if (track.albumArtist().isPresent()) {
+      data.setAlbumArtist(track.albumArtist().get());
+    }
+    if (track.duration().isPresent() && track.duration().get() > 0) {
+      data.setDuration((int) (track.duration().get() / 1000));
+    }
+    return data;
   }
 
   private static class GetSessionTask extends AsyncTask<String, Void, AuthResult> {
@@ -232,7 +238,7 @@ public class LastfmClient {
   }
 
   private static class UpdateNowPlayingTask
-      extends AsyncTask<com.peterjosling.scroball.Track, Object, ScrobbleResult> {
+      extends AsyncTask<ScrobbleData, Object, ScrobbleResult> {
     private final LastfmApi api;
     private final Session session;
     private final Handler.Callback callback;
@@ -244,10 +250,10 @@ public class LastfmClient {
     }
 
     @Override
-    protected ScrobbleResult doInBackground(com.peterjosling.scroball.Track... params) {
-      com.peterjosling.scroball.Track track = params[0];
+    protected ScrobbleResult doInBackground(ScrobbleData... params) {
+      ScrobbleData scrobbleData = params[0];
       try {
-        return api.updateNowPlaying(track.artist(), track.track(), session);
+        return api.updateNowPlaying(scrobbleData, session);
       } catch (CallException e) {
         Log.d(TAG, "Failed to update now playing status", e);
       }

@@ -12,6 +12,7 @@ import org.robolectric.RobolectricTestRunner;
 import de.umass.lastfm.Caller;
 import de.umass.lastfm.Result;
 import de.umass.lastfm.Session;
+import de.umass.lastfm.scrobble.ScrobbleData;
 import de.umass.lastfm.scrobble.ScrobbleResult;
 
 import static com.google.common.truth.Truth.assertThat;
@@ -105,5 +106,34 @@ public class LastfmClientTest {
     client.getSession("abc", callback);
 
     verify(callback).handleMessage(argThat(message -> expectedResult.equals(message.obj)));
+  }
+
+  @Test
+  public void updateNowPlaying_returnsResultOnSuccess() {
+    String track = "My Track";
+    String artist = "Some Artist";
+
+    when(lastfmApi.updateNowPlaying(any(), any())).thenReturn(scrobbleResult);
+
+    client.updateNowPlaying(Track.builder().track(track).artist(artist).build(), callback);
+
+    ScrobbleData expectedScrobbleData = new ScrobbleData();
+    expectedScrobbleData.setTrack(track);
+    expectedScrobbleData.setArtist(artist);
+
+    verify(lastfmApi).updateNowPlaying(refEq(expectedScrobbleData, "timestamp"), refEq(session));
+    verify(callback).handleMessage(argThat(message -> message.obj == scrobbleResult));
+  }
+
+  @Test
+  public void updateNowPlaying_returnsNullOnError() {
+    String track = "My Track";
+    String artist = "Some Artist";
+
+    when(lastfmApi.updateNowPlaying(any(), any())).thenReturn(null);
+
+    client.updateNowPlaying(Track.builder().track(track).artist(artist).build(), callback);
+
+    verify(callback).handleMessage(argThat(message -> message.obj == null));
   }
 }

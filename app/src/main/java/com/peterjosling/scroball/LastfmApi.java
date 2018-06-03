@@ -29,10 +29,10 @@ public class LastfmApi {
   }
 
   /**
-   * @see Track#updateNowPlaying(String, String, Session)
+   * @see Track#updateNowPlaying(ScrobbleData, Session)
    */
-  public ScrobbleResult updateNowPlaying(String artistName, String trackName, Session session) {
-    return Track.updateNowPlaying(artistName, trackName, session);
+  public ScrobbleResult updateNowPlaying(ScrobbleData scrobbleData, Session session) {
+    return Track.updateNowPlaying(scrobbleData, session);
   }
 
   /**
