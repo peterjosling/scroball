@@ -114,6 +114,7 @@ public class LastfmClientTest {
     String artist = "Some Artist";
 
     when(lastfmApi.updateNowPlaying(any(), any())).thenReturn(scrobbleResult);
+    when(scrobbleResult.isSuccessful()).thenReturn(true);
 
     client.updateNowPlaying(Track.builder().track(track).artist(artist).build(), callback);
 
@@ -122,11 +123,12 @@ public class LastfmClientTest {
     expectedScrobbleData.setArtist(artist);
 
     verify(lastfmApi).updateNowPlaying(refEq(expectedScrobbleData, "timestamp"), refEq(session));
-    verify(callback).handleMessage(argThat(message -> message.obj == scrobbleResult));
+    verify(callback)
+        .handleMessage(argThat(message -> ((LastfmClient.Result) message.obj).isSuccessful()));
   }
 
   @Test
-  public void updateNowPlaying_returnsNullOnError() {
+  public void updateNowPlaying_returnsResultOnNullResponse() {
     String track = "My Track";
     String artist = "Some Artist";
 
@@ -134,6 +136,22 @@ public class LastfmClientTest {
 
     client.updateNowPlaying(Track.builder().track(track).artist(artist).build(), callback);
 
-    verify(callback).handleMessage(argThat(message -> message.obj == null));
+    verify(callback)
+        .handleMessage(argThat(message -> !((LastfmClient.Result) message.obj).isSuccessful()));
+  }
+
+  @Test
+  public void updateNowPlaying_returnsResultOnError() {
+    String track = "My Track";
+    String artist = "Some Artist";
+
+    when(lastfmApi.updateNowPlaying(any(), any())).thenReturn(scrobbleResult);
+    when(scrobbleResult.isSuccessful()).thenReturn(false);
+    when(scrobbleResult.getErrorCode()).thenReturn(LastfmClient.ERROR_OPERATION_FAILED);
+
+    client.updateNowPlaying(Track.builder().track(track).artist(artist).build(), callback);
+
+    verify(callback)
+        .handleMessage(argThat(message -> !((LastfmClient.Result) message.obj).isSuccessful()));
   }
 }
