@@ -3,6 +3,7 @@ package com.peterjosling.scroball.ui;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -147,6 +148,13 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
         if (responseCode != BillingResponse.OK) {
           purchaseFailed();
         }
+        return true;
+      case R.id.privacy_policy_item:
+        Intent browserIntent =
+            new Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://peterjosling.com/scroball/privacy_policy.html"));
+        startActivity(browserIntent);
         return true;
       case R.id.logout_item:
         logout();
