@@ -42,6 +42,7 @@
     <string name="logout">Вийти з профілю</string>
     <string name="are_you_sure">Ви впевнені?</string>
     <string name="logout_confirm">Після виходу з системи ви не зможете передавати інформацію про скробблінг. Продовжити?</string>
+    <string name="privacy_policy">Privacy policy</string>
 
     <!-- Strings related to the now playing screen -->
     <string name="nothing_playing">Зараз нічого не грає</string>

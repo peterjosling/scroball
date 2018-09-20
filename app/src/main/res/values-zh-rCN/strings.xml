@@ -42,6 +42,7 @@
     <string name="logout">登出</string>
     <string name="are_you_sure">您确定吗？</string>
     <string name="logout_confirm">登出会清除所有尚未提交的记录。继续吗？</string>
+    <string name="privacy_policy">Privacy policy</string>
 
     <!-- Strings related to the now playing screen -->
     <string name="nothing_playing">鸦雀无声</string>
