@@ -149,6 +149,17 @@ public class LastfmClient {
     new GetTrackInfoTask(session, callback).execute(track);
   }
 
+  /**
+   * Loves the specified track on the Last.fm API.
+   *
+   * @param track the track to take metadata from. Only track and artist will be used.
+   * @param callback the callback which will be invoked with the result of the request, with a
+   *     {@link Result} as the message payload.
+   */
+  public void loveTrack(com.peterjosling.scroball.Track track, Handler.Callback callback) {
+    new LoveTrackTask(api, session, callback).execute(track);
+  }
+
   public void clearSession() {
     session = null;
   }
@@ -372,6 +383,43 @@ public class LastfmClient {
       }
 
       callback.handleMessage(message);
+    }
+  }
+
+  private static class LoveTrackTask
+      extends AsyncTask<com.peterjosling.scroball.Track, Object, Result> {
+    private final LastfmApi api;
+    private final Session session;
+    private final Handler.Callback callback;
+
+    public LoveTrackTask(LastfmApi api, Session session, Handler.Callback callback) {
+      this.api = api;
+      this.session = session;
+      this.callback = callback;
+    }
+
+    @Override
+    protected Result doInBackground(com.peterjosling.scroball.Track... params) {
+      com.peterjosling.scroball.Track track = params[0];
+      try {
+        de.umass.lastfm.Result result = api.love(track.artist(), track.track(), session);
+        if (result.isSuccessful()) {
+          return Result.success();
+        }
+        int errorCode = result.getErrorCode();
+        return Result.error(errorCode >= 0 ? errorCode : ERROR_UNKNOWN);
+      } catch (CallException e) {
+        Log.d(TAG, "Failed to fetch track info", e);
+      }
+      return null;
+    }
+
+    @Override
+    protected void onPostExecute(Result result) {
+      Message message = Message.obtain();
+      message.obj = result;
+      callback.handleMessage(message);
+      Log.d(TAG, String.format("Track loved: %s", result));
     }
   }
 

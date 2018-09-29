@@ -57,6 +57,11 @@
 
     <!-- "Love" button in the Now Playing notification to love the current playing track -->
     <string name="notification_action_love">Love</string>
+    <!--
+    Disabled "Loved" button in the Now Playing notification to display when a
+    track has already been loved.
+    -->
+    <string name="notification_action_loved">Loved</string>
 
     <!-- Strings related to IAPs -->
     <string name="purchase_failed">Purchase failed</string>

@@ -19,7 +19,7 @@ import java.util.List;
 public class ScroballDB {
 
   static final String NAME = "ScroballDB";
-  static final int VERSION = 2;
+  static final int VERSION = 3;
 
   private static final int MAX_ROWS = 1000;
 
@@ -130,6 +130,33 @@ public class ScroballDB {
    */
   public void clearPendingPlaybackItems() {
     Delete.table(PendingPlaybackItemEntry.class);
+  }
+
+  /** Returns a list of all pending track love actions. */
+  public List<LovedTracksEntry> readPendingLoves() {
+    return SQLite.select()
+        .from(LovedTracksEntry.class)
+        .where(LovedTracksEntry_Table.status.in(LastfmClient.TRANSIENT_ERROR_CODES))
+        .queryList();
+  }
+
+  /** Writes a single track love to the database. */
+  public LovedTracksEntry writeLove(Track track, int status) {
+    LovedTracksEntry entry = new LovedTracksEntry();
+    entry.artist = track.artist().toLowerCase();
+    entry.track = track.track().toLowerCase();
+    entry.status = status;
+    entry.save();
+    return entry;
+  }
+
+  public boolean isLoved(Track track) {
+    return SQLite.select()
+            .from(LovedTracksEntry.class)
+            .where(LovedTracksEntry_Table.artist.eq(track.artist().toLowerCase()))
+            .and(LovedTracksEntry_Table.track.eq(track.track().toLowerCase()))
+            .querySingle()
+        != null;
   }
 
   /** Prunes old submitted {@link Scrobble}s from the database, limiting to {@code MAX_ROWS}. */

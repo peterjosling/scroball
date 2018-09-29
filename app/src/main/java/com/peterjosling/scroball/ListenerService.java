@@ -45,16 +45,14 @@ public class ListenerService extends NotificationListenerService
 
     ConnectivityManager connectivityManager =
         (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-
     ScroballDB scroballDB = application.getScroballDB();
-
     ScrobbleNotificationManager scrobbleNotificationManager =
-        new ScrobbleNotificationManager(this, sharedPreferences);
-
+        new ScrobbleNotificationManager(this, sharedPreferences, scroballDB);
     LastfmClient lastfmClient = application.getLastfmClient();
-
+    TrackLover trackLover = new TrackLover(lastfmClient, scroballDB, connectivityManager);
     Scrobbler scrobbler =
-        new Scrobbler(lastfmClient, scrobbleNotificationManager, scroballDB, connectivityManager);
+        new Scrobbler(
+            lastfmClient, scrobbleNotificationManager, scroballDB, connectivityManager, trackLover);
 
     playbackTracker = new PlaybackTracker(scrobbleNotificationManager, scrobbler);
 

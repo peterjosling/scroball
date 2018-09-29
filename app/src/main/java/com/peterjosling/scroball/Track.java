@@ -7,8 +7,10 @@ import com.google.auto.value.AutoValue;
 import com.google.common.base.Optional;
 import com.peterjosling.scroball.transforms.TitleExtractor;
 
+import java.io.Serializable;
+
 @AutoValue
-public abstract class Track {
+public abstract class Track implements Serializable {
 
   public abstract String track();
 
