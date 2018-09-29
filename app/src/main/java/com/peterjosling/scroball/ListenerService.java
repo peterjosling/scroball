@@ -76,6 +76,8 @@ public class ListenerService extends NotificationListenerService
     onActiveSessionsChanged(initialSessions);
 
     sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+
+    new CastListener(getApplicationContext());
   }
 
   public static boolean isNotificationAccessEnabled(Context context) {
