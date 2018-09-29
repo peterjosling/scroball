@@ -154,4 +154,13 @@ public class LastfmClientTest {
     verify(callback)
         .handleMessage(argThat(message -> !((LastfmClient.Result) message.obj).isSuccessful()));
   }
+
+  @Test
+  public void scrobbleTracks_() {
+    // TODO
+  }
+
+  // TODO ignores 0 durations
+  // TODO returns list of failures on scrobble failure
+  // TODO errors on 51 scrobs
 }
