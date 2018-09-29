@@ -2,6 +2,8 @@ package com.peterjosling.scroball;
 
 import android.media.session.PlaybackState;
 import android.util.Log;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -13,6 +15,7 @@ public class PlayerState {
   private final String player;
   private final Scrobbler scrobbler;
   private final ScrobbleNotificationManager notificationManager;
+  private final EventBus eventBus = ScroballApplication.getEventBus();
   private PlaybackItem playbackItem;
   private Timer submissionTimer;
 
@@ -21,6 +24,7 @@ public class PlayerState {
     this.player = player;
     this.scrobbler = scrobbler;
     this.notificationManager = notificationManager;
+    eventBus.register(this);
   }
 
   public void setPlaybackState(PlaybackState playbackState) {
@@ -108,7 +112,14 @@ public class PlayerState {
   }
 
   private void postEvent(Track track) {
-    ScroballApplication.getEventBus()
-        .post(NowPlayingChangeEvent.builder().track(track).source(player).build());
+    eventBus.post(NowPlayingChangeEvent.builder().track(track).source(player).build());
+  }
+
+  @Subscribe
+  private void onTrackLoved(TrackLovedEvent e) {
+    if (playbackItem.isPlaying()) {
+      // Track love state has changed - refresh the notification.
+      notificationManager.updateNowPlaying(playbackItem.getTrack());
+    }
   }
 }

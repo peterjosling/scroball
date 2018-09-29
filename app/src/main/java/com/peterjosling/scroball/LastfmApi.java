@@ -3,6 +3,7 @@ package com.peterjosling.scroball;
 import java.util.List;
 
 import de.umass.lastfm.Authenticator;
+import de.umass.lastfm.Result;
 import de.umass.lastfm.Session;
 import de.umass.lastfm.Track;
 import de.umass.lastfm.scrobble.ScrobbleData;
@@ -33,6 +34,13 @@ public class LastfmApi {
    */
   public ScrobbleResult updateNowPlaying(ScrobbleData scrobbleData, Session session) {
     return Track.updateNowPlaying(scrobbleData, session);
+  }
+
+  /**
+   * @see Track#love(String, String, Session)
+   */
+  public Result love(String artistName, String trackName, Session session) {
+    return Track.love(artistName, trackName, session);
   }
 
   /**

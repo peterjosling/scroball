@@ -21,12 +21,13 @@ public class ScrobblerTest {
   @Mock private ScrobbleNotificationManager notificationManager;
   @Mock private ScroballDB db;
   @Mock private ConnectivityManager connectivityManager;
+  @Mock private TrackLover trackLover;
   private Scrobbler scrobbler;
 
   @Before
   public void setup() {
     MockitoAnnotations.initMocks(this);
-    scrobbler = new Scrobbler(client, notificationManager, db, connectivityManager);
+    scrobbler = new Scrobbler(client, notificationManager, db, connectivityManager, trackLover);
   }
 
   @Test

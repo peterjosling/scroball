@@ -31,6 +31,7 @@
                 <action android:name="android.service.notification.NotificationListenerService"/>
             </intent-filter>
         </service>
+        <service android:name=".LoveTrackService"/>
 
         <activity
             android:name=".ui.LoginActivity"
@@ -52,6 +53,8 @@
             android:label="@string/title_activity_settings"
             android:parentActivityName=".ui.MainActivity">
         </activity>
+
+        <receiver android:name=".LoveTrackReceiver"/>
 
         <meta-data
             android:name="io.fabric.ApiKey"

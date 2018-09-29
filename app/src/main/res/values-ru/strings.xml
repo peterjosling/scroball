@@ -59,4 +59,5 @@
 
     <!-- Strings related to IAPs -->
     <string name="purchase_failed">Ошибка при оплате</string>
+    <string name="notification_action_loved">Loved</string>
 </resources>
