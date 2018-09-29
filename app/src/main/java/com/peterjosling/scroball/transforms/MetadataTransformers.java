@@ -19,6 +19,7 @@ public class MetadataTransformers {
           .putAll("com.google.android.youtube", VIDEO_TRANSFORMS)
           .putAll("com.google.android.youtube.tv", VIDEO_TRANSFORMS)
           .put("com.pandora.android", new PandoraOfflineArtistCleaner())
+          .put("com.sonos.acr", new SonosRoomCleaner())
           .build();
 
   public Track transformForPackageName(String packageName, Track track) {
