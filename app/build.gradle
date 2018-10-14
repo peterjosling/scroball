@@ -4,7 +4,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.25.2'
+        classpath 'io.fabric.tools:gradle:1.26.1'
     }
 }
 apply plugin: 'com.android.application'
@@ -17,7 +17,7 @@ repositories {
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '27.0.3'
+    buildToolsVersion '28.0.3'
 
     defaultConfig {
         applicationId 'com.peterjosling.scroball'
@@ -57,7 +57,7 @@ dependencies {
     implementation 'com.android.support:design:26.1.0'
     implementation 'com.android.support:mediarouter-v7:26.1.0'
     implementation 'com.android.support:support-v4:26.1.0'
-    implementation('com.crashlytics.sdk.android:crashlytics:2.9.1@aar') {
+    implementation('com.crashlytics.sdk.android:crashlytics:2.9.5@aar') {
         transitive = true
     }
     implementation 'com.google.android.gms:play-services-ads:12.0.1'
