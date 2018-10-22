@@ -153,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
         Intent browserIntent =
             new Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse("https://peterjosling.com/scroball/privacy_policy.html"));
+                Uri.parse("https://scroball.peterjosling.com/privacy_policy.html"));
         startActivity(browserIntent);
         return true;
       case R.id.logout_item:
