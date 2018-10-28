@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Scroball</string>
+    <string name="app_name" translatable="false">Scroball</string>
 
     <!-- Strings related to Settings -->
-    <string name="saved_session_key">sessionKey</string>
+    <string name="saved_session_key" translatable="false">sessionKey</string>
 
     <!-- Main window tabs -->
     <string name="tab_now_playing">Now Playing</string>
