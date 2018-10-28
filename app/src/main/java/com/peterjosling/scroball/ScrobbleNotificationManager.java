@@ -254,7 +254,7 @@ public class ScrobbleNotificationManager {
       notification
           .setPriority(Notification.PRIORITY_HIGH)
           .setLights(color, 500, 500)
-          .setVibrate(new long[] {0, 200, 100, 500});
+          .setVibrate(new long[]{0, 200, 100, 500});
     }
 
     notificationManager.notify(AUTH_ERROR_ID, notification.build());
