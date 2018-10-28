@@ -54,8 +54,6 @@
             android:parentActivityName=".ui.MainActivity">
         </activity>
 
-        <receiver android:name=".LoveTrackReceiver"/>
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="9f73e09c31fe1db8981fe3cbcc5ec24aa4ffed81"/>
