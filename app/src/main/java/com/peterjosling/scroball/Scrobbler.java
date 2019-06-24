@@ -3,15 +3,15 @@ package com.peterjosling.scroball;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-
 import com.google.common.base.Optional;
+import com.google.common.eventbus.EventBus;
+import com.google.common.eventbus.Subscribe;
 import com.peterjosling.scroball.db.ScroballDB;
+import de.umass.lastfm.Caller;
+import de.umass.lastfm.Result;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import de.umass.lastfm.Caller;
-import de.umass.lastfm.Result;
 
 public class Scrobbler {
 
@@ -24,6 +24,8 @@ public class Scrobbler {
   private final ScrobbleNotificationManager notificationManager;
   private final ScroballDB scroballDB;
   private final ConnectivityManager connectivityManager;
+  private final TrackLover trackLover;
+  private final EventBus eventBus = ScroballApplication.getEventBus();
   private final List<PlaybackItem> pendingPlaybackItems;
   private final List<Scrobble> pending;
   private boolean isScrobbling = false;
@@ -34,14 +36,18 @@ public class Scrobbler {
       LastfmClient client,
       ScrobbleNotificationManager notificationManager,
       ScroballDB scroballDB,
-      ConnectivityManager connectivityManager) {
+      ConnectivityManager connectivityManager,
+      TrackLover trackLover) {
     this.client = client;
     this.notificationManager = notificationManager;
     this.scroballDB = scroballDB;
     this.connectivityManager = connectivityManager;
+    this.trackLover = trackLover;
     // TODO write unit test to ensure non-network plays get scrobbled with duration lookup.
     this.pendingPlaybackItems = new ArrayList<>(scroballDB.readPendingPlaybackItems());
     this.pending = new ArrayList<>(scroballDB.readPendingScrobbles());
+
+    eventBus.register(this);
   }
 
   public void updateNowPlaying(Track track) {
@@ -105,9 +111,8 @@ public class Scrobbler {
       playCount++;
     }
 
-    playCount -= playbackItem.getPlaysScrobbled();
-
-    for (int i = 0; i < playCount; i++) {
+    int newScrobbles = playCount - playbackItem.getPlaysScrobbled();
+    for (int i = playbackItem.getPlaysScrobbled(); i < playCount; i++) {
       int itemTimestamp = (int) ((timestamp + i * duration) / 1000);
 
       Scrobble scrobble = Scrobble.builder().track(track).timestamp(itemTimestamp).build();
@@ -117,11 +122,11 @@ public class Scrobbler {
       playbackItem.addScrobble();
     }
 
-    if (playCount > 0) {
+    if (newScrobbles > 0) {
       Log.d(TAG, String.format("Queued %d scrobbles", playCount));
     }
 
-    notificationManager.notifyScrobbled(track, playCount);
+    notificationManager.notifyScrobbled(track, newScrobbles);
     scrobblePending();
   }
 
@@ -177,7 +182,13 @@ public class Scrobbler {
     boolean tracksPending = !(pending.isEmpty() && pendingPlaybackItems.isEmpty());
     boolean backoff = lastScrobbleTime + nextScrobbleDelay > System.currentTimeMillis();
 
-    if (isScrobbling || !tracksPending || !isConnected || !client.isAuthenticated() || backoff) {
+    if (!isConnected || !client.isAuthenticated() || backoff) {
+      return;
+    }
+
+    trackLover.lovePending();
+
+    if (isScrobbling || !tracksPending) {
       return;
     }
 
@@ -286,5 +297,10 @@ public class Scrobbler {
   private void queuePendingPlaybackItem(PlaybackItem playbackItem) {
     pendingPlaybackItems.add(playbackItem);
     scroballDB.writePendingPlaybackItem(playbackItem);
+  }
+
+  @Subscribe
+  public void onTrackLoveEvent(TrackLoveEvent e) {
+    trackLover.loveTrack(e.track());
   }
 }

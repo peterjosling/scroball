@@ -3,6 +3,7 @@ package com.peterjosling.scroball;
 import java.util.List;
 
 import de.umass.lastfm.Authenticator;
+import de.umass.lastfm.Result;
 import de.umass.lastfm.Session;
 import de.umass.lastfm.Track;
 import de.umass.lastfm.scrobble.ScrobbleData;
@@ -29,16 +30,23 @@ public class LastfmApi {
   }
 
   /**
-   * @see Track#updateNowPlaying(String, String, Session)
+   * @see Track#updateNowPlaying(ScrobbleData, Session)
    */
-  public ScrobbleResult updateNowPlaying(String artistName, String trackName, Session session) {
-    return Track.updateNowPlaying(artistName, trackName, session);
+  public ScrobbleResult updateNowPlaying(ScrobbleData scrobbleData, Session session) {
+    return Track.updateNowPlaying(scrobbleData, session);
   }
 
   /**
-   * @see Authenticator#getMobileSession(String, String, String, String)
+   * @see Track#love(String, String, Session)
    */
-  public Session getMobileSession(String username, String password, String apiKey, String secret) {
-    return Authenticator.getMobileSession(username, password, apiKey, secret);
+  public Result love(String artistName, String trackName, Session session) {
+    return Track.love(artistName, trackName, session);
+  }
+
+  /**
+   * @see Authenticator#getSession(String, String, String)
+   */
+  public Session getSession(String token, String apiKey, String secret) {
+    return Authenticator.getSession(token, apiKey, secret);
   }
 }

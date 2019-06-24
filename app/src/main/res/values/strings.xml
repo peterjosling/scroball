@@ -1,30 +1,35 @@
 <resources>
-    <string name="app_name">Scroball</string>
+    <string name="app_name" translatable="false">Scroball</string>
 
     <!-- Strings related to Settings -->
-    <string name="saved_session_key">sessionKey</string>
+    <string name="saved_session_key" translatable="false">sessionKey</string>
 
-    <!-- Example General settings -->
+    <!-- Main window tabs -->
+    <string name="tab_now_playing">Now Playing</string>
+    <string name="tab_history">History</string>
+
+    <!-- Settings menu item -->
     <string name="title_activity_settings">Settings</string>
-    <string name="pref_header_players">Enabled media players</string>
 
+    <!-- Enabled players settings -->
+    <string name="pref_header_players">Enabled media players</string>
     <string name="pref_title_new_players">Scrobble from new players automatically</string>
 
-    <!-- Example settings for Notifications -->
+    <!-- Notification settings -->
     <string name="pref_header_notifications">Notifications</string>
-
-    <string name="title_activity_login">Sign in</string>
+    <string name="pref_group_title_notification_types">Notification types</string>
     <string name="pref_title_notifications_now_playing">Now Playing</string>
     <string name="pref_title_notifications_scrobble">Track scrobbled</string>
+    <string name="pref_group_title_notification_settings">Notification settings</string>
+    <string name="pref_title_notification_vibrate">Vibrate</string>
+    <string name="pref_title_notification_sound">Sound</string>
+    <string name="pref_title_notification_light">Light</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_username">Username</string>
-    <string name="prompt_password">Password</string>
+    <string name="title_activity_login">Sign in</string>
     <string name="action_sign_in">Sign in</string>
     <string name="progress_logging_in">Logging in…</string>
     <string name="error">Error</string>
-    <string name="error_incorrect_password">Invalid username or password</string>
-    <string name="error_field_required">This field is required</string>
     <string name="error_unknown">An unknown error occurred</string>
     <string name="error_internet">You are not connected to the internet</string>
     <string name="splash_notification_access">Notification Access required</string>
@@ -37,6 +42,7 @@
     <string name="logout">Logout</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="logout_confirm">Logging out will clear any scrobbles which have yet to be submitted. Continue?</string>
+    <string name="privacy_policy">Privacy policy</string>
 
     <!-- Strings related to the now playing screen -->
     <string name="nothing_playing">Nothing playing</string>
@@ -48,6 +54,14 @@
     <string name="authentication_error_title">Scroball authentication error</string>
     <string name="authentication_error_content">You have been logged out from
         Scroball and scrobbling is paused. Tap here to login.</string>
+
+    <!-- "Love" button in the Now Playing notification to love the current playing track -->
+    <string name="notification_action_love">Love</string>
+    <!--
+    Disabled "Loved" button in the Now Playing notification to display when a
+    track has already been loved.
+    -->
+    <string name="notification_action_loved">Loved</string>
 
     <!-- Strings related to IAPs -->
     <string name="purchase_failed">Purchase failed</string>

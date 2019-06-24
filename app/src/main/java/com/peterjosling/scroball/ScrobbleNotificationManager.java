@@ -16,6 +16,7 @@ import android.os.Build;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
+import com.peterjosling.scroball.db.ScroballDB;
 import com.peterjosling.scroball.ui.MainActivity;
 import com.peterjosling.scroball.ui.SplashScreen;
 
@@ -39,12 +40,16 @@ public class ScrobbleNotificationManager {
 
   private final Context context;
   private final SharedPreferences sharedPreferences;
+  private final ScroballDB scroballDB;
   private final NotificationManager notificationManager;
   private final Map<Track, Integer> playCounts = new HashMap<>();
 
-  public ScrobbleNotificationManager(Context context, SharedPreferences sharedPreferences) {
+  public ScrobbleNotificationManager(
+      Context context, SharedPreferences sharedPreferences,
+      ScroballDB scroballDB) {
     this.context = context;
     this.sharedPreferences = sharedPreferences;
+    this.scroballDB = scroballDB;
     this.notificationManager =
         (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -53,11 +58,22 @@ public class ScrobbleNotificationManager {
 
     // Create notification channels, where available.
     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+      boolean enableSound = sharedPreferences.getBoolean("notification_sound", false);
+      boolean enableVibrate = sharedPreferences.getBoolean("notification_vibrate", false);
+      boolean enableLight = sharedPreferences.getBoolean("notification_light", false);
+
       NotificationChannel scrobbleChannel =
           new NotificationChannel(
               CHANNEL_ID_SCROBBLE,
               context.getString(R.string.notification_channel_name_scrobble),
               NotificationManager.IMPORTANCE_DEFAULT);
+      scrobbleChannel.enableVibration(enableVibrate);
+      scrobbleChannel.enableLights(enableLight);
+      if (enableSound) {
+        scrobbleChannel.setSound(
+            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION),
+            new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).build());
+      }
 
       NotificationChannel errorChannel =
           new NotificationChannel(
@@ -87,10 +103,10 @@ public class ScrobbleNotificationManager {
       return;
     }
 
-    Intent intent = new Intent(context, MainActivity.class);
-    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-    PendingIntent pendingIntent =
-        PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+    Intent clickIntent = new Intent(context, MainActivity.class);
+    clickIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    PendingIntent clickPendingIntent =
+        PendingIntent.getActivity(context, 0, clickIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
     Notification.Builder notification =
         new Notification.Builder(context)
@@ -100,7 +116,27 @@ public class ScrobbleNotificationManager {
             .setOngoing(true)
             .setCategory(Notification.CATEGORY_STATUS)
             .setColor(Color.argb(255, 242, 72, 63))
-            .setContentIntent(pendingIntent);
+            .setContentIntent(clickPendingIntent);
+
+    if (scroballDB.isLoved(track)) {
+      notification
+          .addAction(
+              R.drawable.ic_favorite_black_24dp,
+              context.getString(R.string.notification_action_loved),
+              null);
+    } else {
+      Intent loveIntent = new Intent(context, LoveTrackService.class);
+      loveIntent.putExtra(LoveTrackService.ARTIST_KEY, track.artist());
+      loveIntent.putExtra(LoveTrackService.TRACK_KEY, track.track());
+      PendingIntent lovePendingIntent =
+          PendingIntent.getService(context, 0, loveIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+      notification
+          .addAction(
+              R.drawable.ic_favorite_black_24dp,
+              context.getString(R.string.notification_action_love),
+              lovePendingIntent);
+    }
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       notification.setChannelId(CHANNEL_ID_NOW_PLAYING);
@@ -183,6 +219,14 @@ public class ScrobbleNotificationManager {
       notificationBuilder.setChannelId(CHANNEL_ID_SCROBBLE);
     }
 
+    boolean enableSound = sharedPreferences.getBoolean("notifications_sound", false);
+    boolean enableVibrate = sharedPreferences.getBoolean("notifications_vibrate", false);
+    boolean enableLight = sharedPreferences.getBoolean("notifications_light", false);
+    notificationBuilder.setDefaults(
+        ((enableSound) ? Notification.DEFAULT_SOUND : 0)
+            | ((enableVibrate) ? Notification.DEFAULT_VIBRATE : 0)
+            | ((enableLight) ? Notification.DEFAULT_LIGHTS : 0));
+
     notificationManager.notify(SCROBBLE_ID, notificationBuilder.build());
   }
 
@@ -210,7 +254,7 @@ public class ScrobbleNotificationManager {
       notification
           .setPriority(Notification.PRIORITY_HIGH)
           .setLights(color, 500, 500)
-          .setVibrate(new long[] {0, 200, 100, 500});
+          .setVibrate(new long[]{0, 200, 100, 500});
     }
 
     notificationManager.notify(AUTH_ERROR_ID, notification.build());

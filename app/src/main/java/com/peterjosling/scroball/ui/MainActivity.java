@@ -3,6 +3,7 @@ package com.peterjosling.scroball.ui;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -23,8 +24,6 @@ import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.common.collect.ImmutableList;
 import com.peterjosling.scroball.R;
 import com.peterjosling.scroball.ScroballApplication;
@@ -55,8 +54,6 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
   /** The {@link ViewPager} that will host the section contents. */
   private ViewPager mViewPager;
 
-  private GoogleApiClient mGoogleApiClient;
-
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -84,12 +81,22 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
 
     this.adsRemoved = application.getSharedPreferences().getBoolean(REMOVE_ADS_SKU, false);
 
-    mGoogleApiClient =
-        new GoogleApiClient.Builder(this)
-            .enableAutoManage(this, 0, null)
-            .addApi(Auth.CREDENTIALS_API)
-            .build();
+    adView = findViewById(R.id.adView);
+    if (this.adsRemoved) {
+      RelativeLayout parent = (RelativeLayout) adView.getParent();
+      if (parent != null) {
+        parent.removeView(adView);
+      }
+    } else {
+      AdRequest adRequest =
+          new AdRequest.Builder().addTestDevice("86193DC9EBC8E1C3873178900C9FCCFC").build();
+      adView.loadAd(adRequest);
+    }
+  }
 
+  @Override
+  protected void onResume() {
+    super.onResume();
     billingClient = new BillingClient.Builder(this).setListener(this).build();
     billingClient.startConnection(
         new BillingClientStateListener() {
@@ -106,18 +113,12 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
           @Override
           public void onBillingServiceDisconnected() {}
         });
+  }
 
-    adView = findViewById(R.id.adView);
-    if (this.adsRemoved) {
-      RelativeLayout parent = (RelativeLayout) adView.getParent();
-      if (parent != null) {
-        parent.removeView(adView);
-      }
-    } else {
-      AdRequest adRequest =
-          new AdRequest.Builder().addTestDevice("86193DC9EBC8E1C3873178900C9FCCFC").build();
-      adView.loadAd(adRequest);
-    }
+  @Override
+  protected void onPause() {
+    super.onPause();
+    billingClient.endConnection();
   }
 
   @Override
@@ -148,6 +149,13 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
           purchaseFailed();
         }
         return true;
+      case R.id.privacy_policy_item:
+        Intent browserIntent =
+            new Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse("https://scroball.peterjosling.com/privacy_policy.html"));
+        startActivity(browserIntent);
+        return true;
       case R.id.logout_item:
         logout();
         return true;
@@ -164,7 +172,6 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
             android.R.string.yes,
             (dialog, whichButton) -> {
               application.logout();
-              Auth.CredentialsApi.disableAutoSignIn(mGoogleApiClient);
 
               Intent intent = new Intent(this, SplashScreen.class);
               intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -225,9 +232,9 @@ public class MainActivity extends AppCompatActivity implements PurchasesUpdatedL
     public CharSequence getPageTitle(int position) {
       switch (position) {
         case 0:
-          return "Now Playing";
+          return getString(R.string.tab_now_playing);
         case 1:
-          return "History";
+          return getString(R.string.tab_history);
       }
       return null;
     }

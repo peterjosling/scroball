@@ -5,11 +5,11 @@ import android.media.MediaMetadata;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.robolectric.RobolectricTestRunner;
 
 import static com.google.common.truth.Truth.assertThat;
 
-@RunWith(JUnit4.class)
+@RunWith(RobolectricTestRunner.class)
 public class TrackTest {
 
   private static final Bitmap EMPTY_BITMAP = Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8);
@@ -121,5 +121,17 @@ public class TrackTest {
 
     assertThat(output1.duration()).hasValue(threeMinutesMs);
     assertThat(output2.duration()).hasValue(threeMinutesMs);
+  }
+
+  @Test
+  public void fromMediaMetadata_usesAlbumArtistIfArtistMissing() {
+    MediaMetadata input =
+        new MediaMetadata.Builder()
+            .putString(MediaMetadata.METADATA_KEY_ALBUM_ARTIST, "Artist")
+            .build();
+
+    Track output = Track.fromMediaMetadata(input);
+
+    assertThat(output.artist()).isEqualTo("Artist");
   }
 }

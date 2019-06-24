@@ -7,12 +7,16 @@ import com.google.auto.value.AutoValue;
 import com.google.common.base.Optional;
 import com.peterjosling.scroball.transforms.TitleExtractor;
 
+import java.io.Serializable;
+
 @AutoValue
-public abstract class Track {
+public abstract class Track implements Serializable {
 
   public abstract String track();
 
   public abstract String artist();
+
+  public abstract Optional<String> composer();
 
   public abstract Optional<String> album();
 
@@ -31,6 +35,7 @@ public abstract class Track {
   public static Track fromMediaMetadata(MediaMetadata metadata) {
     String title = metadata.getString(MediaMetadata.METADATA_KEY_TITLE);
     String artist = metadata.getString(MediaMetadata.METADATA_KEY_ARTIST);
+    String composer = metadata.getString(MediaMetadata.METADATA_KEY_COMPOSER);
     String album = metadata.getString(MediaMetadata.METADATA_KEY_ALBUM);
     String albumArtist = metadata.getString(MediaMetadata.METADATA_KEY_ALBUM_ARTIST);
     Bitmap art = metadata.getBitmap(MediaMetadata.METADATA_KEY_ART);
@@ -70,8 +75,14 @@ public abstract class Track {
     }
     if (artist != null) {
       builder.artist(artist);
+    } else if (albumArtist != null) {
+      // Some apps (Telegram) set ALBUM_ARTIST but not ARTIST.
+      builder.artist(albumArtist);
     } else {
       return new TitleExtractor().transform(builder.artist("").build());
+    }
+    if (composer != null) {
+      builder.composer(composer);
     }
     return builder.build();
   }
@@ -94,6 +105,8 @@ public abstract class Track {
     public abstract Builder track(String track);
 
     public abstract Builder artist(String artist);
+
+    public abstract Builder composer(String composer);
 
     public abstract Builder album(String album);
 
