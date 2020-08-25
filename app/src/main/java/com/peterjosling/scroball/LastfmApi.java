@@ -2,15 +2,15 @@ package com.peterjosling.scroball;
 
 import java.util.List;
 
-import de.umass.lastfm.Authenticator;
-import de.umass.lastfm.Result;
-import de.umass.lastfm.Session;
-import de.umass.lastfm.Track;
-import de.umass.lastfm.scrobble.ScrobbleData;
-import de.umass.lastfm.scrobble.ScrobbleResult;
+import com.softartdev.lastfm.Authenticator;
+import com.softartdev.lastfm.Result;
+import com.softartdev.lastfm.Session;
+import com.softartdev.lastfm.Track;
+import com.softartdev.lastfm.scrobble.ScrobbleData;
+import com.softartdev.lastfm.scrobble.ScrobbleResult;
 
 /**
- * Wrapper around the static {@link de.umass.lastfm} API methods to allow for the classes to be
+ * Wrapper around the static {@link com.softartdev.lastfm} API methods to allow for the classes to be
  * mocked out in tests.
  */
 public class LastfmApi {

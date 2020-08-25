@@ -9,11 +9,11 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.robolectric.RobolectricTestRunner;
 
-import de.umass.lastfm.Caller;
-import de.umass.lastfm.Result;
-import de.umass.lastfm.Session;
-import de.umass.lastfm.scrobble.ScrobbleData;
-import de.umass.lastfm.scrobble.ScrobbleResult;
+import com.softartdev.lastfm.Caller;
+import com.softartdev.lastfm.Result;
+import com.softartdev.lastfm.Session;
+import com.softartdev.lastfm.scrobble.ScrobbleData;
+import com.softartdev.lastfm.scrobble.ScrobbleResult;
 
 import static com.google.common.truth.Truth.assertThat;
 import static org.mockito.ArgumentMatchers.any;

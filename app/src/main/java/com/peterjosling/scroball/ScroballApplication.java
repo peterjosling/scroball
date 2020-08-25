@@ -14,7 +14,7 @@ import com.raizlabs.android.dbflow.config.FlowManager;
 
 import java.util.Locale;
 
-import de.umass.lastfm.Caller;
+import com.softartdev.lastfm.Caller;
 import io.fabric.sdk.android.Fabric;
 
 public class ScroballApplication extends Application {

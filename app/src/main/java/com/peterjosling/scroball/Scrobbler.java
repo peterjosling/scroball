@@ -7,8 +7,8 @@ import com.google.common.base.Optional;
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
 import com.peterjosling.scroball.db.ScroballDB;
-import de.umass.lastfm.Caller;
-import de.umass.lastfm.Result;
+import com.softartdev.lastfm.Caller;
+import com.softartdev.lastfm.Result;
 
 import java.util.ArrayList;
 import java.util.List;

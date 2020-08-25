@@ -15,17 +15,17 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Arrays;
 import java.util.List;
 
-import de.umass.lastfm.CallException;
-import de.umass.lastfm.Caller;
-import de.umass.lastfm.Session;
-import de.umass.lastfm.Track;
-import de.umass.lastfm.scrobble.ScrobbleData;
-import de.umass.lastfm.scrobble.ScrobbleResult;
+import com.softartdev.lastfm.CallException;
+import com.softartdev.lastfm.Caller;
+import com.softartdev.lastfm.Session;
+import com.softartdev.lastfm.Track;
+import com.softartdev.lastfm.scrobble.ScrobbleData;
+import com.softartdev.lastfm.scrobble.ScrobbleResult;
 
 /**
  * Client for accessing the Last.fm API.
  *
- * <p>Acts as a wrapper around the client in {@link de.umass.lastfm}, providing asynchronous methods
+ * <p>Acts as a wrapper around the client in {@link com.softartdev.lastfm}, providing asynchronous methods
  * and transforming between the Scroball and internal API data types.
  */
 public class LastfmClient {
@@ -219,7 +219,7 @@ public class LastfmClient {
         return AuthResult.builder().sessionKey(session.getKey()).build();
       }
 
-      de.umass.lastfm.Result result = caller.getLastResult();
+      com.softartdev.lastfm.Result result = caller.getLastResult();
       AuthResult.Builder authResultBuilder = AuthResult.builder();
       int httpErrorCode = result.getHttpErrorCode();
       int errorCode = result.getErrorCode();
@@ -402,7 +402,7 @@ public class LastfmClient {
     protected Result doInBackground(com.peterjosling.scroball.Track... params) {
       com.peterjosling.scroball.Track track = params[0];
       try {
-        de.umass.lastfm.Result result = api.love(track.artist(), track.track(), session);
+        com.softartdev.lastfm.Result result = api.love(track.artist(), track.track(), session);
         if (result.isSuccessful()) {
           return Result.success();
         }
