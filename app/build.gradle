@@ -68,7 +68,7 @@ dependencies {
     testImplementation 'org.robolectric:robolectric:4.2.1'
     androidTestImplementation 'com.google.truth:truth:0.32'
     androidTestImplementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    androidTestImplementation 'androidx.test:rules:1.1.1'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     annotationProcessor 'com.google.auto.value:auto-value:1.5.2'
     annotationProcessor 'com.github.Raizlabs.DBFlow:dbflow-processor:4.2.4'
