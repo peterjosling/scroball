@@ -10,8 +10,8 @@ import android.media.session.MediaSessionManager;
 import android.media.session.PlaybackState;
 import android.net.ConnectivityManager;
 import android.service.notification.NotificationListenerService;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NotificationManagerCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.NotificationManagerCompat;
 import android.util.Log;
 
 import com.google.common.base.Optional;
