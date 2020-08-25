@@ -1,13 +1,15 @@
 package com.peterjosling.scroball;
 
+import android.os.Build;
 import android.os.Handler;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.RobolectricTestRunner;
+import org.robolectric.annotation.Config;
 
 import com.softartdev.lastfm.Caller;
 import com.softartdev.lastfm.Result;
@@ -23,7 +25,8 @@ import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(RobolectricTestRunner.class)
+@Config(sdk = Build.VERSION_CODES.O_MR1)
+@RunWith(AndroidJUnit4.class)
 public class LastfmClientTest {
 
   /** Copied from {@link LastfmClient#API_KEY}. */

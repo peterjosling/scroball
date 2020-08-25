@@ -1,24 +1,28 @@
 package com.peterjosling.scroball.db;
 
+import android.os.Build;
+
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+
 import com.google.common.collect.ImmutableList;
 import com.peterjosling.scroball.Scrobble;
 import com.peterjosling.scroball.ScrobbleStatus;
 import com.peterjosling.scroball.Track;
-import com.peterjosling.scroball.db.ScroballDB;
 import com.raizlabs.android.dbflow.config.FlowManager;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
 import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
 
 import java.util.List;
 
 import static com.google.common.truth.Truth.assertThat;
 
-@RunWith(RobolectricTestRunner.class)
+@Config(sdk = Build.VERSION_CODES.O_MR1)
+@RunWith(AndroidJUnit4.class)
 public class ScroballDBTest {
 
   private ScroballDB scroballDB = new ScroballDB();
